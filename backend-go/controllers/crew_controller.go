@@ -9,56 +9,55 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type KeywordController struct {
-	KeywordService interfaces.KeywordService
+type CrewController struct {
+	CrewService interfaces.CrewService
 }
 
-func NewKeywordController(keywordService interfaces.KeywordService) KeywordController {
-	return KeywordController{
-		KeywordService: keywordService,
+func NewCrewController(crewService interfaces.CrewService) CrewController {
+	return CrewController{
+		CrewService: crewService,
 	}
 }
 
-func (kc *KeywordController) CreateKeyword(ctx *gin.Context) {
-	var keyword models.Keyword
-	if err := ctx.ShouldBindJSON(&keyword); err != nil {
+func (cc *CrewController) CreateCrew(ctx *gin.Context) {
+	var crew models.Crew
+	if err := ctx.ShouldBindJSON(&crew); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
-	if err := kc.KeywordService.CreateKeyword(&keyword); err != nil {
+	if err := cc.CrewService.CreateCrew(&crew); err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "Successful"})
-
 }
 
-func (kc *KeywordController) GetKeyword(ctx *gin.Context) {
+func (cc *CrewController) GetCrew(ctx *gin.Context) {
 	movieId, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	keyword, _ := kc.KeywordService.GetKeyword(&movieId)
+	crew, _ := cc.CrewService.GetCrew(&movieId)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, keyword)
+	ctx.JSON(http.StatusOK, crew)
 }
 
-func (kc *KeywordController) UpdateKeyword(ctx *gin.Context) {
-	var keyword models.Keyword
+func (cc *CrewController) UpdateCrew(ctx *gin.Context) {
+	var crew models.Crew
 
-	if err := ctx.ShouldBindJSON(&keyword); err != nil {
+	if err := ctx.ShouldBindJSON(&crew); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
-	if err := kc.KeywordService.UpdateKeyword(&keyword); err != nil {
+	if err := cc.CrewService.UpdateCrew(&crew); err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 		return
 	}
@@ -66,14 +65,14 @@ func (kc *KeywordController) UpdateKeyword(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "Successful"})
 }
 
-func (kc *KeywordController) DeleteKeyword(ctx *gin.Context) {
+func (cc *CrewController) DeleteCrew(ctx *gin.Context) {
 	movieId, err := strconv.Atoi(ctx.Param("id"))
 
 	if err != nil || int64(movieId) <= 0 {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Invalid movie id"})
 		return
 	}
-	err = kc.KeywordService.DeleteKeyword(&movieId)
+	err = cc.CrewService.DeleteCrew(&movieId)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
@@ -83,14 +82,14 @@ func (kc *KeywordController) DeleteKeyword(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "Successful"})
 }
 
-func (kc *KeywordController) RegisterKeywordRoute(rg *gin.RouterGroup) {
-	keywordRoute := rg.Group("/keyword")
+func (cc *CrewController) RegisterCrewRoute(rg *gin.RouterGroup) {
+	crewRoute := rg.Group("/crew")
 	// The URI must be diffent structure from each other !
-	keywordRoute.POST("/create", kc.CreateKeyword)
+	crewRoute.POST("/create", cc.CreateCrew)
 
-	keywordRoute.GET("/get/:id", kc.GetKeyword)
+	crewRoute.GET("/get/:id", cc.GetCrew)
 
-	keywordRoute.PATCH("/update", kc.UpdateKeyword)
+	crewRoute.PATCH("/update", cc.UpdateCrew)
 
-	keywordRoute.DELETE("/delete/:id", kc.DeleteKeyword)
+	crewRoute.DELETE("/delete/:id", cc.DeleteCrew)
 }

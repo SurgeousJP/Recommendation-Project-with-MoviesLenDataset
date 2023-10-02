@@ -17,17 +17,28 @@ import (
 )
 
 var (
-	server            *gin.Engine
-	movieCollection   *mongo.Collection
-	movieService      interfaces.MovieService
-	movieController   controllers.MovieController
+	server *gin.Engine
+
+	databaseName string
+
+	movieCollection *mongo.Collection
+	movieService    interfaces.MovieService
+	movieController controllers.MovieController
 
 	keywordCollection *mongo.Collection
 	keywordService    interfaces.KeywordService
 	keywordController controllers.KeywordController
 
-	ctx               context.Context
-	mongoClient       *mongo.Client
+	ratingCollection *mongo.Collection
+	ratingService    interfaces.RatingService
+	ratingController controllers.RatingController
+
+	crewCollection *mongo.Collection
+	crewService    interfaces.CrewService
+	crewController controllers.CrewController
+
+	ctx         context.Context
+	mongoClient *mongo.Client
 )
 
 const (
@@ -63,13 +74,23 @@ func init() {
 		log.Fatal(err)
 	}
 
-	movieCollection = mongoClient.Database(os.Getenv("DB_NAME")).Collection("movies")
+	databaseName = os.Getenv("DB_NAME")
+
+	movieCollection = mongoClient.Database(databaseName).Collection("movies")
 	movieService = implementations.NewMovieService(movieCollection, ctx)
 	movieController = controllers.NewMovieController(movieService)
 
-	keywordCollection = mongoClient.Database(os.Getenv("DB_NAME")).Collection("keywords")
+	keywordCollection = mongoClient.Database(databaseName).Collection("keywords")
 	keywordService = implementations.NewKeywordService(keywordCollection, ctx)
 	keywordController = controllers.NewKeywordController(keywordService)
+
+	ratingCollection = mongoClient.Database(databaseName).Collection("ratings")
+	ratingService = implementations.NewRatingService(ratingCollection, ctx)
+	ratingController = controllers.NewRatingController(ratingService)
+
+	crewCollection = mongoClient.Database(databaseName).Collection("crews")
+	crewService = implementations.NewCrewService(crewCollection, ctx)
+	crewController = controllers.NewCrewController(crewService)
 
 	server = gin.Default()
 	// Set up CORS (Cross-Origin Resource Sharing)
@@ -91,6 +112,8 @@ func main() {
 
 	movieController.RegisterMovieRoute(basePath)
 	keywordController.RegisterKeywordRoute(basePath)
+	ratingController.RegisterRatingRoute(basePath)
+	crewController.RegisterCrewRoute(basePath)
 
 	log.Fatal(server.Run(":" + port))
 }
