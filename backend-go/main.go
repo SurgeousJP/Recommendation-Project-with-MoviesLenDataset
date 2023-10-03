@@ -37,6 +37,14 @@ var (
 	crewService    interfaces.CrewService
 	crewController controllers.CrewController
 
+	castCollection *mongo.Collection
+	castService    interfaces.CastService
+	castController controllers.CastController
+
+	userCollection *mongo.Collection
+	userService    interfaces.UserService
+	userController controllers.UserController
+
 	ctx         context.Context
 	mongoClient *mongo.Client
 )
@@ -92,6 +100,14 @@ func init() {
 	crewService = implementations.NewCrewService(crewCollection, ctx)
 	crewController = controllers.NewCrewController(crewService)
 
+	castCollection = mongoClient.Database(databaseName).Collection("casts")
+	castService = implementations.NewCastService(castCollection, ctx)
+	castController = controllers.NewCastController(castService)
+
+	userCollection = mongoClient.Database(databaseName).Collection("users")
+	userService = implementations.NewUserService(userCollection, ctx)
+	userController = controllers.NewUserController(userService)
+
 	server = gin.Default()
 	// Set up CORS (Cross-Origin Resource Sharing)
 	server.Use(cors.Default())
@@ -114,6 +130,8 @@ func main() {
 	keywordController.RegisterKeywordRoute(basePath)
 	ratingController.RegisterRatingRoute(basePath)
 	crewController.RegisterCrewRoute(basePath)
+	castController.RegisterCastRoute(basePath)
+	userController.RegisterUserRoute(basePath)
 
 	log.Fatal(server.Run(":" + port))
 }
