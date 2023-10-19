@@ -8,6 +8,21 @@ html {
 }
 
 body {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 16px;
   font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+input {
+  border-radius: 6px;
+  background: var(--textbox, #222028);
+  padding: 13px 22px;
+  height: 46px;
+  color: white;
+  align-items: flex-start;
+}
+input:focus {
+  outline: none;
+  border: 2px solid #F9AB00;
 }

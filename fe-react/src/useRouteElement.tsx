@@ -2,7 +2,7 @@ import { useRoutes } from 'react-router-dom';
 import ProductList from './pages/ProductList';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import RegisterLayout from './layouts/RegisterLayout';
+import ForgotPass from './pages/ForgotPass';
 
 export default function useRouteElement() {
   const routeElement = useRoutes([
@@ -16,11 +16,11 @@ export default function useRouteElement() {
     },
     {
       path: '/register',
-      element: (
-        <RegisterLayout>
-          <Register />
-        </RegisterLayout>
-      )
+      element: <Register />
+    },
+    {
+      path: '/forgot',
+      element: <ForgotPass />
     }
   ]);
   return routeElement;

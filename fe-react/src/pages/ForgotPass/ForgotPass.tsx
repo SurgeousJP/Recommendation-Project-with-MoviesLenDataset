@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Checkbox from 'src/components/Checkbox';
-import logo from 'src/assets/images/Logo.png';
-import SocialSign from 'src/components/SocialSign';
 import '../Login/Login.css';
+import logo from 'src/assets/images/Logo.png';
 
-export default function Register() {
+export default function ForgotPass() {
   const [isChecked, setIsChecked] = useState(false);
 
   const handleCheckboxChange = (selected: boolean) => {
@@ -13,24 +12,18 @@ export default function Register() {
 
   return (
     <div id='container'>
-      <form id='register' className='form-container'>
+      <form id='forgot-password' className='form-container'>
         <img src={logo} alt='Logo'></img>
-        <input type='text' placeholder='Username'></input>
         <input type='text' placeholder='Email'></input>
-        <input type='password' placeholder='Password'></input>
         <div className='checkbox-container'>
           <Checkbox checked={isChecked} onChange={handleCheckboxChange}>
             <span className='sign__text'>
               I agree to the <a href='privacy'>Privacy Policy</a>
-            </span>
+            </span>{' '}
           </Checkbox>
         </div>
-        <button className='sign__btn'>Sign up</button>
-        <span className='sign__delimiter'>or</span>
-        <SocialSign></SocialSign>
-        <span className='sign__text'>
-          Already have an account? <a href='login'>Sign in!</a>
-        </span>
+        <button className='sign__btn'>Send</button>
+        <span className='sign__text'>We will send a password to your Email</span>
       </form>
     </div>
   );
