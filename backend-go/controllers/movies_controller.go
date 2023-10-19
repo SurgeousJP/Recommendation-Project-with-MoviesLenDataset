@@ -75,9 +75,30 @@ func (mc *MovieController) GetMoviesInPage(ctx *gin.Context) {
 		return
 	}
 
-	booksPerPage := constants.MOVIES_PER_PAGE
+	moviesPerPage := constants.MOVIES_PER_PAGE
 
-	movies, err := mc.MovieService.GetMoviesInPage(int64(pageNumberInt), booksPerPage)
+	movies, err := mc.MovieService.GetMoviesInPage(pageNumberInt, moviesPerPage)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, movies)
+}
+
+func (mc *MovieController) SearchMovie(ctx *gin.Context) {
+	searchWord := ctx.Param("search_word")
+
+	pageNumber := ctx.Param("pageNumber")
+	pageNumberInt, err := strconv.Atoi(pageNumber)
+	if err != nil || int64(pageNumberInt) <= 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Invalid page number"})
+		return
+	}
+
+	moviesPerPage := (constants.MOVIES_PER_PAGE)
+
+	movies, err := mc.MovieService.SearchMovieInPage(&searchWord, &pageNumberInt, &moviesPerPage)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
@@ -129,6 +150,8 @@ func (mc *MovieController) RegisterMovieRoute(rg *gin.RouterGroup) {
 	movieRoute.GET("/get/:id", mc.GetMovie)
 
 	movieRoute.GET("/get/page/:pageNumber", mc.GetMoviesInPage)
+
+	movieRoute.GET("/search/:search_word/:pageNumber", mc.SearchMovie)
 
 	movieRoute.PATCH("/update", mc.UpdateMovie)
 
