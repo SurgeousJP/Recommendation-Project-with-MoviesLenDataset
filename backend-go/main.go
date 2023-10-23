@@ -45,6 +45,10 @@ var (
 	userService    interfaces.UserService
 	userController controllers.UserController
 
+	movieDiscussionCollection *mongo.Collection
+	movieDiscussionService    interfaces.MovieDiscussionServices
+	movieDiscussionController controllers.MovieDiscussionController
+
 	ctx         context.Context
 	mongoClient *mongo.Client
 )
@@ -108,6 +112,10 @@ func init() {
 	userService = implementations.NewUserService(userCollection, ctx)
 	userController = controllers.NewUserController(userService)
 
+	movieDiscussionCollection = mongoClient.Database(databaseName).Collection("discussion_movie")
+	movieDiscussionService = implementations.NewMovieDiscussionServices(movieDiscussionCollection, ctx)
+	movieDiscussionController = controllers.NewMovieDiscussionController(movieDiscussionService)
+
 	server = gin.Default()
 	// Set up CORS (Cross-Origin Resource Sharing)
 	server.Use(cors.Default())
@@ -132,6 +140,7 @@ func main() {
 	crewController.RegisterCrewRoute(basePath)
 	castController.RegisterCastRoute(basePath)
 	userController.RegisterUserRoute(basePath)
+	movieDiscussionController.RegisterMovieDiscussionRoute(basePath)
 
 	log.Fatal(server.Run(":" + port))
 }
