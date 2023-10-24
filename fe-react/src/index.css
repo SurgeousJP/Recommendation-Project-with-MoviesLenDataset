@@ -1,28 +1,28 @@
+@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600");
+
 @tailwind base;
+@layer base {
+  html {
+    @apply font-source_sans;
+  }
+}
 @tailwind components;
 @tailwind utilities;
 
-html {
-  height: 100%;
-  line-height: 1.2;
-}
-
-body {
-  font-family: 'Source Sans Pro', sans-serif;
-  font-size: 16px;
-  font-weight: 400;
-  -webkit-font-smoothing: antialiased;
+@font-face {
+  font-family: 'Ionicons';
+  src: url(assets/fonts/ionicons.woff) format('woff');
 }
 
 input {
-  border-radius: 6px;
-  background: var(--textbox, #222028);
-  padding: 13px 22px;
-  height: 46px;
-  color: white;
-  align-items: flex-start;
+  @apply bg-textbox px-5 py-3 rounded-md text-white items-start;
 }
 input:focus {
-  outline: none;
-  border: 2px solid #F9AB00;
+  @apply outline-none border-2 border-primary;
+}
+button {
+  @apply flex justify-center items-center h-11 w-full rounded-md border-primary border-2 text-white text-sm uppercase transition duration-300 ease-out;
+}
+button:hover {
+  @apply bg-primary/10;
 }

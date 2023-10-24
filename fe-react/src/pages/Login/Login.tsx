@@ -22,7 +22,7 @@ export default function Login() {
             Remember me
           </Checkbox>
         </div>
-        <button className='sign__btn'>Sign in</button>
+        <button className='mb-4 mt-9'>Sign in</button>
         <span className='sign__delimiter'>or</span>
         <SocialSign></SocialSign>
         <span className='sign__text'>

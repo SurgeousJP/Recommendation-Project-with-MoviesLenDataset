@@ -25,7 +25,7 @@ export default function Register() {
             </span>
           </Checkbox>
         </div>
-        <button className='sign__btn'>Sign up</button>
+        <button className='mb-4 mt-9'>Sign up</button>
         <span className='sign__delimiter'>or</span>
         <SocialSign></SocialSign>
         <span className='sign__text'>

@@ -22,7 +22,7 @@ export default function ForgotPass() {
             </span>{' '}
           </Checkbox>
         </div>
-        <button className='sign__btn'>Send</button>
+        <button className='mb-4 mt-9'>Send</button>
         <span className='sign__text'>We will send a password to your Email</span>
       </form>
     </div>

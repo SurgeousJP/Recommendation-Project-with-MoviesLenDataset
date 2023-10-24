@@ -1,5 +1,5 @@
 import Footer from 'src/components/Footer';
-import RegisterHeader from 'src/components/RegisterHeader';
+import Header from 'src/components/Header';
 
 interface Props {
   children?: React.ReactNode;
@@ -7,7 +7,7 @@ interface Props {
 export default function Register({ children }: Props) {
   return (
     <div>
-      <RegisterHeader />
+      <Header />
       {children}
       <Footer />
     </div>
