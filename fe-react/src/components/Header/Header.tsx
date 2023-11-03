@@ -3,22 +3,22 @@ import logo from 'src/assets/images/Logo.png';
 
 export default function Header() {
   return (
-    <header className='py-4 bg-background border-b-1 border-border'>
+    <header className='py-4 bg-background border-b-1 border-border z-50'>
       <div className='flex items-center'>
         <img className='ml-8 w-24 h-4' src={logo} alt='Logo'></img>
         <nav>
-          <ul className=' text-white hidden lg:flex md:ml-8 xl:ml-16 w-auto'>
-            <li className='lg:mr-14'>
+          <ul className=' text-white hidden lg:flex lg:space-x-14 md:ml-8 md:transform-none xl:ml-16 w-auto'>
+            <li>
               <a className='hover:text-primary transition ease-out duration-300' href='movies'>
                 Movies
               </a>
             </li>
-            <li className='lg:mr-14'>
+            <li>
               <a className='hover:text-primary transition ease-out duration-300' href='tv-shows'>
                 Tv shows
               </a>
             </li>
-            <li className='lg:mr-14'>
+            <li>
               <a className='hover:text-primary transition ease-out duration-300' href='people'>
                 People
               </a>

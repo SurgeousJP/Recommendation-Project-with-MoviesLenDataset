@@ -6,9 +6,9 @@ interface Props {
 }
 export default function Register({ children }: Props) {
   return (
-    <div>
+    <div id='outer-container'>
       <Header />
-      {children}
+      <div id='page-wrap'>{children}</div>
       <Footer />
     </div>
   );

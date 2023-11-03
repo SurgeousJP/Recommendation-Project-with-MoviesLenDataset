@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPass from './pages/ForgotPass';
 import HomeLayout from './layouts/HomeLayout';
+import Details from './pages/Details';
 
 export default function useRouteElement() {
   const routeElement = useRoutes([
@@ -12,6 +13,14 @@ export default function useRouteElement() {
       element: (
         <HomeLayout>
           <ProductList />
+        </HomeLayout>
+      )
+    },
+    {
+      path: '/details',
+      element: (
+        <HomeLayout>
+          <Details />
         </HomeLayout>
       )
     },
