@@ -14,4 +14,11 @@ The test coverage for each controller:
 [Controller test coverage](Go_Coverage_Report.html)
 
 ### Mutation Testing
+The package used to implement mutation test is: [gremlins](https://github.com/go-gremlins/gremlins)
+
+
+Mutator Coverage: 99.15%
+
+
+Test efficacy: 97.44%
 ![Mutation testing result](Mutation_Testing_for_Backend.png)
