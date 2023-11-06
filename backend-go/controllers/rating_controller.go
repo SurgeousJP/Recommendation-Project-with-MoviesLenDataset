@@ -27,6 +27,11 @@ func (rc *RatingController) CreateRating(ctx *gin.Context) {
 		return
 	}
 
+	if rating.UserId == 0 || rating.MovieId == 0 || rating.Timestamp == 0 || rating.Rating == 0{
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "wrong input structure"})
+		return
+	}
+
 	if err := rc.RatingService.CreateRating(&rating); err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 		return
@@ -41,6 +46,11 @@ func (rc *RatingController) UpdateRating(ctx *gin.Context) {
 
 	if err := ctx.ShouldBindJSON(&rating); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	if rating.UserId == 0 || rating.MovieId == 0 || rating.Timestamp == 0 || rating.Rating == 0{
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "wrong input structure"})
 		return
 	}
 

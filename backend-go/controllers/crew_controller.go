@@ -26,6 +26,11 @@ func (cc *CrewController) CreateCrew(ctx *gin.Context) {
 		return
 	}
 
+	if crew.MovieId == 0 || len(crew.Crew) == 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "wrong input structure"})
+		return
+	}
+
 	if err := cc.CrewService.CreateCrew(&crew); err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 		return
@@ -40,7 +45,7 @@ func (cc *CrewController) GetCrew(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	crew, _ := cc.CrewService.GetCrew(&movieId)
+	crew, err := cc.CrewService.GetCrew(&movieId)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
@@ -54,6 +59,11 @@ func (cc *CrewController) UpdateCrew(ctx *gin.Context) {
 
 	if err := ctx.ShouldBindJSON(&crew); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	if crew.MovieId == 0 || len(crew.Crew) == 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "wrong input structure"})
 		return
 	}
 

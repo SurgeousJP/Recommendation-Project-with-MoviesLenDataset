@@ -156,7 +156,7 @@ func (m *MovieServiceImpl) UpdateMovie(movie *models.Movie) error {
 				bson.E{Key: "original_language", Value: movie.OriginalLanguage},
 				bson.E{Key: "popularity", Value: movie.Popularity},
 				bson.E{Key: "poster_path", Value: movie.PosterPath},
-				bson.E{Key: "production_company", Value: movie.ProductionCompany},
+				bson.E{Key: "production_companies", Value: movie.ProductionCompanies},
 				bson.E{Key: "production_countries", Value: movie.ProductionCountries},
 				bson.E{Key: "release_date", Value: movie.ReleaseDate},
 				bson.E{Key: "revenue", Value: movie.Revenue},

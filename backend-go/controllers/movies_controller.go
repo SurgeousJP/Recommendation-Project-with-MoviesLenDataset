@@ -27,6 +27,11 @@ func (mc *MovieController) CreateMovie(ctx *gin.Context) {
 		return
 	}
 
+	if !CheckValidMovie(&movie){
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "wrong input structure"})
+		return
+	}
+
 	if err := mc.MovieService.CreateMovie(&movie); err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 		return
@@ -57,7 +62,7 @@ func (mc *MovieController) GetMovie(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	movie, _ := mc.MovieService.GetMovie(&movieId)
+	movie, err := mc.MovieService.GetMovie(&movieId)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
@@ -115,6 +120,11 @@ func (mc *MovieController) UpdateMovie(ctx *gin.Context) {
 		return
 	}
 
+	if !CheckValidMovie(&movie){
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "wrong input structure"})
+		return
+	}
+
 	if err := mc.MovieService.UpdateMovie(&movie); err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 		return
@@ -138,6 +148,41 @@ func (mc *MovieController) DeleteMovie(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "Successful"})
+}
+
+func CheckValidMovie(movie *models.Movie) bool{
+	// Check required fields
+	if movie.Title == "" || movie.ReleaseDate == "" {
+		return false
+	}
+	// Check for valid genres
+	for _, genre := range movie.Genres {
+		if genre.ID <= 0 || genre.Name == "" {
+			return false
+		}
+	}
+
+	// Check for valid production companies
+	for _, company := range movie.ProductionCompanies {
+		if company.ID <= 0 || company.Name == "" {
+			return false
+		}
+	}
+
+	// Check for valid production countries
+	for _, country := range movie.ProductionCountries {
+		if country.Iso3166_1 == "" || country.Name == "" {
+			return false
+		}
+	}
+
+	// Check for valid spoken languages
+	for _, language := range movie.SpokenLanguages {
+		if language.Iso639_1 == "" || language.EnglishName == "" || language.Name == "" {
+			return false
+		}
+	}
+	return true
 }
 
 func (mc *MovieController) RegisterMovieRoute(rg *gin.RouterGroup) {

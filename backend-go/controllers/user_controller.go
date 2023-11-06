@@ -26,6 +26,11 @@ func (uc *UserController) CreateUser(ctx *gin.Context) {
 		return
 	}
 
+	if user.UserId == 0 || user.Username == "" || user.PasswordHash == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "wrong input structure"})
+		return
+	}
+
 	if err := uc.UserService.CreateUser(&user); err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 		return
@@ -40,7 +45,7 @@ func (uc *UserController) GetUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	user, _ := uc.UserService.GetUser(&userId)
+	user, err := uc.UserService.GetUser(&userId)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
@@ -54,6 +59,11 @@ func (uc *UserController) UpdateUser(ctx *gin.Context) {
 
 	if err := ctx.ShouldBindJSON(&user); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	if user.UserId == 0 || user.Username == "" || user.PasswordHash == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "wrong input structure"})
 		return
 	}
 

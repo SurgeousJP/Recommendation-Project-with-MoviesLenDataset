@@ -26,6 +26,11 @@ func (kc *KeywordController) CreateKeyword(ctx *gin.Context) {
 		return
 	}
 
+	if keyword.MovieId == 0 || len(keyword.KeywordList) == 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "wrong input structure"})
+		return
+	}
+
 	if err := kc.KeywordService.CreateKeyword(&keyword); err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 		return
@@ -41,7 +46,7 @@ func (kc *KeywordController) GetKeyword(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	keyword, _ := kc.KeywordService.GetKeyword(&movieId)
+	keyword, err := kc.KeywordService.GetKeyword(&movieId)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
@@ -55,6 +60,11 @@ func (kc *KeywordController) UpdateKeyword(ctx *gin.Context) {
 
 	if err := ctx.ShouldBindJSON(&keyword); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	if keyword.MovieId == 0 || len(keyword.KeywordList) == 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "wrong input structure"})
 		return
 	}
 

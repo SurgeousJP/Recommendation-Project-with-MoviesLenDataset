@@ -21,8 +21,14 @@ func NewCastController(castService interfaces.CastService) CastController {
 
 func (cc *CastController) CreateCast(ctx *gin.Context) {
 	var cast models.Cast
+
 	if err := ctx.ShouldBindJSON(&cast); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	if cast.MovieId == 0 || len(cast.Cast) == 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "wrong input structure"})
 		return
 	}
 
@@ -40,7 +46,7 @@ func (cc *CastController) GetCast(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	cast, _ := cc.CastService.GetCast(&movieId)
+	cast, err := cc.CastService.GetCast(&movieId)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
@@ -54,6 +60,11 @@ func (cc *CastController) UpdateCast(ctx *gin.Context) {
 
 	if err := ctx.ShouldBindJSON(&cast); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	if cast.MovieId == 0 || len(cast.Cast) == 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "wrong input structure"})
 		return
 	}
 
@@ -72,6 +83,7 @@ func (cc *CastController) DeleteCast(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Invalid movie id"})
 		return
 	}
+	
 	err = cc.CastService.DeleteCast(&movieId)
 
 	if err != nil {

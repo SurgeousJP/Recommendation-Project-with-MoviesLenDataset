@@ -47,7 +47,7 @@ var (
 
 	movieDiscussionCollection *mongo.Collection
 	movieDiscussionService    interfaces.MovieDiscussionServices
-	movieDiscussionController controllers.MovieDiscussionController
+	// movieDiscussionController controllers.MovieDiscussionController
 
 	ctx         context.Context
 	mongoClient *mongo.Client
@@ -78,7 +78,7 @@ func init() {
 		Client().
 		ApplyURI(connectionString)
 
-	mongoClient, err := mongo.Connect(ctx, mongoConn)
+	mongoClient, err = mongo.Connect(ctx, mongoConn)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -114,7 +114,7 @@ func init() {
 
 	movieDiscussionCollection = mongoClient.Database(databaseName).Collection("discussion_movie")
 	movieDiscussionService = implementations.NewMovieDiscussionServices(movieDiscussionCollection, ctx)
-	movieDiscussionController = controllers.NewMovieDiscussionController(movieDiscussionService)
+	// movieDiscussionController = controllers.NewMovieDiscussionController(movieDiscussionService)
 
 	server = gin.Default()
 	// Set up CORS (Cross-Origin Resource Sharing)
@@ -140,7 +140,7 @@ func main() {
 	crewController.RegisterCrewRoute(basePath)
 	castController.RegisterCastRoute(basePath)
 	userController.RegisterUserRoute(basePath)
-	movieDiscussionController.RegisterMovieDiscussionRoute(basePath)
+	// movieDiscussionController.RegisterMovieDiscussionRoute(basePath)
 
 	log.Fatal(server.Run(":" + port))
 }
