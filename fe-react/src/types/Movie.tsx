@@ -1,3 +1,4 @@
+import Cast from './Cast';
 import Crew from './Crew';
 
 interface Movie {
@@ -12,8 +13,14 @@ interface Movie {
   overview: string;
   posterPath: string;
   backdropPath: string;
+  status: string;
+  originalLanguage: string;
+  budget: number;
+  revenue: number;
+  homepage: string;
   productionCountries: string;
   crews?: Crew[];
+  casts?: Cast[];
 }
 
 export default Movie;

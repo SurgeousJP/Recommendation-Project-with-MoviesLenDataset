@@ -19,6 +19,19 @@ export function mapJsonToCrews(jsonData: any): Crew[] {
     };
   });
 }
+
+export function mapJsonToCasts(jsonData: any): Cast[] {
+  return jsonData.slice(0, 9).map((cast) => {
+    return {
+      id: cast.id,
+      name: cast.name,
+      character: cast.character,
+      profilePath: cast.profile_path,
+      order: cast.order
+    };
+  });
+}
+
 export function mapJsonToMovie(jsonData: any): Movie {
   return {
     id: jsonData.id,
@@ -31,6 +44,11 @@ export function mapJsonToMovie(jsonData: any): Movie {
       .join(', '),
     posterPath: jsonData.poster_path,
     backdropPath: jsonData.backdrop_path,
+    status: jsonData.status,
+    originalLanguage: jsonData.original_language,
+    budget: jsonData.budget,
+    revenue: jsonData.revenue,
+    homepage: jsonData.homepage,
     runtime: minutesToHourMinuteString(jsonData.runtime),
     tagline: jsonData.tagline,
     overview: jsonData.overview

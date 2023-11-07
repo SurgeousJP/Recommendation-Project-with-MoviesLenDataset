@@ -5,7 +5,10 @@ export default function Header() {
   return (
     <header className='py-4 bg-background border-b-1 border-border z-50'>
       <div className='flex items-center'>
+        <a href='/'>
         <img className='ml-8 w-24 h-4' src={logo} alt='Logo'></img>
+
+        </a>
         <nav>
           <ul className=' text-white hidden lg:flex lg:space-x-14 md:ml-8 md:transform-none xl:ml-16 w-auto'>
             <li>
