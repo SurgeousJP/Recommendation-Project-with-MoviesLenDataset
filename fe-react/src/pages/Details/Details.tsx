@@ -29,21 +29,21 @@ export default function Details() {
   console.log(movie.casts);
   return (
     <div className='w-auto bg-background '>
-      <div className='relative h-[40rem] flex justify-center items-center px-24'>
-        <div className='h-[40rem] w-full overflow-hidden absolute left-0 top-0 '>
+      <div className='relative md:h-96 lg:h-[40rem] flex justify-center items-center lg:px-24 '>
+        <div className='md:h-96 lg:h-[40rem] w-full overflow-hidden absolute left-0 top-0 '>
           <img
             src={`${buildImageUrl(movie.backdropPath, 'original')}`}
             className='w-full h-auto opacity-10'
             alt='backdrop'
           ></img>
         </div>
-        <div className='relative flex w-full'>
+        <div className='relative flex w-full lg:scale-100 scale-75'>
           <img
             className='w-72 h-[27rem] object-cover rounded-lg'
             src={`${buildImageUrl(movie.posterPath, 'w500')}`}
             alt='cover'
           ></img>
-          <div className='ml-6 mt-14'>
+          <div className='ml-6 lg:mt-5 xl:mt-14'>
             <h1 className='text-white text-4xl block font-bold capitalize flex-col'>
               {movie.title}{' '}
               <span className='font-normal opacity-70'>({movie.releaseDate.getFullYear()})</span>
@@ -71,7 +71,7 @@ export default function Details() {
               <h3 className='italic font-normal text-lg text-white/60'>{movie.tagline}</h3>
               <h3 className='font-bold text-xl'>Overview</h3>
               <p>{movie.overview}</p>
-              <ol className='flex justify-between mr-80 mt-4'>
+              <ol className='flex md:space-x-16 lg:space-x-20 xl:space-x-44 mt-4'>
                 {movie.crews?.map(crew => (
                   <li key={crew.id}>
                     <p className='font-bold'>{crew.name}</p>

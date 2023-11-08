@@ -21,13 +21,17 @@ export function mapJsonToCrews(jsonData: any): Crew[] {
 }
 
 export function mapJsonToCasts(jsonData: any): Cast[] {
-  return jsonData.slice(0, 9).map((cast) => {
+  return jsonData.slice(0, 9).map(cast => {
+    const validJsonString = cast.replace('None', 'null').replace(/'/g, '"').replace(/\\"/g, '"');
+    console.log(validJsonString);
+
+    const castData = JSON.parse(validJsonString);
     return {
-      id: cast.id,
-      name: cast.name,
-      character: cast.character,
-      profilePath: cast.profile_path,
-      order: cast.order
+      id: castData.id,
+      name: castData.name,
+      character: castData.character,
+      profilePath: castData.profile_path,
+      order: castData.order
     };
   });
 }
