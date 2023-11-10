@@ -6,27 +6,50 @@ import {
   buildImageUrl,
   mapJsonToCasts
 } from 'src/helpers/utils';
-import Movie from 'src/types/Movie';
-import movieData from 'src/assets/data/movies.json';
-import crewData from 'src/assets/data/crews.json';
-import keywordData from 'src/assets/data/keywords.json';
-import castData from 'src/assets/data/cast.json';
 import CastCard from 'src/components/CastCard/CastCard';
 import Scroller from 'src/components/Scroller/index';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'src/react-tabs.css';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReviewCard from 'src/components/ReviewCard/ReviewCard';
 import MovieCardRecom from 'src/components/MovieCardRecom';
+import { useParams } from 'react-router-dom';
+import { buildApiUrl } from 'src/helpers/api';
+import Movie from 'src/types/Movie';
+import Cast from 'src/types/Cast';
+import Crew from 'src/types/Crew';
 
 export default function Details() {
-  const movie: Movie = mapJsonToMovie(movieData);
-  movie.crews = mapJsonToCrews(crewData.crew)
-    .sort((a, b) => a.id - b.id)
-    .slice(0, 3);
-  movie.casts = mapJsonToCasts(castData.cast);
-  console.log(movie.casts);
+  const [movie, setMovie] = useState<Movie>({} as Movie);
+  const [casts, setCasts] = useState<Cast[]>([]);
+  const [crews, setCrews] = useState<Crew[]>([]);
+  const [keywords, setKeywords] = useState<string[]>([]);
+  const { id } = useParams();
+  useEffect(() => {
+    fetch(buildApiUrl(`movie/get/${id}`))
+      .then(response => response.json())
+      .then(data => {
+        console.log(mapJsonToMovie(data));
+        setMovie(mapJsonToMovie(data));
+      });
+    fetch(buildApiUrl(`keyword/get/${id}`))
+      .then(response => response.json())
+      .then(data => {
+        setKeywords(data.keyword_list);
+      });
+    fetch(buildApiUrl(`cast/get/${id}`))
+      .then(response => response.json())
+      .then(data => {
+        setCasts(mapJsonToCasts(data.cast));
+        console.log(mapJsonToCasts(data.cast));
+      });
+    fetch(buildApiUrl(`crew/get/${id}`))
+      .then(response => response.json())
+      .then(data => {
+        setCrews(mapJsonToCrews(data.crew));
+      });
+  }, []);
   return (
     <div className='w-auto bg-background '>
       <div className='relative md:h-96 lg:h-[40rem] flex justify-center items-center lg:px-24 '>
@@ -37,16 +60,18 @@ export default function Details() {
             alt='backdrop'
           ></img>
         </div>
-        <div className='relative flex w-full lg:scale-100 scale-75'>
+        <div className='relative flex w-full lg:scale-100 scale-75 items-center'>
           <img
             className='w-72 h-[27rem] object-cover rounded-lg'
             src={`${buildImageUrl(movie.posterPath, 'w500')}`}
             alt='cover'
           ></img>
-          <div className='ml-6 lg:mt-5 xl:mt-14'>
+          <div className='ml-6'>
             <h1 className='text-white text-4xl block font-bold capitalize flex-col'>
               {movie.title}{' '}
-              <span className='font-normal opacity-70'>({movie.releaseDate.getFullYear()})</span>
+              <span className='font-normal opacity-70'>
+                {movie.releaseDate ? `(${movie.releaseDate.getFullYear()})` : ''}
+              </span>
             </h1>
             <div className='mt-4'>
               <span className='rounded-md border-white/75 border-1 py-[0.31rem] px-[0.62rem] mr-2 text-base text-white/75'>
@@ -55,8 +80,12 @@ export default function Details() {
               <span>
                 {formatDateToDDMMYYYY(movie.releaseDate)} ({movie.productionCountries})
               </span>
-              <span className="before:content-['•'] before:mx-1">{movie.genres.join(', ')}</span>
-              <span className="before:content-['•'] before:mx-1">{movie.runtime}</span>
+              {movie.genres && (
+                <span className="before:content-['•'] before:mx-1">{movie.genres.join(', ')}</span>
+              )}
+              {movie.runtime && (
+                <span className="before:content-['•'] before:mx-1">{movie.runtime}</span>
+              )}
             </div>
             <div className='mt-4'>
               <span
@@ -72,7 +101,7 @@ export default function Details() {
               <h3 className='font-bold text-xl'>Overview</h3>
               <p>{movie.overview}</p>
               <ol className='flex md:space-x-16 lg:space-x-20 xl:space-x-44 mt-4'>
-                {movie.crews?.map(crew => (
+                {crews?.map(crew => (
                   <li key={crew.id}>
                     <p className='font-bold'>{crew.name}</p>
                     <p className='text-sm'>{crew.job}</p>
@@ -88,10 +117,10 @@ export default function Details() {
           <div className='border-border border-b-1'>
             <h2 className='text-2xl font-semibold mb-3'>Top Billed Cast</h2>
             <Scroller viewMore>
-              {movie.casts.map((cast, index) => (
+              {casts.map((cast, index) => (
                 <CastCard
                   key={index}
-                  imageUrl={cast.profilePath}
+                  imageUrl={buildImageUrl(cast.profilePath, 'w500')}
                   name={cast.name}
                   character={cast.character}
                   profilePath={cast.profilePath}
@@ -198,8 +227,8 @@ export default function Details() {
           <div className='border-border border-b-1 mb-2 pb-6'>
             <h4 className='font-bold mt-6 text-lg'>Keywords</h4>
             <ul className='mt-2 flex flex-wrap'>
-              {keywordData.keyword_list.map(keyword => (
-                <li key={keywordData.keyword_list.indexOf(keyword)}>
+              {keywords.map((keyword, index) => (
+                <li key={index}>
                   <p className='text-sm p-2 border w-fit border-border rounded-[0.1875rem] mr-2 mt-2'>
                     {keyword}
                   </p>

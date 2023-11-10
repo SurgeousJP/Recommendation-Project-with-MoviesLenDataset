@@ -1,6 +1,7 @@
-import {getColor} from "src/helpers/utils";
+import { getColor } from 'src/helpers/utils';
 
 interface MovieCardProps {
+  id: number;
   posterUrl: string;
   movieName: string;
   rating: number;
@@ -9,7 +10,7 @@ interface MovieCardProps {
 }
 
 export default function MovieCard(props: MovieCardProps) {
-  const { posterUrl, movieName, genres, rating, className } = props;
+  const { id, posterUrl, movieName, genres, rating, className } = props;
 
   return (
     <div className={`flex ${className}`}>
@@ -18,7 +19,7 @@ export default function MovieCard(props: MovieCardProps) {
           <img className='w-[14.5rem] h-[21.5rem] rounded-lg' src={posterUrl} alt={movieName} />
           <a
             className='absolute flex justify-center items-center w-14 h-14 bg-white rounded-full top-1/2 lef-1/2 z-30 text-primary outline transition duration-500 transform scale-90 opacity-0 outline-6 -m-7 outline-white/[0.3] group-hover/play:opacity-100 hover:outline-primary/[0.4]'
-            href='details'
+            href={`details/${id}`}
           >
             <span className='flex justify-center items-center'>
               <svg
@@ -40,8 +41,10 @@ export default function MovieCard(props: MovieCardProps) {
             {rating === undefined ? 'NR' : rating.toFixed(1).toString()}
           </span>
         </div>
-        <p className='text-white mt-2 text-xl'>{movieName}</p>
-        <span className='text-primary text-base'>{genres.join(', ')}</span>
+        <div className='px-5'>
+          <p className='text-white mt-2 text-xl'>{movieName}</p>
+          <span className='text-primary text-base'>{genres.join(', ')}</span>
+        </div>
       </div>
     </div>
   );

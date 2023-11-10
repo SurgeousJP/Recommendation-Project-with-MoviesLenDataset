@@ -17,7 +17,7 @@ export default function useRouteElement() {
       )
     },
     {
-      path: '/details',
+      path: '/details/:id',
       element: (
         <HomeLayout>
           <Details />

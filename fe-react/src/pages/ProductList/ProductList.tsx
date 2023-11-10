@@ -2,10 +2,28 @@ import MovieCard from 'src/components/MovieCard';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
+import { buildApiUrl } from 'src/helpers/api';
+import { buildImageUrl, mapJsonToMovie } from 'src/helpers/utils';
+import Movie from 'src/types/Movie';
 
 export default function ProductList() {
   const [backdropURL, setBackdropURL] = useState('/src/assets/images/backdrop.png');
+  const [cardData, setCardData] = useState<Array<Movie>>([]);
+
+  useEffect(() => {
+    fetch(buildApiUrl('movie/get/page/1'))
+      .then(response => response.json())
+      .then(data => {
+        setCardData(
+          data.map((movie: any) => {
+            const tmp = mapJsonToMovie(movie);
+            console.log(tmp);
+            return tmp;
+          })
+        );
+      });
+  }, []);
 
   const settings = {
     dots: false,
@@ -16,7 +34,7 @@ export default function ProductList() {
     slidesToShow: 5,
     slidesToScroll: 1,
     afterChange: current => {
-      setBackdropURL(cardData[current].backdropURL);
+      setBackdropURL(buildImageUrl(cardData[current].backdropPath, 'original'));
     }
   };
   let sliderRef = useRef(null);
@@ -26,62 +44,7 @@ export default function ProductList() {
   const onClickPrev = () => {
     sliderRef.slickPrev();
   };
-  const cardData = [
-    {
-      posterUrl: '/src/assets/images/cover2.png',
-      movieName: 'Reptile',
-      rating: 7.2,
-      genres: ['test', 'test'],
-      backdropURL: '/src/assets/images/backdrop.png'
-    },
-    {
-      posterUrl: '/src/assets/images/cover2.png',
-      movieName: 'Reptile 1',
-      rating: 5.2,
-      genres: ['test', 'test'],
-      backdropURL:
-        'https://www.themoviedb.org/t/p/w355_and_h200_multi_faces/feSiISwgEpVzR1v3zv2n2AU4ANJ.jpg'
-    },
-    {
-      posterUrl: '/src/assets/images/cover2.png',
-      movieName: 'Reptile 2',
-      rating: 6.8,
-      genres: ['test', 'test'],
-      backdropURL:
-        'https://www.themoviedb.org/t/p/w355_and_h200_multi_faces/z9PfYCwpecdCX5qNCC9Fk5CiPFq.jpg'
-    },
-    {
-      posterUrl: '/src/assets/images/cover2.png',
-      movieName: 'Reptile 3 ',
-      rating: 4.0,
-      genres: ['test', 'test'],
-      backdropURL:
-        'https://www.themoviedb.org/t/p/w355_and_h200_multi_faces/1jKBfRyeyJvBkJSKvNQ4nhIzTSx.jpg'
-    },
-    {
-      posterUrl: '/src/assets/images/cover2.png',
-      movieName: 'Reptile 4',
-      rating: 8.9,
-      genres: ['test', 'test'],
-      backdropURL:
-        'https://www.themoviedb.org/t/p/w355_and_h200_multi_faces/rqbCbjB19amtOtFQbb3K2lgm2zv.jpg'
-    },
-    {
-      posterUrl: '/src/assets/images/cover2.png',
-      movieName: 'Reptile 5',
-      rating: 9.0,
-      genres: ['test', 'test'],
-      backdropURL:
-        'https://www.themoviedb.org/t/p/w355_and_h200_multi_faces/oGkh6ByqaSKXlW6SkIOBXJWvLan.jpg'
-    },
-    {
-      posterUrl: '/src/assets/images/cover2.png',
-      movieName: 'Reptile 6',
-      genres: ['test', 'test'],
-      backdropURL:
-        'https://www.themoviedb.org/t/p/w355_and_h200_multi_faces/a0GM57AnJtNi7lMOCamniiyV10W.jpg'
-    }
-  ];
+
   return (
     <div className='w-auto h-screen bg-background '>
       <div className='relative md:h-96 lg:h-[40rem] flex justify-center items-center lg:px-24 '>
@@ -148,9 +111,10 @@ export default function ProductList() {
                 return (
                   <MovieCard
                     key={index}
+                    id={card.id}
                     className='scale-50 md:scale-100'
-                    posterUrl={card.posterUrl}
-                    movieName={card.movieName}
+                    posterUrl={buildImageUrl(card.posterPath, 'w500')}
+                    movieName={card.title}
                     rating={card.rating}
                     genres={card.genres}
                   ></MovieCard>

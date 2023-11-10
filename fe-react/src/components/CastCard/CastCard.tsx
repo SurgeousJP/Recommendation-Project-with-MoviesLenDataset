@@ -9,11 +9,7 @@ interface CastCardProps {
 }
 
 const CastCard: React.FC<CastCardProps> = ({ imageUrl, name, character, profilePath }) => {
-  if (imageUrl === null) {
-    imageUrl = '/images/placeholder.png';
-  }
-  imageUrl = buildImageUrl(imageUrl, 'original');
-  console.log(imageUrl);
+
   return (
     <div className='hover:shadow-gray-800/70 hover:shadow-lg shadow-none transition border-border rounded-lg border-1 h-72 w-[8rem] bg-textbox overflow-clip'>
       <a href={profilePath}>

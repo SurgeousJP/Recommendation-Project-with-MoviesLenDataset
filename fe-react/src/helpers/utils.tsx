@@ -1,4 +1,5 @@
 import Crew from 'src/types/Crew';
+import Movie from 'src/types/Movie';
 
 export const getColor = (rating: number | undefined) => {
   if (rating === undefined) return 'border-gray-400';
@@ -7,10 +8,8 @@ export const getColor = (rating: number | undefined) => {
   return 'border-red-600';
 };
 export function mapJsonToCrews(jsonData: any): Crew[] {
-  return jsonData.map((crew: string) => {
+  return jsonData.slice(0, 3).map((crew: string) => {
     const validJsonString = crew.replace('None', 'null').replace(/'/g, '"');
-    console.log(validJsonString);
-
     const crewData = JSON.parse(validJsonString);
     return {
       id: crewData.id,
@@ -23,6 +22,7 @@ export function mapJsonToCrews(jsonData: any): Crew[] {
 export function mapJsonToCasts(jsonData: any): Cast[] {
   return jsonData.slice(0, 9).map(cast => {
     const validJsonString = cast.replace('None', 'null').replace(/'/g, '"').replace(/\\"/g, '"');
+
     console.log(validJsonString);
 
     const castData = JSON.parse(validJsonString);
@@ -58,11 +58,18 @@ export function mapJsonToMovie(jsonData: any): Movie {
     overview: jsonData.overview
   };
 }
-export function formatDateToDDMMYYYY(date: Date): string {
+export function formatDateToDDMMYYYY(date: Date | null | undefined): string {
+  if (!date) {
+    return '';
+  }
   return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
 }
 
-export function buildImageUrl(imagePath: string, size: string): string {
+export function buildImageUrl(imagePath: string | null | undefined, size: string): string {
+  if (!imagePath) {
+    return '';
+  }
+
   const baseURL = 'https://image.tmdb.org/t/p/';
   const validSizes = ['w92', 'w154', 'w185', 'w342', 'w500', 'w780', 'original'];
 
