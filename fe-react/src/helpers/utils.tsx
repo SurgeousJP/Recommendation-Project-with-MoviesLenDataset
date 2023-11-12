@@ -38,24 +38,23 @@ export function mapJsonToCasts(jsonData: any): Cast[] {
 
 export function mapJsonToMovie(jsonData: any): Movie {
   return {
-    id: jsonData.id,
-    title: jsonData.title,
-    releaseDate: new Date(jsonData.release_date),
-    rating: jsonData.vote_average,
-    genres: jsonData.genres.map(genre => genre.name),
-    productionCountries: jsonData.production_countries
-      .map(country => country.iso_3166_1)
-      .join(', '),
-    posterPath: jsonData.poster_path,
-    backdropPath: jsonData.backdrop_path,
-    status: jsonData.status,
-    originalLanguage: jsonData.original_language,
-    budget: jsonData.budget,
-    revenue: jsonData.revenue,
-    homepage: jsonData.homepage,
-    runtime: minutesToHourMinuteString(jsonData.runtime),
-    tagline: jsonData.tagline,
-    overview: jsonData.overview
+    id: jsonData?.id ?? null,
+    title: jsonData?.title ?? null,
+    releaseDate: jsonData?.release_date ? new Date(jsonData.release_date) : null,
+    rating: jsonData?.vote_average ?? null,
+    genres: jsonData?.genres?.map(genre => genre.name) ?? [],
+    productionCountries:
+      jsonData?.production_countries?.map(country => country.iso_3166_1).join(', ') ?? null,
+    posterPath: jsonData?.poster_path ?? null,
+    backdropPath: jsonData?.backdrop_path ?? null,
+    status: jsonData?.status ?? null,
+    originalLanguage: jsonData?.original_language ?? null,
+    budget: jsonData?.budget ?? null,
+    revenue: jsonData?.revenue ?? null,
+    homepage: jsonData?.homepage ?? null,
+    runtime: jsonData?.runtime ? minutesToHourMinuteString(jsonData.runtime) : null,
+    tagline: jsonData?.tagline ?? null,
+    overview: jsonData?.overview ?? null
   };
 }
 export function formatDateToDDMMYYYY(date: Date | null | undefined): string {

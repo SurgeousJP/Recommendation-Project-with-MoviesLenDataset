@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600");
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600');
 
 @tailwind base;
 @layer base {
@@ -17,16 +17,16 @@
   .scrollbar::-webkit-scrollbar-track {
     margin: 0px 10px;
     border-radius: 20px;
-    background: #1A191F;
+    background: #1a191f;
   }
 
   .scrollbar::-webkit-scrollbar-thumb {
-    background: #A7A7A7;
+    background: #a7a7a7;
     border-radius: 20px;
   }
 
   .scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #A7A7A7;
+    background: #a7a7a7;
   }
 }
 
@@ -37,6 +37,15 @@
 
 * {
   box-sizing: border-box;
+}
+.react-tabs__tab-list {
+  @apply mb-2 p-0;
+}
+.react-tabs__tab {
+  @apply inline-block relative list-none px-4 py-2 cursor-pointer -bottom-px uppercase text-sm;
+}
+.react-tabs__tab--selected {
+  @apply border-b-4 border-primary text-primary;
 }
 
 input {

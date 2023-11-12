@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { getColor } from 'src/helpers/utils';
 
 interface MovieCardProps {
@@ -17,9 +18,9 @@ export default function MovieCard(props: MovieCardProps) {
       <div>
         <div className='flex justify-center items-center relative group/play before:absolute before:bg-black/[0.35] before:inset-0 before:z-0 before:opacity-0 before:transition-opacity before:duration-500 before:pointer-events-none before:hover:opacity-100'>
           <img className='w-[14.5rem] h-[21.5rem] rounded-lg' src={posterUrl} alt={movieName} />
-          <a
+          <Link
             className='absolute flex justify-center items-center w-14 h-14 bg-white rounded-full top-1/2 lef-1/2 z-30 text-primary outline transition duration-500 transform scale-90 opacity-0 outline-6 -m-7 outline-white/[0.3] group-hover/play:opacity-100 hover:outline-primary/[0.4]'
-            href={`details/${id}`}
+            to={`/details/${id}`}
           >
             <span className='flex justify-center items-center'>
               <svg
@@ -32,7 +33,7 @@ export default function MovieCard(props: MovieCardProps) {
                 <path d='M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z'></path>
               </svg>
             </span>
-          </a>
+          </Link>
           <span
             className={`text-sm font-semibold text-white absolute z-30 flex justify-center items-center w-9 h-9 top-4 left-4 border-2 rounded-full bg-background/60 ${getColor(
               rating

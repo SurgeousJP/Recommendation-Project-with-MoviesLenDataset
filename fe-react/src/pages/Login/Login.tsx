@@ -3,6 +3,7 @@ import Checkbox from 'src/components/Checkbox';
 import './Login.css';
 import logo from 'src/assets/images/Logo.png';
 import SocialSign from 'src/components/SocialSign';
+import { Link } from 'react-router-dom';
 
 export default function Login() {
   const [isChecked, setIsChecked] = useState(false);
@@ -26,10 +27,10 @@ export default function Login() {
         <span className='sign__delimiter'>or</span>
         <SocialSign></SocialSign>
         <span className='sign__text'>
-          Don&apos;t have an account? <a href='register'>Sign up!</a>
+          Don&apos;t have an account? <Link to='/register'>Sign up!</Link>
         </span>
         <span className='sign__text'>
-          <a href='forgot'>Forgot password?</a>
+          <Link to='/forgot'>Forgot password?</Link>
         </span>
       </form>
     </div>

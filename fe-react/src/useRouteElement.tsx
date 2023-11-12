@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import ForgotPass from './pages/ForgotPass';
 import HomeLayout from './layouts/HomeLayout';
 import Details from './pages/Details';
+import SearchResult from './pages/SearchResult';
 
 export default function useRouteElement() {
   const routeElement = useRoutes([
@@ -21,6 +22,22 @@ export default function useRouteElement() {
       element: (
         <HomeLayout>
           <Details />
+        </HomeLayout>
+      )
+    },
+    {
+      path: '/search/:type',
+      element: (
+        <HomeLayout>
+          <SearchResult />
+        </HomeLayout>
+      )
+    },
+    {
+      path: '/search',
+      element: (
+        <HomeLayout>
+          <SearchResult />
         </HomeLayout>
       )
     },

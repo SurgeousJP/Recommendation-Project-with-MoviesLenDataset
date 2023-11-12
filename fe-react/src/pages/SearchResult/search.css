@@ -1,0 +1,12 @@
+.search-menu li {
+  @apply flex hover:bg-gray-700 px-4 py-3;
+}
+.search-menu li a {
+  @apply flex-1;
+}
+.search-menu li span {
+  @apply bg-gray-100 text-black font-light px-2 rounded-md;
+}
+.selected {
+  @apply bg-gray-700;
+}

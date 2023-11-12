@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Checkbox from 'src/components/Checkbox';
 import '../Login/Login.css';
 import logo from 'src/assets/images/Logo.png';
+import { Link } from 'react-router-dom';
 
 export default function ForgotPass() {
   const [isChecked, setIsChecked] = useState(false);
@@ -18,7 +19,7 @@ export default function ForgotPass() {
         <div className='checkbox-container'>
           <Checkbox checked={isChecked} onChange={handleCheckboxChange}>
             <span className='sign__text'>
-              I agree to the <a href='privacy'>Privacy Policy</a>
+              I agree to the <Link to='/privacy'>Privacy Policy</Link>
             </span>{' '}
           </Checkbox>
         </div>

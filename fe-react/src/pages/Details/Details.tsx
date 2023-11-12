@@ -9,7 +9,6 @@ import {
 import CastCard from 'src/components/CastCard/CastCard';
 import Scroller from 'src/components/Scroller/index';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import 'src/react-tabs.css';
 
 import { useEffect, useState } from 'react';
 import ReviewCard from 'src/components/ReviewCard/ReviewCard';
@@ -19,12 +18,29 @@ import { buildApiUrl } from 'src/helpers/api';
 import Movie from 'src/types/Movie';
 import Cast from 'src/types/Cast';
 import Crew from 'src/types/Crew';
+import DiscussionCard from 'src/components/Dicussion/DicussionCard';
 
 export default function Details() {
   const [movie, setMovie] = useState<Movie>({} as Movie);
   const [casts, setCasts] = useState<Cast[]>([]);
   const [crews, setCrews] = useState<Crew[]>([]);
   const [keywords, setKeywords] = useState<string[]>([]);
+  const MockDiscussionData = {
+    subject: 'Sample Discussion',
+    status: 'Open',
+    answerCount: 5,
+    profilePath: '/t/p/w45_and_h45_face/1kks3YnVkpyQxzw36CObFPvhL5f.jpg',
+    username: 'john_doe',
+    time: new Date(2023, 10, 12, 3, 4, 0)
+  };
+  const options = {
+    month: 'short', // abbreviated month name
+    day: 'numeric', // day of the month
+    year: 'numeric', // full year
+    hour: 'numeric', // hour in 12-hour format
+    minute: 'numeric', // minute
+    hour12: true // use 12-hour time format
+  };
   const { id } = useParams();
   useEffect(() => {
     fetch(buildApiUrl(`movie/get/${id}`))
@@ -162,7 +178,14 @@ export default function Details() {
                 </div>
               </TabPanel>
               <TabPanel>
-                <h2>Any content 2</h2>
+                <DiscussionCard
+                  answerCount={MockDiscussionData.answerCount}
+                  profilePath={buildImageUrl(MockDiscussionData.profilePath, 'original')}
+                  status={MockDiscussionData.status}
+                  subject={MockDiscussionData.subject}
+                  time={MockDiscussionData.time.toLocaleString('en-US', options)}
+                  username={MockDiscussionData.username}
+                ></DiscussionCard>
               </TabPanel>
             </Tabs>
           </div>

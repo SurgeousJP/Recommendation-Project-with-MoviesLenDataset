@@ -3,6 +3,7 @@ import Checkbox from 'src/components/Checkbox';
 import logo from 'src/assets/images/Logo.png';
 import SocialSign from 'src/components/SocialSign';
 import '../Login/Login.css';
+import { Link } from 'react-router-dom';
 
 export default function Register() {
   const [isChecked, setIsChecked] = useState(false);
@@ -21,7 +22,7 @@ export default function Register() {
         <div className='checkbox-container'>
           <Checkbox checked={isChecked} onChange={handleCheckboxChange}>
             <span className='sign__text'>
-              I agree to the <a href='privacy'>Privacy Policy</a>
+              I agree to the <Link to='/privacy'>Privacy Policy</Link>
             </span>
           </Checkbox>
         </div>
@@ -29,7 +30,7 @@ export default function Register() {
         <span className='sign__delimiter'>or</span>
         <SocialSign></SocialSign>
         <span className='sign__text'>
-          Already have an account? <a href='login'>Sign in!</a>
+          Already have an account? <Link to='/login'>Sign in!</Link>
         </span>
       </form>
     </div>
