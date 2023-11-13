@@ -92,6 +92,7 @@ func (mc *MovieController) GetMoviesInPage(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"movies": movies,
 		"page": pageNumber,
+		"page_size": moviesPerPage,
 		"total_page": math.Ceil(float64(total_movies) / float64(moviesPerPage)),
 	})
 }
