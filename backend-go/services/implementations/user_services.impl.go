@@ -63,3 +63,10 @@ func (u *UserServiceImpl) DeleteUser(userId *int) error{
 	}
 	return nil
 }
+
+func (u *UserServiceImpl) GetUserFromUsername(username *string) (*models.User, error){
+	var user *models.User
+	query := bson.D{bson.E{Key: "username", Value: username}}
+	err := u.userCollection.FindOne(u.ctx, query).Decode(&user)
+	return user, err
+}

@@ -7,4 +7,5 @@ type UserService interface {
 	GetUser(*int) (*models.User, error)
 	UpdateUser(*models.User) error
 	DeleteUser(*int) error
+	GetUserFromUsername(*string) (*models.User, error)
 }
