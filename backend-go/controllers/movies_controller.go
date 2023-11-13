@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"math"
 	"movies_backend/constants"
 	"movies_backend/models"
 	"movies_backend/services/interfaces"
@@ -82,13 +83,17 @@ func (mc *MovieController) GetMoviesInPage(ctx *gin.Context) {
 
 	moviesPerPage := constants.MOVIES_PER_PAGE
 
-	movies, err := mc.MovieService.GetMoviesInPage(pageNumberInt, moviesPerPage)
+	movies, total_movies, err := mc.MovieService.GetMoviesInPage(pageNumberInt, moviesPerPage)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, movies)
+	ctx.JSON(http.StatusOK, gin.H{
+		"movies": movies,
+		"page": pageNumber,
+		"total_page": math.Ceil(float64(total_movies) / float64(moviesPerPage)),
+	})
 }
 
 func (mc *MovieController) SearchMovie(ctx *gin.Context) {

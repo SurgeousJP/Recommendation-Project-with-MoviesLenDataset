@@ -45,7 +45,7 @@ func (m *MovieServiceImpl) GetMovie(movieId *int) (*models.Movie, error) {
 	return movie, err
 }
 
-func (m *MovieServiceImpl) GetMoviesInPage(pageNumber, moviesPerPage int) ([]*models.Movie, error) {
+func (m *MovieServiceImpl) GetMoviesInPage(pageNumber, moviesPerPage int) ([]*models.Movie, int, error) {
 	var moviesInPage []*models.Movie
 	options := options.Find().
 		SetSkip(int64(pageNumber - 1) * int64(moviesPerPage)).
@@ -54,24 +54,31 @@ func (m *MovieServiceImpl) GetMoviesInPage(pageNumber, moviesPerPage int) ([]*mo
 	cursor, err := m.movieCollection.Find(m.ctx, bson.D{{}}, options)
 
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	for cursor.Next(m.ctx) {
 		var movie models.Movie
 		err := cursor.Decode(&movie)
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 		moviesInPage = append(moviesInPage, &movie)
 	}
 	if err := cursor.Err(); err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	cursor.Close(m.ctx)
 	if len(moviesInPage) == 0 {
-		return nil, errors.New("documents not found")
+		return nil, 0, errors.New("documents not found")
 	}
-	return moviesInPage, nil
+
+	// Fetch total movies
+	totalMovies, err := m.movieCollection.CountDocuments(m.ctx, bson.D{{}})
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return moviesInPage, int(totalMovies), nil
 }
 
 func (m *MovieServiceImpl) SearchMovieInPage(searchWord *string, pageNumber *int, moviesPerPage *int) ([]*models.Movie, error) {
