@@ -19,12 +19,16 @@ import Movie from 'src/types/Movie';
 import Cast from 'src/types/Cast';
 import Crew from 'src/types/Crew';
 import DiscussionCard from 'src/components/Dicussion/DicussionCard';
+import { Rating } from 'react-simple-star-rating';
+import useRating from 'src/hooks/useRating';
 
 export default function Details() {
   const [movie, setMovie] = useState<Movie>({} as Movie);
   const [casts, setCasts] = useState<Cast[]>([]);
   const [crews, setCrews] = useState<Crew[]>([]);
   const [keywords, setKeywords] = useState<string[]>([]);
+  const [isRatingVisible, setRatingVisible] = useState(false);
+
   const MockDiscussionData = {
     subject: 'Sample Discussion',
     status: 'Open',
@@ -32,6 +36,18 @@ export default function Details() {
     profilePath: '/t/p/w45_and_h45_face/1kks3YnVkpyQxzw36CObFPvhL5f.jpg',
     username: 'john_doe',
     time: new Date(2023, 10, 12, 3, 4, 0)
+  };
+  const handleButtonClick = () => {
+    setRatingVisible(!isRatingVisible);
+  };
+  const [rating, setRating] = useState(0);
+
+  const { createRating } = useRating();
+
+  const handleRating = (rate: number) => {
+    console.log(rate);
+    setRating(rate);
+    createRating({ user_id: 123, movie_id: movie.id, rating: rate });
   };
   const options = {
     month: 'short', // abbreviated month name
@@ -103,7 +119,7 @@ export default function Details() {
                 <span className="before:content-['•'] before:mx-1">{movie.runtime}</span>
               )}
             </div>
-            <div className='mt-4'>
+            <div className='mt-4 flex items-center space-x-4'>
               <span
                 className={`text-xl font-semibold text-white flex justify-center items-center w-16 h-16 border-[3.5px] rounded-full bg-background/60 ${getColor(
                   movie.rating
@@ -111,6 +127,35 @@ export default function Details() {
               >
                 {movie.rating === undefined ? 'NR' : movie.rating.toFixed(1).toString()}
               </span>
+              <button className='rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'>
+                <img className='w-5 h-5' src='/src/assets/images/list.svg' alt='Add to list' />
+              </button>
+              <button className='rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'>
+                <img className='w-5 h-5' src='/src/assets/images/favourite.svg' alt='Add to list' />
+              </button>
+              <button className='rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'>
+                <img className='w-5 h-5' src='/src/assets/images/watchlist.svg' alt='Add to list' />
+              </button>
+              <div className='relative'>
+                <button
+                  className='rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'
+                  onClick={handleButtonClick}
+                >
+                  <img className='w-5 h-5' src='/src/assets/images/star.svg' alt='Add to list' />
+                </button>
+
+                {isRatingVisible && (
+                  <div className='absolute -left-[80px] rounded-sm mt-2 bg-gray-700 p-1 '>
+                    <div className='triangle'></div>
+                    <Rating
+                      allowFraction={true}
+                      initialValue={rating}
+                      onClick={handleRating}
+                      /* Available Props */
+                    />
+                  </div>
+                )}
+              </div>
             </div>
             <div className='mt-4'>
               <h3 className='italic font-normal text-lg text-white/60'>{movie.tagline}</h3>

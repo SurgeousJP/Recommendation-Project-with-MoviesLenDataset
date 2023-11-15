@@ -2,28 +2,26 @@ import MovieCard from 'src/components/MovieCard';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import { buildApiUrl } from 'src/helpers/api';
 import { buildImageUrl, mapJsonToMovie } from 'src/helpers/utils';
-import Movie from 'src/types/Movie';
-
+import { useQuery } from 'react-query';
+const fetchMovies = async () => {
+  const res = await fetch(buildApiUrl('movie/get/page/1'));
+  return res.json();
+};
 export default function ProductList() {
   const [backdropURL, setBackdropURL] = useState('/src/assets/images/backdrop.png');
-  const [cardData, setCardData] = useState<Array<Movie>>([]);
+  let sliderRef = useRef(null);
+  const onError = () => {
+    setBackdropURL('/src/assets/images/backdrop.png');
+  };
+  const { isLoading, data } = useQuery('movies', fetchMovies, {
+    staleTime: 1000 * 60 * 1, // 1 minutes
+    onError: onError
+  });
 
-  useEffect(() => {
-    fetch(buildApiUrl('movie/get/page/1'))
-      .then(response => response.json())
-      .then(data => {
-        setCardData(
-          data.map((movie: any) => {
-            const tmp = mapJsonToMovie(movie);
-            console.log(tmp);
-            return tmp;
-          })
-        );
-      });
-  }, []);
+  if (isLoading) return <div className='text-black'>Loading...</div>;
 
   const settings = {
     dots: false,
@@ -33,11 +31,10 @@ export default function ProductList() {
     speed: 500,
     slidesToShow: 5,
     slidesToScroll: 1,
-    afterChange: current => {
-      setBackdropURL(buildImageUrl(cardData[current].backdropPath, 'original'));
+    afterChange: (current: number) => {
+      setBackdropURL(buildImageUrl(mapJsonToMovie(data.movies[current]).backdropPath, 'original'));
     }
   };
-  let sliderRef = useRef(null);
   const onClickNext = () => {
     sliderRef.slickNext();
   };
@@ -107,7 +104,8 @@ export default function ProductList() {
               }}
               {...settings}
             >
-              {cardData.map((card, index) => {
+              {data.movies.map((movie, index) => {
+                const card = mapJsonToMovie(movie);
                 return (
                   <MovieCard
                     key={index}

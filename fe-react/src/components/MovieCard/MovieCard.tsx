@@ -14,12 +14,12 @@ export default function MovieCard(props: MovieCardProps) {
   const { id, posterUrl, movieName, genres, rating, className } = props;
 
   return (
-    <div className={`flex ${className}`}>
+    <div className={`flex ${className} w-[14.5rem]`}>
       <div>
-        <div className='flex justify-center items-center relative group/play before:absolute before:bg-black/[0.35] before:inset-0 before:z-0 before:opacity-0 before:transition-opacity before:duration-500 before:pointer-events-none before:hover:opacity-100'>
+        <div className='flex relative group/play before:absolute before:bg-black/[0.35] before:inset-0 before:z-0 before:opacity-0 before:transition-opacity before:duration-500 before:pointer-events-none before:hover:opacity-100'>
           <img className='w-[14.5rem] h-[21.5rem] rounded-lg' src={posterUrl} alt={movieName} />
           <Link
-            className='absolute flex justify-center items-center w-14 h-14 bg-white rounded-full top-1/2 lef-1/2 z-30 text-primary outline transition duration-500 transform scale-90 opacity-0 outline-6 -m-7 outline-white/[0.3] group-hover/play:opacity-100 hover:outline-primary/[0.4]'
+            className='absolute flex justify-center items-center w-14 h-14 bg-white rounded-full top-1/2 left-1/2 z-30 text-primary outline transition duration-500 transform scale-90 opacity-0 outline-6 -m-7 outline-white/[0.3] group-hover/play:opacity-100 hover:outline-primary/[0.4]'
             to={`/details/${id}`}
           >
             <span className='flex justify-center items-center'>
@@ -42,9 +42,9 @@ export default function MovieCard(props: MovieCardProps) {
             {rating === undefined ? 'NR' : rating.toFixed(1).toString()}
           </span>
         </div>
-        <div className='px-5'>
+        <div className='pl-2 pr-2'>
           <p className='text-white mt-2 text-xl'>{movieName}</p>
-          <span className='text-primary text-base'>{genres.join(', ')}</span>
+          <span className='text-primary line-clamp-2 text-base'>{genres.join(', ')}</span>
         </div>
       </div>
     </div>

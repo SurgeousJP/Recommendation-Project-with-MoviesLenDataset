@@ -134,18 +134,17 @@ func (uc *UserController) Login(ctx *gin.Context) {
 
 func (uc *UserController) protectedFunction(ctx *gin.Context) {
 	user, _ := ctx.Get("user")
-    ctx.JSON(http.StatusOK, gin.H{"message": "Access granted for user", "user": user})
+	ctx.JSON(http.StatusOK, gin.H{"message": "Access granted for user", "user": user})
 }
-
 
 func (uc *UserController) RegisterUserRoute(rg *gin.RouterGroup) {
 	userRoute := rg.Group("/user")
 	// The URI must be diffent structure from each other !
 	userRoute.POST("/create", uc.CreateUser)
 
-	userRoute.GET("/login", uc.Login)
+	userRoute.POST("/login", uc.Login)
 
-	userRoute.GET("/authenticateUser", helper.JWTAuthenticateMiddleware(), uc.protectedFunction)
+	userRoute.POST("/authenticateUser", helper.JWTAuthenticateMiddleware(), uc.protectedFunction)
 
 	userRoute.GET("/get/:id", uc.GetUser)
 
