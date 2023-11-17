@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import axios from 'axios';
 import { buildApiUrl } from 'src/helpers/api';
 import { mapJsonToMovie } from 'src/helpers/utils';
@@ -10,12 +10,26 @@ const fetchMovieDetail = async (movieId: string) => {
 };
 
 const useMovieDetail = (movieId: string) => {
+  const queryClient = useQueryClient();
   const { isLoading, isError, data, error } = useQuery(
     ['movieDetail', movieId],
     () => fetchMovieDetail(movieId),
     {
       select(data) {
         return mapJsonToMovie(data);
+      },
+      initialData: () => {
+        const movie = queryClient
+          .getQueryData('movies')
+          ?.movies?.find(movie => movie.id == movieId);
+        console.log(movie);
+        if (movie) {
+          console.log('yes');
+
+          return mapJsonToMovie(movie);
+        } else {
+          return undefined;
+        }
       }
     }
   );

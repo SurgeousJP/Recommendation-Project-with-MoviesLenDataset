@@ -23,8 +23,6 @@ export function mapJsonToCasts(jsonData: any): Cast[] {
   return jsonData.slice(0, 9).map(cast => {
     const validJsonString = cast.replace('None', 'null').replace(/'/g, '"').replace(/\\"/g, '"');
 
-    console.log(validJsonString);
-
     const castData = JSON.parse(validJsonString);
     return {
       id: castData.id,

@@ -1,32 +1,21 @@
-import {
-  getColor,
-  mapJsonToMovie,
-  formatDateToDDMMYYYY,
-  mapJsonToCrews,
-  buildImageUrl,
-  mapJsonToCasts
-} from 'src/helpers/utils';
+import { getColor, formatDateToDDMMYYYY, buildImageUrl } from 'src/helpers/utils';
 import CastCard from 'src/components/CastCard/CastCard';
 import Scroller from 'src/components/Scroller/index';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import ReviewCard from 'src/components/ReviewCard/ReviewCard';
 import MovieCardRecom from 'src/components/MovieCardRecom';
 import { useParams } from 'react-router-dom';
-import { buildApiUrl } from 'src/helpers/api';
-import Movie from 'src/types/Movie';
-import Cast from 'src/types/Cast';
-import Crew from 'src/types/Crew';
 import DiscussionCard from 'src/components/Dicussion/DicussionCard';
 import { Rating } from 'react-simple-star-rating';
 import useRating from 'src/hooks/useRating';
+import useMovieDetail from 'src/hooks/useMovieDetail';
+import useCast from 'src/hooks/useCasts';
+import useCrew from 'src/hooks/useCrew';
+import useKeyword from 'src/hooks/useKeyword';
 
 export default function Details() {
-  const [movie, setMovie] = useState<Movie>({} as Movie);
-  const [casts, setCasts] = useState<Cast[]>([]);
-  const [crews, setCrews] = useState<Crew[]>([]);
-  const [keywords, setKeywords] = useState<string[]>([]);
   const [isRatingVisible, setRatingVisible] = useState(false);
 
   const MockDiscussionData = {
@@ -47,7 +36,7 @@ export default function Details() {
   const handleRating = (rate: number) => {
     console.log(rate);
     setRating(rate);
-    createRating({ user_id: 123, movie_id: movie.id, rating: rate });
+    createRating({ user_id: 123, movie_id: movie?.id, rating: rate });
   };
   const options = {
     month: 'short', // abbreviated month name
@@ -58,36 +47,17 @@ export default function Details() {
     hour12: true // use 12-hour time format
   };
   const { id } = useParams();
-  useEffect(() => {
-    fetch(buildApiUrl(`movie/get/${id}`))
-      .then(response => response.json())
-      .then(data => {
-        console.log(mapJsonToMovie(data));
-        setMovie(mapJsonToMovie(data));
-      });
-    fetch(buildApiUrl(`keyword/get/${id}`))
-      .then(response => response.json())
-      .then(data => {
-        setKeywords(data.keyword_list);
-      });
-    fetch(buildApiUrl(`cast/get/${id}`))
-      .then(response => response.json())
-      .then(data => {
-        setCasts(mapJsonToCasts(data.cast));
-        console.log(mapJsonToCasts(data.cast));
-      });
-    fetch(buildApiUrl(`crew/get/${id}`))
-      .then(response => response.json())
-      .then(data => {
-        setCrews(mapJsonToCrews(data.crew));
-      });
-  }, []);
+  const { data: movie } = useMovieDetail(id || '');
+  const { data: casts } = useCast(id || '');
+  const { data: crews } = useCrew(id || '');
+  const { data: keywords } = useKeyword(id || '');
+
   return (
     <div className='w-auto bg-background '>
       <div className='relative md:h-96 lg:h-[40rem] flex justify-center items-center lg:px-24 '>
         <div className='md:h-96 lg:h-[40rem] w-full overflow-hidden absolute left-0 top-0 '>
           <img
-            src={`${buildImageUrl(movie.backdropPath, 'original')}`}
+            src={`${buildImageUrl(movie?.backdropPath, 'original')}`}
             className='w-full h-auto opacity-10'
             alt='backdrop'
           ></img>
@@ -95,14 +65,14 @@ export default function Details() {
         <div className='relative flex w-full lg:scale-100 scale-75 items-center'>
           <img
             className='w-72 h-[27rem] object-cover rounded-lg'
-            src={`${buildImageUrl(movie.posterPath, 'w500')}`}
+            src={`${buildImageUrl(movie?.posterPath, 'w500')}`}
             alt='cover'
           ></img>
           <div className='ml-6'>
             <h1 className='text-white text-4xl block font-bold capitalize flex-col'>
-              {movie.title}{' '}
+              {movie?.title}{' '}
               <span className='font-normal opacity-70'>
-                {movie.releaseDate ? `(${movie.releaseDate.getFullYear()})` : ''}
+                {movie?.releaseDate ? `(${movie?.releaseDate.getFullYear()})` : ''}
               </span>
             </h1>
             <div className='mt-4'>
@@ -110,22 +80,22 @@ export default function Details() {
                 PG-13
               </span>
               <span>
-                {formatDateToDDMMYYYY(movie.releaseDate)} ({movie.productionCountries})
+                {formatDateToDDMMYYYY(movie?.releaseDate)} ({movie?.productionCountries})
               </span>
-              {movie.genres && (
-                <span className="before:content-['•'] before:mx-1">{movie.genres.join(', ')}</span>
+              {movie?.genres && (
+                <span className="before:content-['•'] before:mx-1">{movie?.genres.join(', ')}</span>
               )}
-              {movie.runtime && (
-                <span className="before:content-['•'] before:mx-1">{movie.runtime}</span>
+              {movie?.runtime && (
+                <span className="before:content-['•'] before:mx-1">{movie?.runtime}</span>
               )}
             </div>
             <div className='mt-4 flex items-center space-x-4'>
               <span
                 className={`text-xl font-semibold text-white flex justify-center items-center w-16 h-16 border-[3.5px] rounded-full bg-background/60 ${getColor(
-                  movie.rating
+                  movie?.rating
                 )}`}
               >
-                {movie.rating === undefined ? 'NR' : movie.rating.toFixed(1).toString()}
+                {movie?.rating === undefined ? 'NR' : movie?.rating?.toFixed(1).toString()}
               </span>
               <button className='rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'>
                 <img className='w-5 h-5' src='/src/assets/images/list.svg' alt='Add to list' />
@@ -158,9 +128,9 @@ export default function Details() {
               </div>
             </div>
             <div className='mt-4'>
-              <h3 className='italic font-normal text-lg text-white/60'>{movie.tagline}</h3>
+              <h3 className='italic font-normal text-lg text-white/60'>{movie?.tagline}</h3>
               <h3 className='font-bold text-xl'>Overview</h3>
-              <p>{movie.overview}</p>
+              <p>{movie?.overview}</p>
               <ol className='flex md:space-x-16 lg:space-x-20 xl:space-x-44 mt-4'>
                 {crews?.map(crew => (
                   <li key={crew.id}>
@@ -178,7 +148,7 @@ export default function Details() {
           <div className='border-border border-b-1'>
             <h2 className='text-2xl font-semibold mb-3'>Top Billed Cast</h2>
             <Scroller viewMore>
-              {casts.map((cast, index) => (
+              {casts?.map((cast, index) => (
                 <CastCard
                   key={index}
                   imageUrl={buildImageUrl(cast.profilePath, 'w500')}
@@ -212,7 +182,7 @@ export default function Details() {
                     text."
                     rating={8.5}
                     reviewTime='24.08.2018, 17:53'
-                    title='Best Marvel movie in my opinion'
+                    title='Best Marvel movie? in my opinion'
                     username='Johnny Sin'
                   ></ReviewCard>
                   <h3 className='font-semibold my-6'>
@@ -237,27 +207,27 @@ export default function Details() {
           <h2 className='text-2xl font-semibold mb-3 mt-3'>Recommendations</h2>
           <Scroller>
             <MovieCardRecom
-              posterUrl={buildImageUrl(movie.backdropPath, 'original')}
-              rating={movie.rating}
-              title={movie.title}
+              posterUrl={buildImageUrl(movie?.backdropPath, 'original')}
+              rating={movie?.rating}
+              title={movie?.title ?? ''}
               key={1}
             ></MovieCardRecom>
             <MovieCardRecom
-              posterUrl={buildImageUrl(movie.backdropPath, 'original')}
-              rating={movie.rating}
-              title={movie.title}
+              posterUrl={buildImageUrl(movie?.backdropPath, 'original')}
+              rating={movie?.rating}
+              title={movie?.title ?? ''}
               key={2}
             ></MovieCardRecom>
             <MovieCardRecom
-              posterUrl={buildImageUrl(movie.backdropPath, 'original')}
-              rating={movie.rating}
-              title={movie.title}
+              posterUrl={buildImageUrl(movie?.backdropPath, 'original')}
+              rating={movie?.rating}
+              title={movie?.title ?? ''}
               key={4}
             ></MovieCardRecom>
             <MovieCardRecom
-              posterUrl={buildImageUrl(movie.backdropPath, 'original')}
-              rating={movie.rating}
-              title={movie.title}
+              posterUrl={buildImageUrl(movie?.backdropPath, 'original')}
+              rating={movie?.rating}
+              title={movie?.title ?? ''}
               key={5}
             ></MovieCardRecom>
           </Scroller>
@@ -267,7 +237,7 @@ export default function Details() {
           </p>
         </div>
         <div className='px-2 min-w-[15rem]'>
-          <a href={movie.homepage} rel='noreferrer' target='_blank'>
+          <a href={movie?.homepage} rel='noreferrer' target='_blank'>
             <svg
               className='w-6 h-6'
               fill='none'
@@ -285,17 +255,17 @@ export default function Details() {
             </svg>
           </a>
           <p className='font-bold mt-9'>Status</p>
-          <p>{movie.status ?? '-'}</p>
+          <p>{movie?.status ?? '-'}</p>
           <p className='font-bold mt-5'>Original Language</p>
-          <p>{movie.originalLanguage ?? '-'}</p>
+          <p>{movie?.originalLanguage ?? '-'}</p>
           <p className='font-bold mt-5'>Budget</p>
-          <p>{movie.budget ? `$${movie.budget.toLocaleString()}` : '-'}</p>
+          <p>{movie?.budget ? `$${movie?.budget.toLocaleString()}` : '-'}</p>
           <p className='font-bold mt-5'>Revenue</p>
-          <p>{movie.revenue ? `$${movie.revenue.toLocaleString()}` : '-'}</p>
+          <p>{movie?.revenue ? `$${movie?.revenue.toLocaleString()}` : '-'}</p>
           <div className='border-border border-b-1 mb-2 pb-6'>
             <h4 className='font-bold mt-6 text-lg'>Keywords</h4>
             <ul className='mt-2 flex flex-wrap'>
-              {keywords.map((keyword, index) => (
+              {keywords?.map((keyword: string, index: number) => (
                 <li key={index}>
                   <p className='text-sm p-2 border w-fit border-border rounded-[0.1875rem] mr-2 mt-2'>
                     {keyword}
