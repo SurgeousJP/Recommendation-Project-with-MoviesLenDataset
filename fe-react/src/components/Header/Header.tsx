@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from 'src/assets/images/Logo.png';
-import useToken from '../../hooks/useToken';
+import { useUser } from 'src/hooks/useUser';
 
 type HeaderProps = {
   isOpen: boolean;
@@ -12,10 +12,10 @@ export default function Header(props: HeaderProps) {
   const { onBurgerMenuClick, isOpen } = props;
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
-  const { token } = useToken();
+  const user = useUser();
   let hasLogin = false;
-  console.log(token);
-  if (token) {
+  if (user.user != undefined && user.user != null) {
+    console.log('user', user);
     hasLogin = true;
   }
   const toggleMenu = () => {

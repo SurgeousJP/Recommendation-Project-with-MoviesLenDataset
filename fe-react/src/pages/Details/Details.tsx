@@ -3,7 +3,7 @@ import CastCard from 'src/components/CastCard/CastCard';
 import Scroller from 'src/components/Scroller/index';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReviewCard from 'src/components/ReviewCard/ReviewCard';
 import MovieCardRecom from 'src/components/MovieCardRecom';
 import { useParams } from 'react-router-dom';
@@ -14,10 +14,29 @@ import useMovieDetail from 'src/hooks/useMovieDetail';
 import useCast from 'src/hooks/useCasts';
 import useCrew from 'src/hooks/useCrew';
 import useKeyword from 'src/hooks/useKeyword';
+import { useUser } from 'src/hooks/useUser';
+import { getMovieRatingByUser } from 'src/helpers/api';
 
 export default function Details() {
   const [isRatingVisible, setRatingVisible] = useState(false);
+  const [rating, setRating] = useState(0);
+  const { id } = useParams();
+  const user = useUser();
+  useEffect(() => {
+    const fetchRating = async () => {
+      if (user.user != null) {
+        try {
+          const userRating = await getMovieRatingByUser(user.user.user.id, id);
+          console.log(userRating);
+          setRating(userRating.rating);
+        } catch (error) {
+          console.error('Error fetching user rating:', error);
+        }
+      }
+    };
 
+    fetchRating();
+  }, [user.user, id]);
   const MockDiscussionData = {
     subject: 'Sample Discussion',
     status: 'Open',
@@ -29,14 +48,14 @@ export default function Details() {
   const handleButtonClick = () => {
     setRatingVisible(!isRatingVisible);
   };
-  const [rating, setRating] = useState(0);
 
   const { createRating } = useRating();
 
   const handleRating = (rate: number) => {
     console.log(rate);
     setRating(rate);
-    createRating({ user_id: 123, movie_id: movie?.id, rating: rate });
+    if (user.user === undefined) return;
+    createRating({ user_id: user.user.user.id, movie_id: movie?.id, rating: rate });
   };
   const options = {
     month: 'short', // abbreviated month name
@@ -46,7 +65,7 @@ export default function Details() {
     minute: 'numeric', // minute
     hour12: true // use 12-hour time format
   };
-  const { id } = useParams();
+
   const { data: movie } = useMovieDetail(id || '');
   const { data: casts } = useCast(id || '');
   const { data: crews } = useCrew(id || '');
@@ -117,12 +136,16 @@ export default function Details() {
                 {isRatingVisible && (
                   <div className='absolute -left-[80px] rounded-sm mt-2 bg-gray-700 p-1 '>
                     <div className='triangle'></div>
-                    <Rating
-                      allowFraction={true}
-                      initialValue={rating}
-                      onClick={handleRating}
-                      /* Available Props */
-                    />
+                    {user?.user ? (
+                      <Rating
+                        allowFraction={true}
+                        initialValue={4.5}
+                        onClick={handleRating}
+                        /* Available Props */
+                      />
+                    ) : (
+                      <p className='w-[12.5rem]'>Please login to rate this movie</p>
+                    )}
                   </div>
                 )}
               </div>

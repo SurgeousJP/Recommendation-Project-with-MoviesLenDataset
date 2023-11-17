@@ -3,10 +3,11 @@ package implementations
 import (
 	"context"
 	"errors"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 	"movies_backend/models"
 	"movies_backend/services/interfaces"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type RatingServiceImpl struct {
@@ -114,4 +115,24 @@ func (r *RatingServiceImpl) GetRatingOfUser(userId *int) ([]*models.Rating, erro
 	}
 
 	return ratings, nil
+}
+
+func (r *RatingServiceImpl) GetMovieRatingOfUser(movieId *int, userId *int) (*models.Rating, error) {
+	var rating models.Rating
+
+	filter := bson.D{
+		bson.E{Key: "movie_id", Value: movieId},
+		bson.E{Key: "user_id", Value: userId},
+	}
+
+	err := r.ratingCollection.FindOne(r.ctx, filter).Decode(&rating)
+
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, errors.New("rating not found")
+		}
+		return nil, err
+	}
+
+	return &rating, nil
 }

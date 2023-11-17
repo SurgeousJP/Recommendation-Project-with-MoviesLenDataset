@@ -6,30 +6,12 @@ import ForgotPass from './pages/ForgotPass';
 import HomeLayout from './layouts/HomeLayout';
 import Details from './pages/Details';
 import SearchResult from './pages/SearchResult';
-import useToken from './hooks/useToken';
-import { buildApiUrl } from './helpers/api';
+import { useUser } from './hooks/useUser';
 
 export default function useRouteElement() {
-  const { token, setToken } = useToken();
-
-  const authenticateUser = async () => {
-    const url = buildApiUrl('user/authenticateUser');
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        token
-      })
-    });
-    if (response.status === 401) {
-      localStorage.removeItem('token');
-    }
-  };
-
-  if (token) {
-    authenticateUser();
+  const { user } = useUser();
+  if (user) {
+    console.log('user', user);
   }
 
   const routeElement = useRoutes([
@@ -67,7 +49,7 @@ export default function useRouteElement() {
     },
     {
       path: '/login',
-      element: token ? <Navigate to='/' /> : <Login setToken={setToken} />
+      element: user ? <Navigate to='/' /> : <Login />
     },
     {
       path: '/register',

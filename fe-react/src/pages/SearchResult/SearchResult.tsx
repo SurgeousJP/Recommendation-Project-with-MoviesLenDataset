@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import MovieCardSearch from 'src/components/MovieCardSearch/MovieCardSearch';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { buildApiUrl } from 'src/helpers/api';
 import { buildImageUrl, mapJsonToMovie } from 'src/helpers/utils';
 import { formatDateToDDMMYYYY } from './../../helpers/utils';
 import Movie from 'src/types/Movie';
 import './search.css';
+import useSearchMovie from 'src/hooks/useSearchMovie';
 
 const SearchResult = () => {
   const [cardData, setCardData] = useState<Array<Movie>>([]);
@@ -20,23 +20,13 @@ const SearchResult = () => {
   const { type } = useParams();
   console.log(type);
 
-  useEffect(() => {
-    if (!page) {
-      page = '1';
-    }
-    fetch(buildApiUrl(`movie/search/${query}/${page}`))
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        setCardData(
-          data.map((movie: any) => {
-            const tmp = mapJsonToMovie(movie);
-            console.log(tmp);
-            return tmp;
-          })
-        );
-      });
-  }, []);
+  if (!page) {
+    page = '1';
+  }
+  const { data, isLoading } = useSearchMovie(query, parseInt(page));
+
+  if (isLoading) return <div className='text-black'>Loading...</div>;
+
   return (
     <div className='w-auto min-h-screen bg-background flex px-24 pt-20'>
       <div className='w-64 min-w-[15rem] rounded-md border-border border-1 h-fit overflow-hidden'>
@@ -65,7 +55,7 @@ const SearchResult = () => {
         </div>
       </div>
       <div className='space-y-4 ml-12'>
-        {cardData.map((movie: Movie) => {
+        {data.map((movie: Movie) => {
           return (
             <MovieCardSearch
               key={movie.id}

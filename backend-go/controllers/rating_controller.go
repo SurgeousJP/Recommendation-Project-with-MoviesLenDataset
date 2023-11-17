@@ -27,7 +27,7 @@ func (rc *RatingController) CreateRating(ctx *gin.Context) {
 		return
 	}
 
-	if rating.UserId == 0 || rating.MovieId == 0 || rating.Timestamp == 0 || rating.Rating == 0{
+	if rating.UserId == 0 || rating.MovieId == 0 || rating.Timestamp == 0 || rating.Rating == 0 {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": "wrong input structure"})
 		return
 	}
@@ -49,7 +49,7 @@ func (rc *RatingController) UpdateRating(ctx *gin.Context) {
 		return
 	}
 
-	if rating.UserId == 0 || rating.MovieId == 0 || rating.Timestamp == 0 || rating.Rating == 0{
+	if rating.UserId == 0 || rating.MovieId == 0 || rating.Timestamp == 0 || rating.Rating == 0 {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": "wrong input structure"})
 		return
 	}
@@ -86,7 +86,7 @@ func (rc *RatingController) DeleteRating(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "Successful"})
 }
 
-func (rc *RatingController) GetRatingOfMovie(ctx *gin.Context){
+func (rc *RatingController) GetRatingOfMovie(ctx *gin.Context) {
 	movieId, err := strconv.Atoi(ctx.Param("movie_id"))
 	if err != nil || int64(movieId) <= 0 {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Invalid movie id"})
@@ -102,7 +102,7 @@ func (rc *RatingController) GetRatingOfMovie(ctx *gin.Context){
 	ctx.JSON(http.StatusOK, ratings)
 }
 
-func (rc *RatingController) GetRatingOfUser(ctx *gin.Context){
+func (rc *RatingController) GetRatingOfUser(ctx *gin.Context) {
 	userId, err := strconv.Atoi(ctx.Param("user_id"))
 	if err != nil || int64(userId) <= 0 {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Invalid movie id"})
@@ -118,6 +118,29 @@ func (rc *RatingController) GetRatingOfUser(ctx *gin.Context){
 	ctx.JSON(http.StatusOK, ratings)
 }
 
+func (rc *RatingController) GetMovieRatingOfUser(ctx *gin.Context) {
+	movieId, err := strconv.Atoi(ctx.Param("movie_id"))
+	if err != nil || int64(movieId) <= 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Invalid movie id"})
+		return
+	}
+
+	userId, err := strconv.Atoi(ctx.Param("user_id"))
+	if err != nil || int64(userId) <= 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Invalid user id"})
+		return
+	}
+
+	rating, err := rc.RatingService.GetMovieRatingOfUser(&movieId, &userId)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, rating)
+}
+
 func (rc *RatingController) RegisterRatingRoute(rg *gin.RouterGroup) {
 	ratingRoute := rg.Group("/rating")
 	// The URI must be diffent structure from each other !
@@ -126,6 +149,8 @@ func (rc *RatingController) RegisterRatingRoute(rg *gin.RouterGroup) {
 	ratingRoute.GET("/get/movie/:movie_id", rc.GetRatingOfMovie)
 
 	ratingRoute.GET("/get/user/:user_id", rc.GetRatingOfUser)
+
+	ratingRoute.GET("/get/:user_id/:movie_id", rc.GetMovieRatingOfUser)
 
 	ratingRoute.PATCH("/update", rc.UpdateRating)
 

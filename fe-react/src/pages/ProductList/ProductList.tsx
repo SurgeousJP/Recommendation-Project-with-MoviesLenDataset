@@ -3,20 +3,17 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { useRef, useState } from 'react';
-import { buildApiUrl } from 'src/helpers/api';
 import { buildImageUrl, mapJsonToMovie } from 'src/helpers/utils';
 import { useQuery } from 'react-query';
-const fetchMovies = async () => {
-  const res = await fetch(buildApiUrl('movie/get/page/1'));
-  return res.json();
-};
+import { getMoviesByPage } from 'src/helpers/api';
+
 export default function ProductList() {
   const [backdropURL, setBackdropURL] = useState('/src/assets/images/backdrop.png');
   let sliderRef = useRef(null);
   const onError = () => {
     setBackdropURL('/src/assets/images/backdrop.png');
   };
-  const { isLoading, data } = useQuery('movies', fetchMovies, {
+  const { isLoading, data } = useQuery('movies', () => getMoviesByPage(1), {
     staleTime: 1000 * 60 * 1, // 1 minutes
     onError: onError
   });
@@ -32,7 +29,7 @@ export default function ProductList() {
     slidesToShow: 5,
     slidesToScroll: 1,
     afterChange: (current: number) => {
-      setBackdropURL(buildImageUrl(mapJsonToMovie(data.movies[current]).backdropPath, 'original'));
+      setBackdropURL(buildImageUrl(mapJsonToMovie(data?.movies[current]).backdropPath, 'original'));
     }
   };
   const onClickNext = () => {

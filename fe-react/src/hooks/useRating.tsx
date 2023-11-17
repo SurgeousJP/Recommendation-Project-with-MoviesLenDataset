@@ -1,20 +1,10 @@
-import axios from 'axios';
 import { useMutation } from 'react-query';
-import { buildApiUrl } from 'src/helpers/api';
-
-interface Rating {
-  user_id: number;
-  movie_id: number;
-  rating: number;
-  timestamp: number;
-}
+import { createMovieRating } from 'src/helpers/api';
+import Rating from 'src/types/Rating';
 
 const useRating = () => {
   const createRating = async (rating: Rating) => {
-    const ratingWithTimestamp = { ...rating, timestamp: Math.floor(Date.now() / 1000) };
-    console.log(ratingWithTimestamp);
-    const response = await axios.post(buildApiUrl('rating/create'), ratingWithTimestamp);
-    return response.data;
+    return await createMovieRating(rating);
   };
 
   const { mutate, isLoading, isError, isSuccess } = useMutation(createRating);

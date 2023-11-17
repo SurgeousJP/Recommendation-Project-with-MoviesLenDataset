@@ -4,14 +4,15 @@ import './Login.css';
 import logo from 'src/assets/images/Logo.png';
 import SocialSign from 'src/components/SocialSign';
 import { Link } from 'react-router-dom';
-import { buildApiUrl } from 'src/helpers/api';
-import { useQuery } from 'react-query';
+import { useSignIn } from 'src/hooks/useLogin';
 
-export default function Login({ setToken }) {
+export default function Login() {
   const [isChecked, setIsChecked] = useState(false);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('4nh3k');
+  const [password, setPassword] = useState('12345');
   const [errors, setErrors] = useState<string[]>([]);
+
+  const testSignIn = useSignIn();
 
   const handleCheckboxChange = (selected: boolean) => {
     setIsChecked(selected);
@@ -34,28 +35,9 @@ export default function Login({ setToken }) {
       return;
     }
 
-    const url = buildApiUrl('user/login');
+    //const data = await login(username, password);
     console.log(username, password);
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        username,
-        password
-      })
-    });
-    const data = await response.json();
-    console.log(data); // do something with the response data
-    if (data.token) {
-      console.log(data.token);
-      setToken(data.token);
-    }
-    if (data.message) {
-      setErrors([data.message]);
-    }
-    alert(JSON.stringify(data));
+    testSignIn({ username, password });
   };
 
   return (
