@@ -8,7 +8,7 @@ export default {
         border: '#393643',
         primary: '#F9AB00',
         textbox: '#222028',
-        transColor: 'rgba(26, 25, 31, 0.85)',
+        transColor: 'rgba(26, 25, 31, 0.85)'
       },
       fontFamily: {
         icon: 'Ionicons',
@@ -16,6 +16,7 @@ export default {
       },
       borderWidth: {
         1: '1px',
+        3: '3px',
         6: '6px'
       },
       outlineWidth: {
@@ -23,5 +24,5 @@ export default {
       }
     }
   },
-  plugins: [],
+  plugins: []
 };

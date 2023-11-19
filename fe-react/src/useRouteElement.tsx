@@ -7,6 +7,8 @@ import HomeLayout from './layouts/HomeLayout';
 import Details from './pages/Details';
 import SearchResult from './pages/SearchResult';
 import { useUser } from './hooks/useUser';
+import User from './pages/User/UserProfile';
+import UserProfile from './pages/User/UserProfile';
 
 export default function useRouteElement() {
   const { user } = useUser();
@@ -58,6 +60,14 @@ export default function useRouteElement() {
     {
       path: '/forgot',
       element: <ForgotPass />
+    },
+    {
+      path: '/u/:id',
+      element: (
+        <HomeLayout>
+          <UserProfile />
+        </HomeLayout>
+      )
     }
   ]);
   return routeElement;

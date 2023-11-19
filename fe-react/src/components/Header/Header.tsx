@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { Tooltip } from 'react-tooltip';
 import logo from 'src/assets/images/Logo.png';
 import { useUser } from 'src/hooks/useUser';
 
@@ -120,10 +121,67 @@ export default function Header(props: HeaderProps) {
               />
             </svg>
             <img
+              id='user-avatar'
               className='w-8 h-8 mr-12 rounded-full'
               src='https://picsum.photos/200'
               alt='Avatar'
             ></img>
+            <Tooltip
+              style={{ backgroundColor: 'rgb(55, 65, 81)' }}
+              id='user-avatar-tooltip'
+              anchorSelect='#user-avatar'
+              place='bottom'
+            >
+              Profiles and Settings
+            </Tooltip>
+
+            <Tooltip
+              style={{ backgroundColor: 'rgb(55, 65, 81)', minWidth: '170px', padding: '0' }}
+              opacity={1}
+              place='bottom'
+              anchorSelect='#user-avatar'
+              openOnClick
+              clickable
+            >
+              <div className='py-1 px-0.5'>
+                <div className='p-3'>
+                  <h2 className='text-white font-semibold text-md '>
+                    <Link to={`/u/${user.user?.user.id}`}>{user.user?.user.username}</Link>
+                  </h2>
+                  <p className='text-xs text-white/70'>
+                    <Link to={`/u/${user.user?.user.id}`}>View profile</Link>
+                  </p>
+                </div>
+                <hr className='border-white/30'></hr>
+                <ul className='my-1'>
+                  <li className=' hover:bg-gray-800 py-1.5 px-3'>
+                    <Link to={`/u/${user.user?.user.id}/disscussion`}>Disscussion</Link>
+                  </li>
+                  <li className=' hover:bg-gray-800 py-1.5 px-3'>
+                    <Link to={`/u/${user.user?.user.id}/lists`}>Lists</Link>
+                  </li>
+                  <li className=' hover:bg-gray-800 py-1.5 px-3'>
+                    <Link to={`/u/${user.user?.user.id}/ratings`}>Ratings</Link>
+                  </li>
+                  <li className=' hover:bg-gray-800 py-1.5 px-3'>
+                    <Link to={`/u/${user.user?.user.id}/watchlist`}>Watchlist</Link>
+                  </li>
+                </ul>
+                <hr className='border-white/30'></hr>
+                <ul className='my-1'>
+                  <li className=' hover:bg-gray-800 py-1.5 px-3'>
+                    <Link to={`/settings/profiles`}>Edit Profile</Link>
+                  </li>
+                  <li className=' hover:bg-gray-800 py-1.5 px-3'>
+                    <Link to={`/settings/accounts`}>Settings</Link>
+                  </li>
+                </ul>
+                <hr className='border-white/30'></hr>
+                <p className=' mt-1 hover:bg-gray-800 py-1.5 px-3'>
+                  <Link to='/logout'>Logout</Link>
+                </p>
+              </div>
+            </Tooltip>
           </>
         ) : (
           <button

@@ -50,8 +50,9 @@
 .react-tabs__tab {
   @apply inline-block relative list-none px-4 py-2 cursor-pointer -bottom-px uppercase text-sm;
 }
+
 .react-tabs__tab--selected {
-  @apply border-b-4 border-primary text-primary;
+  @apply border-b-3 border-primary text-primary;
 }
 
 input {

@@ -2,6 +2,7 @@ import { getColor, formatDateToDDMMYYYY, buildImageUrl } from 'src/helpers/utils
 import CastCard from 'src/components/CastCard/CastCard';
 import Scroller from 'src/components/Scroller/index';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import { Tooltip } from 'react-tooltip';
 
 import { useEffect, useState } from 'react';
 import ReviewCard from 'src/components/ReviewCard/ReviewCard';
@@ -15,19 +16,23 @@ import useCast from 'src/hooks/useCasts';
 import useCrew from 'src/hooks/useCrew';
 import useKeyword from 'src/hooks/useKeyword';
 import { useUser } from 'src/hooks/useUser';
-import { getMovieRatingByUser } from 'src/helpers/api';
+import { deleteMovieRating, getMovieRatingByUser, updateMovieRating } from 'src/helpers/api';
+import { useMutation } from 'react-query';
 
 export default function Details() {
   const [isRatingVisible, setRatingVisible] = useState(false);
   const [rating, setRating] = useState(0);
+  const [hasRated, setHasRated] = useState(false);
   const { id } = useParams();
   const user = useUser();
+  const isLogin = user.user != null;
   useEffect(() => {
     const fetchRating = async () => {
-      if (user.user != null) {
+      if (user.user != null && id != null) {
         try {
           const userRating = await getMovieRatingByUser(user.user.user.id, id);
           console.log(userRating);
+          setHasRated(true);
           setRating(userRating.rating);
         } catch (error) {
           console.error('Error fetching user rating:', error);
@@ -48,14 +53,29 @@ export default function Details() {
   const handleButtonClick = () => {
     setRatingVisible(!isRatingVisible);
   };
-
-  const { createRating } = useRating();
+  const handleCreateRatingSuccess = () => {
+    setHasRated(true);
+  };
+  const { createRating } = useRating(handleCreateRatingSuccess);
+  const { mutate: updateRating } = useMutation(updateMovieRating);
+  const { mutate: deleteRating } = useMutation(deleteMovieRating);
 
   const handleRating = (rate: number) => {
     console.log(rate);
     setRating(rate);
-    if (user.user === undefined) return;
-    createRating({ user_id: user.user.user.id, movie_id: movie?.id, rating: rate });
+    if (id == null) return;
+    console.log(hasRated);
+    if (hasRated === true) {
+      updateRating({ user_id: user.user.user.id, movie_id: parseInt(id), rating: rate });
+    } else {
+      createRating({ user_id: user.user.user.id, movie_id: parseInt(id), rating: rate });
+    }
+  };
+  const handleDeleteRating = () => {
+    if (id == null) return;
+    setRating(0);
+    setHasRated(false);
+    deleteRating({ userId: user.user.user.id, movieId: id });
   };
   const options = {
     month: 'short', // abbreviated month name
@@ -116,38 +136,90 @@ export default function Details() {
               >
                 {movie?.rating === undefined ? 'NR' : movie?.rating?.toFixed(1).toString()}
               </span>
-              <button className='rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'>
+              <button
+                data-tooltip-id='my-tooltip'
+                data-tooltip-content={
+                  isLogin ? 'Add to list' : 'Login to create and edit custom lists'
+                }
+                data-tooltip-place='bottom'
+                className='rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'
+              >
                 <img className='w-5 h-5' src='/src/assets/images/list.svg' alt='Add to list' />
               </button>
-              <button className='rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'>
+              <button
+                data-tooltip-id='my-tooltip'
+                data-tooltip-content={
+                  isLogin ? 'Mark as favourite' : 'Login to add this movie to your favourites list'
+                }
+                data-tooltip-place='bottom'
+                className='rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'
+              >
                 <img className='w-5 h-5' src='/src/assets/images/favourite.svg' alt='Add to list' />
               </button>
-              <button className='rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'>
+              <button
+                data-tooltip-id='my-tooltip'
+                data-tooltip-content={
+                  isLogin ? 'Add to your watchlist' : 'Login to add this movie to your watchlist'
+                }
+                data-tooltip-place='bottom'
+                className='rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'
+              >
                 <img className='w-5 h-5' src='/src/assets/images/watchlist.svg' alt='Add to list' />
               </button>
               <div className='relative'>
                 <button
+                  id='clickable'
                   className='rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'
                   onClick={handleButtonClick}
                 >
-                  <img className='w-5 h-5' src='/src/assets/images/star.svg' alt='Add to list' />
+                  <svg
+                    className={`w-5 h-5 ${hasRated ? 'fill-yellow-400' : 'fill-white'}`}
+                    xmlns='http://www.w3.org/2000/svg'
+                    width='20'
+                    height='20'
+                    viewBox='0 0 256 256'
+                  >
+                    <path d='M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0h0L166,81.17l59.44,5.15a16,16,0,0,1,9.11,28.06Z'></path>
+                  </svg>
                 </button>
+                <Tooltip
+                  style={{ backgroundColor: 'rgb(55, 65, 81)' }}
+                  id='rating'
+                  anchorSelect='#clickable'
+                  place='bottom'
+                >
+                  {isLogin ? 'Rating' : 'Login to rate this movie'}
+                </Tooltip>
 
-                {isRatingVisible && (
-                  <div className='absolute -left-[80px] rounded-sm mt-2 bg-gray-700 p-1 '>
-                    <div className='triangle'></div>
-                    {user?.user ? (
-                      <Rating
-                        allowFraction={true}
-                        initialValue={4.5}
-                        onClick={handleRating}
-                        /* Available Props */
-                      />
-                    ) : (
-                      <p className='w-[12.5rem]'>Please login to rate this movie</p>
-                    )}
+                <Tooltip
+                  hidden={!isLogin}
+                  style={{ backgroundColor: 'rgb(55, 65, 81)' }}
+                  opacity={1}
+                  id='rating-clickable'
+                  anchorSelect='#clickable'
+                  place='bottom'
+                  openOnClick
+                  clickable
+                >
+                  <div className='flex items-center'>
+                    <svg
+                      onClick={handleDeleteRating}
+                      xmlns='http://www.w3.org/2000/svg'
+                      width='20'
+                      height='20'
+                      fill='white'
+                      viewBox='0 0 256 256'
+                    >
+                      <path d='M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm40,112H88a8,8,0,0,1,0-16h80a8,8,0,0,1,0,16Z'></path>
+                    </svg>
+                    <Rating
+                      allowFraction={true}
+                      initialValue={rating}
+                      onClick={handleRating}
+                      /* Available Props */
+                    />
                   </div>
-                )}
+                </Tooltip>
               </div>
             </div>
             <div className='mt-4'>
