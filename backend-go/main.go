@@ -137,6 +137,14 @@ func Init() {
 	server.SetTrustedProxies(nil)
 }
 
+func returnUser(c *gin.Context) {
+	// claims := jwt.ExtractClaims(c)
+	user, _ := c.Get(identityKey)
+	c.JSON(200, gin.H{
+		"userId": user.(*models.User).UserId,
+	})
+  }
+
 func main() {
 	Init()
 
@@ -179,9 +187,9 @@ func main() {
 
 			if username == user.Username && helper.CheckPassword(user.PasswordHash, password) {
 				return &models.User{
-					UserId:   user.UserId,
+					UserId: user.UserId,
 					Username: user.Username,
-					// Set other user data as needed
+					PictureProfile: user.PictureProfile,
 				}, nil
 			}
 
@@ -233,13 +241,18 @@ func main() {
 	basePath.POST("/login", authMiddleware.LoginHandler)
 	basePath.GET("/refresh_token", authMiddleware.RefreshHandler)
 	basePath.Use(authMiddleware.MiddlewareFunc())
+  	{
+    	basePath.GET("/currentUser", returnUser)
+  	}
+
+	userController.RegisterUserRoute(basePath)
+	basePath.Use(authMiddleware.MiddlewareFunc())
 
 	movieController.RegisterMovieRoute(basePath)
 	keywordController.RegisterKeywordRoute(basePath)
 	ratingController.RegisterRatingRoute(basePath)
 	crewController.RegisterCrewRoute(basePath)
 	castController.RegisterCastRoute(basePath)
-	userController.RegisterUserRoute(basePath)
 	// movieDiscussionController.RegisterMovieDiscussionRoute(basePath)
 
 	log.Fatal(server.Run(":" + port))
