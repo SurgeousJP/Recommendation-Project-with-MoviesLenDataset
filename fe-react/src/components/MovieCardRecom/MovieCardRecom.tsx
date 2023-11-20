@@ -2,7 +2,7 @@ import React from 'react';
 
 interface MovieCardRecomProps {
   posterUrl: string;
-  rating: number;
+  rating?: number;
   title: string;
 }
 

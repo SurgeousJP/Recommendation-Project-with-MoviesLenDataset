@@ -41,11 +41,18 @@
 .react-tabs__tab-list {
   @apply mb-2 p-0;
 }
+.empty-icons {
+  display: flex !important;
+}
+.filled-icons {
+  display: -webkit-inline-box !important;
+}
 .react-tabs__tab {
   @apply inline-block relative list-none px-4 py-2 cursor-pointer -bottom-px uppercase text-sm;
 }
+
 .react-tabs__tab--selected {
-  @apply border-b-4 border-primary text-primary;
+  @apply border-b-3 border-primary text-primary;
 }
 
 input {
@@ -59,4 +66,15 @@ button {
 }
 button:hover {
   @apply bg-primary/10;
+}
+.triangle {
+  position: absolute;
+  top: -8px; /* Adjust as needed */
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-left: 0.5rem solid transparent; /* Adjust the size of the triangle */
+  border-right: 0.5rem solid transparent; /* Adjust the size of the triangle */
+  border-bottom: 0.5rem solid #374151; /* Adjust the size and color of the triangle */
+  transform: translateX(-50%);
 }

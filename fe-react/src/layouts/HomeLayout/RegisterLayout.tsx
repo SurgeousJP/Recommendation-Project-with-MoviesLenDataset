@@ -34,11 +34,13 @@ export default function Register({ children }: Props) {
   return (
     <div id='outer-container'>
       <Header onBurgerMenuClick={toggleSideBar} isOpen={isSideBarOpen} />
-      <div id='page-wrap'>{children}</div>
+      <div className='mt-14 min-h-screen bg-background' id='page-wrap'>
+        {children}
+      </div>
       <Footer />
       {isSideBarOpen && (
         <div
-          className='fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-10'
+          className='lg:hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-10'
           onClick={closeSideBar}
           onKeyDown={event => {
             // Handle keyboard events for accessibility
