@@ -151,7 +151,7 @@ func (suite *UserTestSuite) TestGetAnExistingUser() {
 	// Check the response body
 	assert.JSONEq(suite.T(), `{
 		"id": 10001,
-		"username": "Surgeous",
+		"username": "test",
 		"password_hash": "abcxyz",
 		"favorite_list": [2,3,5,6,11],
 		"recommendation_list": [2,3,5,6,11],
