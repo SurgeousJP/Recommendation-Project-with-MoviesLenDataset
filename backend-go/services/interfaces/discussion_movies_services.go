@@ -9,6 +9,6 @@ type MovieDiscussionServices interface {
 	DeleteMovieDiscussion(*int) error
 	CreateMovieDiscussionPart(*models.DiscussionPart, *int) error
 	GetMovieDiscussionPartInPage(int, int, *int) ([]*models.DiscussionPart, error)
-	// UpdateMovieDiscussionPart(*models.DiscussionPart) error
-	// DeleteMovieDiscussionPart(*int) error
+	UpdateMovieDiscussionPart(*int, *int, *models.DiscussionPart) error
+	DeleteMovieDiscussionPart(*int, *int) error
 }

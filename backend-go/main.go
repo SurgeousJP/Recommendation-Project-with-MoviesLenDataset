@@ -49,7 +49,8 @@ var (
 
 	movieDiscussionCollection *mongo.Collection
 	movieDiscussionService    interfaces.MovieDiscussionServices
-	// movieDiscussionController controllers.MovieDiscussionController
+	movieDiscussionController controllers.MovieDiscussionController
+	
 	ctx         context.Context
 	mongoClient *mongo.Client
 )
@@ -115,7 +116,7 @@ func Init() {
 
 	movieDiscussionCollection = mongoClient.Database(databaseName).Collection("discussion_movie")
 	movieDiscussionService = implementations.NewMovieDiscussionServices(movieDiscussionCollection, ctx)
-	// movieDiscussionController = controllers.NewMovieDiscussionController(movieDiscussionService)
+	movieDiscussionController = controllers.NewMovieDiscussionController(movieDiscussionService)
 
 	server = gin.Default()
 	// Set up CORS (Cross-Origin Resource Sharing)
@@ -158,11 +159,11 @@ func main() {
 	basePath.GET("/currentUser", authMiddleware.MiddlewareFunc(), returnUser)
 
 	// Apply middleware to all routes under basePath, except for GET requests
-	basePath.Use(func(c *gin.Context) {
-		if c.Request.Method != "GET" {
-			authMiddleware.MiddlewareFunc()(c)
-		}
-	})
+	// basePath.Use(func(c *gin.Context) {
+	// 	if c.Request.Method != "GET" {
+	// 		authMiddleware.MiddlewareFunc()(c)
+	// 	}
+	// })
 
 	// Other route registrations without the middleware
 	userController.RegisterUserRoute(basePath)
@@ -171,8 +172,7 @@ func main() {
 	crewController.RegisterCrewRoute(basePath)
 	castController.RegisterCastRoute(basePath)
 	ratingController.RegisterRatingRoute(basePath)
-
-	// movieDiscussionController.RegisterMovieDiscussionRoute(basePath)
+	movieDiscussionController.RegisterMovieDiscussionRoute(basePath)
 
 	log.Fatal(server.Run(":" + port))
 }

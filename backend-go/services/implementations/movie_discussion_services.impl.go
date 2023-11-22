@@ -100,3 +100,52 @@ func (m *MovieDiscussionServicesImpl) GetMovieDiscussionPartInPage(pageNumber in
 	return partsInPage, nil
 }
 
+func (m *MovieDiscussionServicesImpl) UpdateMovieDiscussionPart(discussionId *int, partId *int, updatedPart *models.DiscussionPart) error {
+	filter := bson.M{
+		"discussion_id":      discussionId,
+		"discussion_part.part_id": partId,
+	}
+
+	update := bson.M{
+		"$set": bson.M{
+			"discussion_part.$": updatedPart,
+		},
+	}
+
+	result, err := m.movieDiscussionCollection.UpdateOne(m.ctx, filter, update)
+	if err != nil {
+		return err
+	}
+
+	if result.MatchedCount != 1 {
+		return errors.New("no matched document found for update")
+	}
+
+	return nil
+}
+
+func (m *MovieDiscussionServicesImpl) DeleteMovieDiscussionPart(discussionId *int, partId *int) error {
+	filter := bson.M{
+		"discussion_id":      discussionId,
+		"discussion_part.part_id": partId,
+	}
+
+	update := bson.M{
+		"$pull": bson.M{
+			"discussion_part": bson.M{"part_id": partId},
+		},
+	}
+
+	result, err := m.movieDiscussionCollection.UpdateOne(m.ctx, filter, update)
+	if err != nil {
+		return err
+	}
+
+	if result.MatchedCount != 1 {
+		return errors.New("no matched document found for delete")
+	}
+
+	return nil
+}
+
+
