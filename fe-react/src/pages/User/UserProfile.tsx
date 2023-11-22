@@ -6,6 +6,7 @@ import useUserProfile from 'src/hooks/useUserProfile';
 import useUserRating from 'src/hooks/useUserRating';
 import UserOverview from './UserOverView';
 import UserRatingPanel from './UserRatingPanel';
+import UserRecomList from './UserRecomList';
 
 const UserProfile = () => {
   const { id } = useParams();
@@ -69,7 +70,7 @@ const UserProfile = () => {
           <TabList className={'flex justify-center border-border border-b-1 react-tabs__tab-list '}>
             <Tab>Overview</Tab>
             <Tab>Discussions</Tab>
-            <Tab>Lists</Tab>
+            <Tab>Recommendations</Tab>
             <Tab>Ratings</Tab>
             <Tab>Watchlist</Tab>
           </TabList>
@@ -77,7 +78,9 @@ const UserProfile = () => {
             <UserOverview ratingData={ratingData} favourites={[233, 3, 5, 6, 11]} />
           </TabPanel>
           <TabPanel></TabPanel>
-          <TabPanel></TabPanel>
+          <TabPanel>
+            <UserRecomList movieIds={[233, 3, 5, 6, 11]}></UserRecomList>
+          </TabPanel>
           <TabPanel>
             <UserRatingPanel userId={id}></UserRatingPanel>
           </TabPanel>

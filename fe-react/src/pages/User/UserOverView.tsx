@@ -4,7 +4,7 @@ import { useQueries } from 'react-query';
 import LoadingIndicator from 'src/components/LoadingIndicator';
 import MovieCardUser from 'src/components/MovieCardUser';
 import { getMovieDetail } from 'src/helpers/api';
-import { buildImageUrl } from 'src/helpers/utils';
+import { buildImageUrl, formatDateToDDMMYYYY, mapJsonToMovie } from 'src/helpers/utils';
 
 export type RatingData = {
   rate: string;
@@ -55,7 +55,6 @@ function countRatings(ratings: RatingRawData[]): RatingData[] {
 
 const UserOverview: React.FC<UserOverviewProps> = props => {
   // Implement the component logic here
-
   const primaryAxis = React.useMemo(
     (): AxisOptions<RatingData> => ({
       getValue: datum => datum.rate
@@ -72,10 +71,11 @@ const UserOverview: React.FC<UserOverviewProps> = props => {
     ],
     []
   );
+
   const data: Series[] = [
     {
       label: 'Ratings',
-      data: countRatings(props.ratingData)
+      data: countRatings(props.ratingData ?? [])
     }
   ];
   const movieQueries = useQueries(
@@ -96,11 +96,11 @@ const UserOverview: React.FC<UserOverviewProps> = props => {
       <div className='flex justify-between'>
         <div>
           <p className='text-lg'>Total Rating</p>
-          <p className='text-[4rem] font-bold'>{props.ratingData?.length}</p>
+          <p className='text-[4rem] font-bold'>{props.ratingData?.length ?? 0}</p>
         </div>
         <div>
           <p className='text-lg'>Total Reviews</p>
-          <p className='text-[4rem] font-bold'>{props.ratingData?.length}</p>
+          <p className='text-[4rem] font-bold'>{props.ratingData?.length ?? 0}</p>
         </div>
         <div className='w-1/3'>
           <p className='text-lg'>Total Reviews</p>
@@ -115,22 +115,22 @@ const UserOverview: React.FC<UserOverviewProps> = props => {
         </div>
       </div>
       <h2 className='text-2xl font-bold mt-8 '>Favourites</h2>
-      <div className='space-y-3 pt-3'>
+      <div className='space-y-3 mt-4 pt-3'>
         {isLoading ? (
           <LoadingIndicator />
         ) : (
-          movieQueries.map((movie, index) => {
+          movieQueries.map((res, index) => {
+            const movie = mapJsonToMovie(res.data);
             return (
               <MovieCardUser
-                movieId={movie.data.id}
-                overview={movie.data.overview}
-                posterPath={buildImageUrl(movie.data.poster_path, 'original')}
-                avgRating={movie.data.vote_average}
-                releaseDate={movie.data.release_date}
-                title={movie.data.title}
                 key={index}
-                isFavourite={true}
-              ></MovieCardUser>
+                movieId={movie.id}
+                posterPath={buildImageUrl(movie.posterPath, 'original')}
+                title={movie.title}
+                avgRating={movie.rating}
+                releaseDate={formatDateToDDMMYYYY(movie.releaseDate)}
+                overview={movie.overview}
+              />
             );
           })
         )}

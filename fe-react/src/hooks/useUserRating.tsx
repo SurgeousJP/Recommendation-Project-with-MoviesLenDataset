@@ -9,6 +9,8 @@ const useUserRating = (data: {
   return useQuery(['userRating', data.id], () => getUserRating(data.id), {
     onSuccess: data.onSuccess,
     onError: data.onError,
+    retry: false,
+    refetchOnWindowFocus: false,
     select: data => {
       console.log('data', data);
       return data.map(item => {
