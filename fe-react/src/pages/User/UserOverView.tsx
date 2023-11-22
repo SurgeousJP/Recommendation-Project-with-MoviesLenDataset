@@ -1,0 +1,142 @@
+import React from 'react';
+import { AxisOptions, Chart } from 'react-charts';
+import { useQueries } from 'react-query';
+import LoadingIndicator from 'src/components/LoadingIndicator';
+import MovieCardUser from 'src/components/MovieCardUser';
+import { getMovieDetail } from 'src/helpers/api';
+import { buildImageUrl } from 'src/helpers/utils';
+
+export type RatingData = {
+  rate: string;
+  rateCount: number;
+  year: number;
+};
+
+export type Series = {
+  label: string;
+  data: RatingData[];
+};
+
+export type RatingRawData = {
+  movie_id: string;
+  rating: number;
+  timestamp: number;
+};
+
+export interface UserOverviewProps {
+  ratingData: RatingRawData[];
+  favourites: number[];
+  // Define the props for the component here
+}
+
+function countRatings(ratings: RatingRawData[]): RatingData[] {
+  const countMap: { [key: string]: number } = {};
+
+  // Initialize countMap with default counts for ratings from 0 to 10
+  for (let i = 0; i <= 10; i++) {
+    countMap[i.toString()] = 0;
+  }
+
+  // Count the ratings
+  for (const { rating } of ratings) {
+    const key = rating.toString();
+    countMap[key] += 1;
+  }
+
+  // Convert the countMap to the desired format
+  const result: RatingData[] = Object.entries(countMap).map(([rate, rateCount]) => ({
+    rate,
+    rateCount,
+    year: 0
+  }));
+
+  return result;
+}
+
+const UserOverview: React.FC<UserOverviewProps> = props => {
+  // Implement the component logic here
+
+  const primaryAxis = React.useMemo(
+    (): AxisOptions<RatingData> => ({
+      getValue: datum => datum.rate
+    }),
+    []
+  );
+
+  const secondaryAxes = React.useMemo(
+    (): AxisOptions<RatingData>[] => [
+      {
+        getValue: datum => datum.rateCount,
+        elementType: 'bar'
+      }
+    ],
+    []
+  );
+  const data: Series[] = [
+    {
+      label: 'Ratings',
+      data: countRatings(props.ratingData)
+    }
+  ];
+  const movieQueries = useQueries(
+    props.favourites.map(movieId => {
+      return {
+        queryKey: ['movie', movieId],
+        queryFn: () => getMovieDetail(movieId.toString())
+      };
+    })
+  );
+
+  const isLoading = movieQueries.some(result => result.isLoading);
+
+  return (
+    // JSX code for rendering the component
+    <div className='mt-3'>
+      <h2 className='text-2xl font-bold'>Stats</h2>
+      <div className='flex justify-between'>
+        <div>
+          <p className='text-lg'>Total Rating</p>
+          <p className='text-[4rem] font-bold'>{props.ratingData?.length}</p>
+        </div>
+        <div>
+          <p className='text-lg'>Total Reviews</p>
+          <p className='text-[4rem] font-bold'>{props.ratingData?.length}</p>
+        </div>
+        <div className='w-1/3'>
+          <p className='text-lg'>Total Reviews</p>
+          <Chart
+            options={{
+              data: data,
+              primaryAxis: primaryAxis,
+              secondaryAxes: secondaryAxes,
+              dark: true
+            }}
+          />
+        </div>
+      </div>
+      <h2 className='text-2xl font-bold mt-8 '>Favourites</h2>
+      <div className='space-y-3 pt-3'>
+        {isLoading ? (
+          <LoadingIndicator />
+        ) : (
+          movieQueries.map((movie, index) => {
+            return (
+              <MovieCardUser
+                movieId={movie.data.id}
+                overview={movie.data.overview}
+                posterPath={buildImageUrl(movie.data.poster_path, 'original')}
+                avgRating={movie.data.vote_average}
+                releaseDate={movie.data.release_date}
+                title={movie.data.title}
+                key={index}
+                isFavourite={true}
+              ></MovieCardUser>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default UserOverview;

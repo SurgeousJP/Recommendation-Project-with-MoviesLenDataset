@@ -28,6 +28,24 @@
   .scrollbar::-webkit-scrollbar-thumb:hover {
     background: #a7a7a7;
   }
+  .text-area::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .text-area::-webkit-scrollbar-track {
+    margin: 0px 10px;
+    border-radius: 20px;
+  }
+
+  .text-area::-webkit-scrollbar-thumb {
+    background: #a7a7a7;
+    border-radius: 20px;
+  }
+
+  .text-area::-webkit-scrollbar-thumb:hover {
+    background: #a7a7a7;
+  }
 }
 
 @font-face {
@@ -59,6 +77,12 @@ input {
   @apply bg-textbox px-5 py-3 rounded-md text-white items-start;
 }
 input:focus {
+  @apply outline-none border-2 border-primary;
+}
+.text-area {
+  @apply bg-textbox px-5 py-3 rounded-md text-white items-start;
+}
+.text-area:focus {
   @apply outline-none border-2 border-primary;
 }
 button {

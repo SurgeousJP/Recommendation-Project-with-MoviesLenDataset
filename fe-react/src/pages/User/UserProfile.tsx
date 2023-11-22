@@ -1,43 +1,11 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
-import { AxisOptions, Chart } from 'react-charts';
-import { useQuery } from 'react-query';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import { getColor } from 'src/helpers/utils';
 import useUserProfile from 'src/hooks/useUserProfile';
 import useUserRating from 'src/hooks/useUserRating';
-type RatingData = {
-  rate: string;
-  rateCount: number;
-};
-
-type Series = {
-  label: string;
-  data: RatingData[];
-};
-function countRatings(ratings: any): RatingData[] {
-  const countMap: { [key: string]: number } = {};
-
-  // Initialize countMap with default counts for ratings from 0 to 10
-  for (let i = 0; i <= 10; i++) {
-    countMap[i.toString()] = 0;
-  }
-
-  // Count the ratings
-  for (const { rating } of ratings) {
-    const key = rating.toString();
-    countMap[key] += 1;
-  }
-
-  // Convert the countMap to the desired format
-  const result: RatingData[] = Object.entries(countMap).map(([rate, rateCount]) => ({
-    rate,
-    rateCount
-  }));
-
-  return result;
-}
+import UserOverview from './UserOverView';
+import UserRatingPanel from './UserRatingPanel';
 
 const UserProfile = () => {
   const { id } = useParams();
@@ -48,41 +16,20 @@ const UserProfile = () => {
 
   const { data: ratingData, isLoading: isRatingLoading } = useUserRating({
     id: id ?? '',
-    onSuccess: () => {
+    onSuccess: data => {
       let totalRating = 0;
-      ratingData?.forEach(element => {
+      data.forEach(element => {
         totalRating += element.rating;
       });
-      setAvarageRating(totalRating / ratingData?.length);
+      console.log('totalRating', totalRating);
+      setAvarageRating(totalRating / data.length);
     }
   });
-
-  const primaryAxis = React.useMemo(
-    (): AxisOptions<RatingData> => ({
-      getValue: datum => datum.rate
-    }),
-    []
-  );
-
-  const secondaryAxes = React.useMemo(
-    (): AxisOptions<RatingData>[] => [
-      {
-        getValue: datum => datum.rateCount,
-        elementType: 'bar'
-      }
-    ],
-    []
-  );
 
   if (isLoading || isRatingLoading) {
     return <p>Loading...</p>;
   }
-  const data: Series[] = [
-    {
-      label: 'Ratings',
-      data: countRatings(ratingData)
-    }
-  ];
+
   return (
     <div>
       <div className='relative md:h-96 lg:h-[25rem] flex justify-center items-center lg:px-24 '>
@@ -117,7 +64,7 @@ const UserProfile = () => {
           </div>
         </div>
       </div>
-      <div className='py-3'>
+      <div className='py-3 px-24 '>
         <Tabs>
           <TabList className={'flex justify-center border-border border-b-1 react-tabs__tab-list '}>
             <Tab>Overview</Tab>
@@ -127,34 +74,13 @@ const UserProfile = () => {
             <Tab>Watchlist</Tab>
           </TabList>
           <TabPanel>
-            <div className='px-24 mt-3'>
-              <h2 className='text-2xl font-bold'>Stats</h2>
-              <div className='flex justify-between'>
-                <div>
-                  <p className='text-lg'>Total Rating</p>
-                  <p className='text-[4rem] font-bold'>{ratingData?.length}</p>
-                </div>
-                <div>
-                  <p className='text-lg'>Total Reviews</p>
-                  <p className='text-[4rem] font-bold'>{ratingData?.length}</p>
-                </div>
-                <div className='w-1/3'>
-                  <p className='text-lg'>Total Reviews</p>
-                  <Chart
-                    options={{
-                      data: data,
-                      primaryAxis: primaryAxis,
-                      secondaryAxes: secondaryAxes,
-                      dark: true
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
+            <UserOverview ratingData={ratingData} favourites={[233, 3, 5, 6, 11]} />
           </TabPanel>
           <TabPanel></TabPanel>
           <TabPanel></TabPanel>
-          <TabPanel></TabPanel>
+          <TabPanel>
+            <UserRatingPanel userId={id}></UserRatingPanel>
+          </TabPanel>
           <TabPanel></TabPanel>
         </Tabs>
       </div>
