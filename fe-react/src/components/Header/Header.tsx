@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 import logo from 'src/assets/images/Logo.png';
-import { useUser } from 'src/hooks/useUser';
+import useUser from 'src/hooks/useUser';
+import useUserId from 'src/hooks/useUserId';
 
 type HeaderProps = {
   isOpen: boolean;
@@ -13,12 +14,11 @@ export default function Header(props: HeaderProps) {
   const { onBurgerMenuClick, isOpen } = props;
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
-  const user = useUser();
-  let hasLogin = false;
-  if (user.user != undefined && user.user != null) {
-    console.log('user', user);
-    hasLogin = true;
-  }
+
+  const { userId, hasLogin } = useUserId();
+
+  const { data: user } = useUser(userId);
+
   const toggleMenu = () => {
     onBurgerMenuClick();
   };
@@ -146,25 +146,25 @@ export default function Header(props: HeaderProps) {
               <div className='py-1 px-0.5'>
                 <div className='p-3'>
                   <h2 className='text-white font-semibold text-md '>
-                    <Link to={`/u/${user.user?.user.id}`}>{user.user?.user.username}</Link>
+                    <Link to={`/u/${userId}`}>{user?.username}</Link>
                   </h2>
                   <p className='text-xs text-white/70'>
-                    <Link to={`/u/${user.user?.user.id}`}>View profile</Link>
+                    <Link to={`/u/${userId}`}>View profile</Link>
                   </p>
                 </div>
                 <hr className='border-white/30'></hr>
                 <ul className='my-1'>
                   <li className=' hover:bg-gray-800 py-1.5 px-3'>
-                    <Link to={`/u/${user.user?.user.id}/disscussion`}>Disscussion</Link>
+                    <Link to={`/u/${userId}/disscussion`}>Disscussion</Link>
                   </li>
                   <li className=' hover:bg-gray-800 py-1.5 px-3'>
-                    <Link to={`/u/${user.user?.user.id}/lists`}>Lists</Link>
+                    <Link to={`/u/${userId}/lists`}>Lists</Link>
                   </li>
                   <li className=' hover:bg-gray-800 py-1.5 px-3'>
-                    <Link to={`/u/${user.user?.user.id}/ratings`}>Ratings</Link>
+                    <Link to={`/u/${userId}/ratings`}>Ratings</Link>
                   </li>
                   <li className=' hover:bg-gray-800 py-1.5 px-3'>
-                    <Link to={`/u/${user.user?.user.id}/watchlist`}>Watchlist</Link>
+                    <Link to={`/u/${userId}/watchlist`}>Watchlist</Link>
                   </li>
                 </ul>
                 <hr className='border-white/30'></hr>

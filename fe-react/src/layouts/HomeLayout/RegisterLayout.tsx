@@ -34,7 +34,7 @@ export default function Register({ children }: Props) {
   return (
     <div id='outer-container'>
       <Header onBurgerMenuClick={toggleSideBar} isOpen={isSideBarOpen} />
-      <div className='mt-14 min-h-screen bg-background' id='page-wrap'>
+      <div className='mt-14 min-h-screen pb-4 bg-background' id='page-wrap'>
         {children}
       </div>
       <Footer />

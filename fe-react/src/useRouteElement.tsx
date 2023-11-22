@@ -6,16 +6,11 @@ import ForgotPass from './pages/ForgotPass';
 import HomeLayout from './layouts/HomeLayout';
 import Details from './pages/Details';
 import SearchResult from './pages/SearchResult';
-import { useUser } from './hooks/useUser';
-import User from './pages/User/UserProfile';
+
 import UserProfile from './pages/User/UserProfile';
+import Logout from './pages/Logout/Logout';
 
 export default function useRouteElement() {
-  const { user } = useUser();
-  if (user) {
-    console.log('user', user);
-  }
-
   const routeElement = useRoutes([
     {
       path: '/',
@@ -51,7 +46,7 @@ export default function useRouteElement() {
     },
     {
       path: '/login',
-      element: user ? <Navigate to='/' /> : <Login />
+      element: <Login />
     },
     {
       path: '/register',
@@ -68,6 +63,10 @@ export default function useRouteElement() {
           <UserProfile />
         </HomeLayout>
       )
+    },
+    {
+      path: '/logout',
+      element: <Logout />
     }
   ]);
   return routeElement;

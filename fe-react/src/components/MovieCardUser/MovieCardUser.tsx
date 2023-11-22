@@ -8,6 +8,7 @@ import { useMutation, useQuery } from 'react-query';
 import LoadingIndicator from '../LoadingIndicator';
 import { useState } from 'react';
 import useRating from 'src/hooks/useRating';
+import useUserId from 'src/hooks/useUserId';
 
 type MovieCardUserProps = {
   movieId: number;
@@ -28,10 +29,11 @@ const MovieCardUser = ({
   avgRating,
   isFavourite
 }: MovieCardUserProps) => {
-  const userData = useUser();
-  const userId = userData.user?.user.id;
   const [rating, setRating] = useState<number | undefined>(undefined);
   const [hasRated, setHasRated] = useState(false);
+
+  const { userId, hasLogin } = useUserId();
+
   const handleCreateRatingSuccess = () => {
     setHasRated(true);
   };
@@ -41,7 +43,7 @@ const MovieCardUser = ({
   const handleDeleteRating = () => {
     setRating(0);
     setHasRated(false);
-    deleteRating({ userId: userData.user?.user.id ?? 1, movieId: movieId.toString() });
+    deleteRating({ userId: userId ?? 1, movieId: movieId.toString() });
   };
   const { isLoading: isRatingLoading, refetch: getUserRating } = useQuery(
     ['userRating', userId, movieId],
@@ -65,9 +67,9 @@ const MovieCardUser = ({
     setRating(rate);
     console.log(hasRated);
     if (hasRated === true) {
-      updateRating({ user_id: userData.user?.user.id ?? 1, movie_id: movieId, rating: rate });
+      updateRating({ user_id: userId ?? 1, movie_id: movieId, rating: rate });
     } else {
-      createRating({ user_id: userData.user?.user.id ?? 1, movie_id: movieId, rating: rate });
+      createRating({ user_id: userId ?? 1, movie_id: movieId, rating: rate });
     }
   };
 
