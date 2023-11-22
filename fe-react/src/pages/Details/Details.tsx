@@ -9,16 +9,17 @@ import DiscussionCard from 'src/components/Dicussion/DicussionCard';
 import useMovieDetail from 'src/hooks/useMovieDetail';
 import useCast from 'src/hooks/useCasts';
 import useKeyword from 'src/hooks/useKeyword';
-import { useUser } from 'src/hooks/useUser';
 import MovieDetails from './MovieDetails';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReviewForm from './ReviewForm';
+import useUser from 'src/hooks/useUser';
+import useUserId from 'src/hooks/useUserId';
 
 export default function Details() {
   const { id } = useParams();
-  const user = useUser();
   const [toggleReview, setToggleReview] = useState(false);
-  const isLogin = user.user != null;
+
+  const { userId, hasLogin } = useUserId();
 
   const MockDiscussionData = {
     subject: 'Sample Discussion',
@@ -48,7 +49,7 @@ export default function Details() {
 
   return (
     <div className='w-auto bg-background '>
-      <MovieDetails movie={movie} userId={user.user?.user.id} isLogin={isLogin} />
+      <MovieDetails movie={movie} userId={userId} hasLogin={hasLogin} />
       <div className='flex mt-6'>
         <div className='pl-24 pr-10 w-[calc(100vw_-_80px_-_268px)] '>
           <div className='border-border border-b-1'>
@@ -105,7 +106,7 @@ export default function Details() {
                     <h3 className='font-semibold my-5'>Read All Reviews</h3>
                   </a>
                 </div>
-                <ReviewForm hidden={toggleReview} className='mt-4' userId={user.user?.user.id} />
+                <ReviewForm hidden={toggleReview} className='mt-4' userId={userId} />
                 <button
                   className='font-semibold text-primary w-fit border-none hover:bg-transparent h-fit text-base normal-case my-3 hover:opacity-70'
                   onClick={handleToggleReview}

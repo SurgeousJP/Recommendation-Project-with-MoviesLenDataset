@@ -120,7 +120,16 @@ func Init() {
 
 	server = gin.Default()
 	// Set up CORS (Cross-Origin Resource Sharing)
-	server.Use(cors.Default())
+	config := cors.DefaultConfig()
+
+	// Allow all origins
+	config.AllowAllOrigins = true
+
+	// Allow the "Authorization" header
+	config.AddAllowHeaders("Authorization")
+
+	server.Use(cors.New(config))
+
 	server.SetTrustedProxies(nil)
 }
 
@@ -147,12 +156,9 @@ func main() {
 
 	basePath := server.Group(serverGroup)
 
-	
-
 	// Register your routes
 	basePath.POST("/login", authMiddleware.LoginHandler)
 
-	
 	basePath.GET("/refresh_token", authMiddleware.RefreshHandler)
 
 	// Apply middleware only to the /currentUser route

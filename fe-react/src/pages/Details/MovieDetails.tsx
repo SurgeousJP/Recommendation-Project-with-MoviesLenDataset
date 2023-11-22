@@ -10,11 +10,11 @@ import Movie from 'src/types/Movie';
 
 interface MovieDetailsProps {
   movie: Movie | undefined;
-  isLogin: boolean;
+  hasLogin: boolean;
   userId: number;
 }
 
-const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, isLogin, userId }) => {
+const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) => {
   const [isRatingVisible, setRatingVisible] = useState(false);
   const [rating, setRating] = useState(0);
   const [hasRated, setHasRated] = useState(false);
@@ -112,7 +112,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, isLogin, userId }) =
             <button
               data-tooltip-id='my-tooltip'
               data-tooltip-content={
-                isLogin ? 'Add to list' : 'Login to create and edit custom lists'
+                hasLogin ? 'Add to list' : 'Login to create and edit custom lists'
               }
               data-tooltip-place='bottom'
               className='rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'
@@ -130,7 +130,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, isLogin, userId }) =
             <button
               data-tooltip-id='my-tooltip'
               data-tooltip-content={
-                isLogin ? 'Mark as favourite' : 'Login to add this movie to your favourites list'
+                hasLogin ? 'Mark as favourite' : 'Login to add this movie to your favourites list'
               }
               data-tooltip-place='bottom'
               className='rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'
@@ -148,7 +148,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, isLogin, userId }) =
             <button
               data-tooltip-id='my-tooltip'
               data-tooltip-content={
-                isLogin ? 'Add to your watchlist' : 'Login to add this movie to your watchlist'
+                hasLogin ? 'Add to your watchlist' : 'Login to add this movie to your watchlist'
               }
               data-tooltip-place='bottom'
               className='rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'
@@ -185,11 +185,11 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, isLogin, userId }) =
                 anchorSelect='#clickable'
                 place='bottom'
               >
-                {isLogin ? 'Rate this movie' : 'Login to rate this movie'}
+                {hasLogin ? 'Rate this movie' : 'Login to rate this movie'}
               </Tooltip>
 
               <Tooltip
-                hidden={!isLogin}
+                hidden={!hasLogin}
                 style={{ backgroundColor: 'rgb(55, 65, 81)' }}
                 opacity={1}
                 id='rating-clickable'
