@@ -6,9 +6,9 @@ const instance = axios.create({
   baseURL: 'http://localhost:9090/v1'
 });
 
-export const login = async (username: string, password: string) => {
-  console.log({ username, password });
-  const response = await instance.post('/user/login', { username, password });
+export const login = async (Username: string, Password: string) => {
+  console.log({ Username, Password });
+  const response = await instance.post('/login', { username: Username, password: Password });
   return response.data;
 };
 

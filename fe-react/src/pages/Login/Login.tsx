@@ -37,7 +37,7 @@ export default function Login() {
 
     //const data = await login(username, password);
     console.log(username, password);
-    testSignIn({ username, password });
+    testSignIn({ Username: username, Password: password });
   };
 
   return (

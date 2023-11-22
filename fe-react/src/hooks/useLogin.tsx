@@ -10,10 +10,10 @@ export function useSignIn() {
   const { mutate: signInMutation } = useMutation<
     LoginResponse,
     unknown,
-    { username: string; password: string },
+    { Username: string; Password: string },
     unknown
   >({
-    mutationFn: ({ username, password }) => login(username, password),
+    mutationFn: ({ Username, Password }) => login(Username, Password),
     onSuccess: data => {
       // TODO: save the user in the state
       queryClient.setQueryData(['user'], data);

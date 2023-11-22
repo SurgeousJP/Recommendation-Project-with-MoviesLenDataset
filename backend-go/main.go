@@ -2,17 +2,14 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"movies_backend/controllers"
-	"movies_backend/helper"
+	auth "movies_backend/jwt-authenticate"
 	"movies_backend/models"
 	"movies_backend/services/implementations"
 	"movies_backend/services/interfaces"
 	"os"
-	"time"
 
-	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -53,17 +50,9 @@ var (
 	movieDiscussionCollection *mongo.Collection
 	movieDiscussionService    interfaces.MovieDiscussionServices
 	// movieDiscussionController controllers.MovieDiscussionController
-
 	ctx         context.Context
 	mongoClient *mongo.Client
-	identityKey = "userId"
-	jwtSecret []byte
 )
-
-type login struct {
-	Username string `form:"username" json:"username" binding:"required"`
-	Password string `form:"password" json:"password" binding:"required"`
-}
 
 const (
 	NUMBER_OF_SECONDS_IN_ONE_DAY = 86400
@@ -99,9 +88,6 @@ func Init() {
 	}
 
 	databaseName = os.Getenv("DB_NAME")
-
-	jwtSecret = []byte(os.Getenv("JWT_SECRET_KEY"))
-	fmt.Print(jwtSecret)
 
 	movieCollection = mongoClient.Database(databaseName).Collection("movies")
 	movieService = implementations.NewMovieService(movieCollection, ctx)
@@ -139,95 +125,16 @@ func Init() {
 
 func returnUser(c *gin.Context) {
 	// claims := jwt.ExtractClaims(c)
-	user, _ := c.Get(identityKey)
+	user, _ := c.Get("userId")
 	c.JSON(200, gin.H{
 		"userId": user.(*models.User).UserId,
 	})
-  }
+}
 
 func main() {
 	Init()
 
-	// Define the middleware
-	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
-		Realm:       "validation zone",
-		Key:         jwtSecret,
-		Timeout:     time.Hour,
-		MaxRefresh:  time.Hour,
-		IdentityKey: identityKey,
-		PayloadFunc: func(data interface{}) jwt.MapClaims {
-			if v, ok := data.(*models.User); ok {
-				return jwt.MapClaims{
-					identityKey: v.UserId,
-					// Add other claims as needed
-				}
-			}
-			return jwt.MapClaims{}
-		},
-		IdentityHandler: func(c *gin.Context) interface{} {
-			claims := jwt.ExtractClaims(c)
-			return &models.User{
-				UserId: int(claims[identityKey].(float64)),
-				// Retrieve other claims as needed
-			}
-		},
-		Authenticator: func(c *gin.Context) (interface{}, error) {
-			var loginVals login
-			if err := c.ShouldBind(&loginVals); err != nil {
-				return "", jwt.ErrMissingLoginValues
-			}
-			username := loginVals.Username
-			password := loginVals.Password
-
-			user, err := userController.UserService.GetUserFromUsername(&username)
-
-			if err != nil {
-				return nil, jwt.ErrFailedAuthentication
-			}
-
-			if username == user.Username && helper.CheckPassword(user.PasswordHash, password) {
-				return &models.User{
-					UserId: user.UserId,
-					Username: user.Username,
-					PictureProfile: user.PictureProfile,
-				}, nil
-			}
-
-			return nil, jwt.ErrFailedAuthentication
-		},
-		Authorizator: func(data interface{}, c *gin.Context) bool {
-			user, _ := c.Get(identityKey)
-
-			if v, ok := data.(*models.User); ok && v.UserId == user.(*models.User).UserId {
-				return true
-			}
-			return false
-		},
-		Unauthorized: func(c *gin.Context, code int, message string) {
-			c.JSON(code, gin.H{
-				"code":    code,
-				"message": message,
-			})
-		},
-		TokenLookup: "header: Authorization, query: token, cookie: jwt",
-
-		TokenHeadName: "Bearer",
-
-		TimeFunc: time.Now,
-	})
-
-	if err != nil {
-		log.Fatal("JWT Error:" + err.Error())
-	}
-
-	// When you use jwt.New(), the function is already automatically called for checking,
-	// which means you don't need to call it again.
-	errInit := authMiddleware.MiddlewareInit()
-
-	if errInit != nil {
-		log.Fatal("authMiddleware.MiddlewareInit() Error:" + errInit.Error())
-	}
-
+	authMiddleware := auth.NewJWTAuthMiddleware(&userController)
 	defer mongoClient.Disconnect(ctx)
 
 	serverGroup := os.Getenv("SERVER_GROUP")
@@ -238,21 +145,33 @@ func main() {
 	}
 
 	basePath := server.Group(serverGroup)
+
+	
+
+	// Register your routes
 	basePath.POST("/login", authMiddleware.LoginHandler)
+
+	
 	basePath.GET("/refresh_token", authMiddleware.RefreshHandler)
-	basePath.Use(authMiddleware.MiddlewareFunc())
-  	{
-    	basePath.GET("/currentUser", returnUser)
-  	}
 
+	// Apply middleware only to the /currentUser route
+	basePath.GET("/currentUser", authMiddleware.MiddlewareFunc(), returnUser)
+
+	// Apply middleware to all routes under basePath, except for GET requests
+	basePath.Use(func(c *gin.Context) {
+		if c.Request.Method != "GET" {
+			authMiddleware.MiddlewareFunc()(c)
+		}
+	})
+
+	// Other route registrations without the middleware
 	userController.RegisterUserRoute(basePath)
-	basePath.Use(authMiddleware.MiddlewareFunc())
-
 	movieController.RegisterMovieRoute(basePath)
 	keywordController.RegisterKeywordRoute(basePath)
-	ratingController.RegisterRatingRoute(basePath)
 	crewController.RegisterCrewRoute(basePath)
 	castController.RegisterCastRoute(basePath)
+	ratingController.RegisterRatingRoute(basePath)
+
 	// movieDiscussionController.RegisterMovieDiscussionRoute(basePath)
 
 	log.Fatal(server.Run(":" + port))
