@@ -63,6 +63,7 @@ func (mc *MovieController) GetMovie(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
+	
 	movie, err := mc.MovieService.GetMovie(&movieId)
 
 	if err != nil {

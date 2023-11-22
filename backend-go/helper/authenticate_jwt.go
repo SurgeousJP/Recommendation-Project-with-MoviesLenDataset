@@ -4,21 +4,21 @@ import (
 	"fmt"
 	"movies_backend/models"
 	// "log"
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"net/http"
 	"os"
 	"time"
-	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 	// "github.com/joho/godotenv"
 )
 
-
 var (
-	secret *[]byte
-	apiKey *string
+	secret         *[]byte
+	apiKey         *string
+	jwtTokenString *string
 )
 
-func loadEnvVariables () {
+func loadEnvVariables() {
 	// err := godotenv.Load()
 	// if err != nil {
 	// 	log.Fatal("Error loading .env file")
@@ -31,9 +31,9 @@ func loadEnvVariables () {
 
 func GenerateJWTTokenString(user *models.User) (string, error) {
 	/*
-	HS256 (HMAC with SHA-256) is a symmetric keyed hashing algorithm that uses one secret key. 
-	Symmetric means two parties share the secret key. 
-	The key is used for both generating the signature and validating it.
+		HS256 (HMAC with SHA-256) is a symmetric keyed hashing algorithm that uses one secret key.
+		Symmetric means two parties share the secret key.
+		The key is used for both generating the signature and validating it.
 	*/
 	loadEnvVariables()
 
@@ -61,7 +61,7 @@ func JWTAuthenticateMiddleware() gin.HandlerFunc {
 		var tokenRequest struct {
 			TokenString string `json:"token"`
 		}
-	
+
 		if err := c.ShouldBindJSON(&tokenRequest); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid request payload"})
 			return
@@ -90,8 +90,8 @@ func JWTAuthenticateMiddleware() gin.HandlerFunc {
 
 		claims, _ := token.Claims.(jwt.MapClaims)
 		user := claims["user"]
-        c.Set("user", user)
-		
+		c.Set("user", user)
+
 		c.Next()
 	}
 }
@@ -99,8 +99,8 @@ func JWTAuthenticateMiddleware() gin.HandlerFunc {
 func GetJwtToken(c *gin.Context) {
 	loadEnvVariables()
 	var loginRequest struct {
-		User models.User `json:"user"`
-		Token string `json:"token"`
+		User  models.User `json:"user"`
+		Token string      `json:"token"`
 	}
 
 	if err := c.ShouldBindJSON(&loginRequest); err != nil {
@@ -121,4 +121,5 @@ func GetJwtToken(c *gin.Context) {
 	}
 
 	c.String(http.StatusOK, token)
+	jwtTokenString = &token
 }
