@@ -41,22 +41,22 @@ export default function Header(props: HeaderProps) {
         <nav>
           <ul className=' text-white hidden lg:flex lg:space-x-14 md:ml-8 md:transform-none xl:ml-16 w-auto'>
             <li>
-              <a className='hover:text-primary transition ease-out duration-300' href='movies'>
+              <a className='hover:text-primary transition ease-out duration-300' href='/'>
                 Movies
               </a>
             </li>
             <li>
-              <a className='hover:text-primary transition ease-out duration-300' href='tv-shows'>
+              <a className='hover:text-primary transition ease-out duration-300' href='/'>
                 Tv shows
               </a>
             </li>
             <li>
-              <a className='hover:text-primary transition ease-out duration-300' href='people'>
+              <a className='hover:text-primary transition ease-out duration-300' href='/'>
                 People
               </a>
             </li>
             <li>
-              <a className='hover:text-primary transition ease-out duration-300' href='people'>
+              <a className='hover:text-primary transition ease-out duration-300' href='/'>
                 More
               </a>
             </li>

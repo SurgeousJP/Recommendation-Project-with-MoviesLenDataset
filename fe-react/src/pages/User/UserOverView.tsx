@@ -114,7 +114,7 @@ const UserOverview: React.FC<UserOverviewProps> = props => {
           />
         </div>
       </div>
-      <h2 className='text-2xl font-bold mt-8 '>Favourites</h2>
+      {/* <h2 className='text-2xl font-bold mt-8 '>Favourites</h2>
       <div className='space-y-3 mt-4 pt-3'>
         {isLoading ? (
           <LoadingIndicator />
@@ -134,7 +134,7 @@ const UserOverview: React.FC<UserOverviewProps> = props => {
             );
           })
         )}
-      </div>
+      </div> */}
     </div>
   );
 };
