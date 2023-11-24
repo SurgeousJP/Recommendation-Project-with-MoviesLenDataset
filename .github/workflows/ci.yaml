@@ -27,6 +27,7 @@ jobs:
       - name: Test and Coverage
         run: |
             cd backend-go
-            go test -coverprofile=coverage.out ./controllers & go tool cover -html=coverage.out
+            cd controllers
+            go test -coverprofile=coverage.out & go tool cover -html=coverage.out
             gremlins unleash
 
