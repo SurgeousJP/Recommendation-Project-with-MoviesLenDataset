@@ -15,7 +15,6 @@ jobs:
     env:
       DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
       DB_NAME: ${{ secrets.DB_NAME }}
-      PATH: $PATH:/path/to/go/bin
     steps:
       - name: Print Environment Variables
         run: |
