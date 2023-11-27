@@ -26,7 +26,8 @@ jobs:
         run: |
             cd backend-go
             go get github.com/stretchr/testify
-            go install github.com/go-gremlins/gremlins/cmd/gremlins@v0.4.0
+            go get github.com/go-gremlins/gremlins/cmd/gremlins@v0.4.0
+            go mod tidy
       - name: Build Backend
         run: |
             cd backend-go
