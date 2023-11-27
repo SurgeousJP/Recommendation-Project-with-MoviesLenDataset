@@ -16,6 +16,10 @@ jobs:
       DB_CONNECTION_STRING: ${{ vars.DB_CONNECTION_STRING }}
       DB_NAME: ${{ vars.DB_NAME }}
     steps:
+      - name: Print Environment Variables
+        run: |
+            echo "DB_CONNECTION_STRING=$DB_CONNECTION_STRING"
+            echo "DB_NAME=$DB_NAME"
       - name: Checkout
         uses: actions/checkout@v3
       - name: Install dependecies
