@@ -20,6 +20,7 @@ jobs:
         run: |
             echo "DB_CONNECTION_STRING=$DB_CONNECTION_STRING"
             echo "DB_NAME=$DB_NAME"
+            export PATH=${PATH}:`go env GOPATH`/bin
       - name: Checkout
         uses: actions/checkout@v3
       - name: Install dependecies
