@@ -28,6 +28,13 @@ jobs:
             cd backend-go
             go get github.com/stretchr/testify
             go install github.com/go-gremlins/gremlins/cmd/gremlins@v0.4.0
+            # Add debugging step to check if gremlins is installed after the command
+            if command -v gremlins &> /dev/null
+            then
+                echo "Gremlins is now installed"
+            else
+                echo "Gremlins installation failed"
+            fi
             go mod tidy
       - name: Build Backend
         run: |
