@@ -9,13 +9,15 @@ jobs:
       fail-fast: false 
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        go-version: ["1.20"] 
     name: Test
     runs-on: ${{ matrix.os }}
     env:
       DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
       DB_NAME: ${{ secrets.DB_NAME }}
     steps:
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
       - name: Print Environment Variables
         run: |
             echo "DB_CONNECTION_STRING=$DB_CONNECTION_STRING"
@@ -27,13 +29,7 @@ jobs:
             go env
             cd backend-go
             go get github.com/stretchr/testify
-            if [ "$RUNNER_OS" == "Windows" ]; then
-                set GOBIN=%cd%\bin
-            else
-                export GOBIN=$PWD/bin
-            fi
-            go get github.com/go-gremlins/gremlins/cmd/gremlins@v0.4.0
-            go mod tidy
+            go install github.com/go-gremlins/gremlins/cmd/gremlins@v0.4.0
       - name: Build Backend
         run: |
             cd backend-go
