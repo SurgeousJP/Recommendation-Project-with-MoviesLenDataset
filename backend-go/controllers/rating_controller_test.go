@@ -13,7 +13,7 @@ import (
 
 	// "github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
+	// "github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -37,10 +37,10 @@ func (suite *RatingTestSuite) SetupTest() {
 
 	ctx := context.TODO()
 
-	err := godotenv.Load("../.env")
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// err := godotenv.Load("../.env")
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
 
 	// Retrieve the connection string from the environment
 	connectionString := os.Getenv("DB_CONNECTION_STRING")

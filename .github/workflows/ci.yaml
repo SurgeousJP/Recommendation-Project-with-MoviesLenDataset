@@ -8,15 +8,25 @@ jobs:
     strategy: 
       fail-fast: false 
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        go-version: ["1.20"] 
+        os: [ubuntu-latest, windows-latest, macos-latest]
     name: Test
     runs-on: ${{ matrix.os }}
+    env:
+      DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
+      DB_NAME: ${{ secrets.DB_NAME }}
     steps:
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+      - name: Print Environment Variables
+        run: |
+            echo "DB_CONNECTION_STRING=$DB_CONNECTION_STRING"
+            echo "DB_NAME=$DB_NAME"
       - name: Checkout
         uses: actions/checkout@v3
       - name: Install dependecies
         run: |
+            go env
             cd backend-go
             go get github.com/stretchr/testify
             go install github.com/go-gremlins/gremlins/cmd/gremlins@v0.4.0
@@ -28,6 +38,5 @@ jobs:
         run: |
             cd backend-go
             cd controllers
-            go test -coverprofile=coverage.out & go tool cover -html=coverage.out
+            go test
             gremlins unleash
-
