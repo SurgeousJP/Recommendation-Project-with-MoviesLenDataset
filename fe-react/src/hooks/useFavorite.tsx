@@ -1,10 +1,9 @@
 import { useMutation } from 'react-query';
-import useUserProfile from './useUserProfile';
 import { updateUserProfile } from 'src/helpers/api';
+import useUser from './useUser';
 
-const useFavorite = (userId: string, favoriteId: number, onSuccess?: () => void) => {
-  const { data: user } = useUserProfile(userId);
-  console.log('user', user, userId);
+const useFavorite = (userId: number | undefined, favoriteId: number, onSuccess?: () => void) => {
+  const { data: user } = useUser(userId);
   const mutation = useMutation(updateUserProfile, {
     onSuccess: onSuccess
   });
@@ -13,9 +12,13 @@ const useFavorite = (userId: string, favoriteId: number, onSuccess?: () => void)
     try {
       // Wait for the user profile to be fetched
       const updatedUser = user
-        ? { ...user, favorite_list: [...user.favorite_list, favoriteId] }
+        ? {
+            ...user,
+            favorite_list: user.favorite_list.includes(favoriteId)
+              ? user.favorite_list.filter(id => id !== favoriteId)
+              : [...user.favorite_list, favoriteId]
+          }
         : null;
-      console.log('updatedUser', updatedUser);
       await mutation.mutateAsync(updatedUser);
     } catch (error) {
       // Handle errors, if needed

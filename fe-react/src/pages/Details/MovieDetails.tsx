@@ -7,6 +7,8 @@ import { buildImageUrl, formatDateToDDMMYYYY, getColor } from 'src/helpers/utils
 import useCrew from 'src/hooks/useCrew';
 import useFavorite from 'src/hooks/useFavorite';
 import useRating from 'src/hooks/useRating';
+import useUser from 'src/hooks/useUser';
+import useUserId from 'src/hooks/useUserId';
 import Movie from 'src/types/Movie';
 
 interface MovieDetailsProps {
@@ -19,20 +21,24 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
   const [isRatingVisible, setRatingVisible] = useState(false);
   const [rating, setRating] = useState(0);
   const [hasRated, setHasRated] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(true);
-
+  const [isFavorite, setIsFavorite] = useState(false);
+  const handleGetUserSuccess = data => {
+    console.log(data);
+    data.favorite_list.includes(movie?.id) && setIsFavorite(true);
+  };
   const handleCreateRatingSuccess = () => {
     setHasRated(true);
   };
   const handleAddFavoriteSuccess = () => {
-    setIsFavorite(true);
+    setIsFavorite(!isFavorite);
   };
+  const userQuery = useUser(userId, handleGetUserSuccess);
   const { createRating } = useRating(handleCreateRatingSuccess);
   const { mutate: updateRating } = useMutation(updateMovieRating);
   const { mutate: deleteRating } = useMutation(deleteMovieRating);
   const { data: crews } = useCrew(movie?.id.toString() || '');
-  const { mutate: addFavorite } = useFavorite(
-    userId && userId.toString(),
+  const { mutate: toggleFavorite } = useFavorite(
+    userId,
     movie?.id || null,
     handleAddFavoriteSuccess
   );
@@ -53,6 +59,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
 
     fetchRating();
   }, [userId, movie?.id]);
+
   const handleRating = (rate: number) => {
     console.log(rate);
     setRating(rate);
@@ -68,6 +75,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
     setHasRated(false);
     deleteRating({ userId: userId, movieId: movie?.id.toString() });
   };
+
   if (!movie) {
     return <div>Loading...</div>;
   }
@@ -77,7 +85,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
   };
   const handleAddFavorite = () => {
     if (hasLogin) {
-      addFavorite();
+      toggleFavorite();
     }
   };
 
@@ -144,24 +152,20 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
               </svg>{' '}
             </button>
             <button
-              onClick={handleAddFavorite}
+              onClick={hasLogin ? handleAddFavorite : () => {}}
               data-tooltip-id='my-tooltip'
               data-tooltip-content={
                 hasLogin ? 'Mark as favourite' : 'Login to add this movie to your favourites list'
               }
               data-tooltip-place='bottom'
-              className={`border-1  w-12 h-12 rounded-full group/favourite ${
+              className={`border-1  w-12 h-12 rounded-full ${
                 isFavorite
                   ? 'bg-red-400 border-red-400 hover:bg-red-400'
-                  : 'border-white/70 hover:bg-white/70 '
+                  : 'border-none bg-gray-700 hover:bg-gray-600'
               }`}
             >
               <svg
-                className={
-                  isFavorite
-                    ? 'fill-white'
-                    : 'fill-white/70 group-hover/favourite:fill-background/70'
-                }
+                className={isFavorite ? 'fill-white' : 'fill-white/70 '}
                 xmlns='http://www.w3.org/2000/svg'
                 width='20'
                 height='20'
@@ -192,7 +196,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
               <button
                 id='clickable'
                 className='rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'
-                onClick={handleRatingButton}
+                onClick={hasLogin ? handleRatingButton : () => {}}
               >
                 <svg
                   className={`w-5 h-5 ${hasRated ? 'fill-yellow-400' : 'fill-white'}`}
@@ -249,8 +253,8 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
             <h3 className='font-bold text-xl'>Overview</h3>
             <p className=''>{movie?.overview}</p>
             <ol className='flex md:space-x-16 lg:space-x-20 xl:space-x-44 mt-4'>
-              {crews?.map(crew => (
-                <li key={crew.id}>
+              {crews?.map((crew, index) => (
+                <li key={index}>
                   <p className='font-bold'>{crew.name}</p>
                   <p className='text-sm'>{crew.job}</p>
                 </li>

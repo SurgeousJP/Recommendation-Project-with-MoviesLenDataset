@@ -5,6 +5,7 @@ import LoadingIndicator from 'src/components/LoadingIndicator';
 import MovieCardUser from 'src/components/MovieCardUser';
 import { getMovieDetail, getUserRating } from 'src/helpers/api';
 import { buildImageUrl } from 'src/helpers/utils';
+import MovieList from './MovieList';
 
 export type Series = {
   label: string;
@@ -13,6 +14,7 @@ export type Series = {
 
 interface UserRatingPanelProps {
   userId: string;
+  favoriteList?: number[];
 }
 type RatingData = {
   rateCount: number;
@@ -53,7 +55,7 @@ function countRatings(ratings: RatingRawData[]): RatingData[] {
   return result;
 }
 
-const UserRatingPanel = ({ userId }: UserRatingPanelProps) => {
+const UserRatingPanel = ({ userId, favoriteList }: UserRatingPanelProps) => {
   const { data: ratingData } = useQuery(['userRating', userId], () => getUserRating(userId), {
     select: (data): RatingRawData[] => {
       return data.map(rating => {
@@ -119,28 +121,13 @@ const UserRatingPanel = ({ userId }: UserRatingPanelProps) => {
           }}
         />
       </div>
-      <h2 className='text-2xl font-bold mb-3'>My Ratings</h2>
-
-      {isLoading ? (
-        <LoadingIndicator />
-      ) : (
-        <div className='space-y-3'>
-          {movieQueries.map((movie, index) => {
-            return (
-              <MovieCardUser
-                movieId={movie.data.id}
-                overview={movie.data.overview}
-                posterPath={buildImageUrl(movie.data.poster_path, 'original')}
-                avgRating={movie.data.vote_average}
-                releaseDate={movie.data.release_date}
-                title={movie.data.title}
-                key={index}
-                isFavourite={true}
-              ></MovieCardUser>
-            );
-          })}
-        </div>
-      )}
+      <MovieList
+        movieIds={ratingData?.map(rating => parseInt(rating.movie_id)) ?? []}
+        nullListMessage={`You haven't rate any movie yet`}
+        title='My Ratings'
+        canRemove
+        favoriteList={favoriteList}
+      />
     </div>
   );
 };

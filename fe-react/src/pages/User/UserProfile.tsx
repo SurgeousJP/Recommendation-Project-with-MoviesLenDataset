@@ -6,13 +6,14 @@ import useUserProfile from 'src/hooks/useUserProfile';
 import useUserRating from 'src/hooks/useUserRating';
 import UserOverview from './UserOverView';
 import UserRatingPanel from './UserRatingPanel';
-import UserRecomList from './UserRecomList';
-import DiscussionCard from './../../components/Dicussion/DicussionCard';
+import UserRecomList from './MovieList';
+import useUser from 'src/hooks/useUser';
+import MovieList from './MovieList';
 
 const UserProfile = () => {
   const { id } = useParams();
 
-  const { data: userProfileData, isLoading } = useUserProfile(id);
+  const { data: userProfileData, isLoading } = useUser(parseInt(id));
 
   const [avarageRating, setAvarageRating] = useState<number | undefined>(undefined);
 
@@ -77,13 +78,28 @@ const UserProfile = () => {
           </TabList>
           <TabPanel>
             <UserOverview ratingData={ratingData} favourites={[233, 3, 5, 6, 11]} />
-            <UserRecomList movieIds={userProfileData.recommendation_list}></UserRecomList>
+            <MovieList
+              title={'My Favourite List'}
+              nullListMessage={`You don't have any favourite movie yet.`}
+              favoriteList={userProfileData.favorite_list}
+              canRemove
+              movieIds={userProfileData.favorite_list}
+            />
           </TabPanel>
           <TabPanel>
-            <UserRatingPanel userId={id}></UserRatingPanel>
+            <UserRatingPanel
+              userId={id}
+              favoriteList={userProfileData.favorite_list}
+            ></UserRatingPanel>
           </TabPanel>
           <TabPanel>
-            <UserRecomList movieIds={userProfileData.recommendation_list}></UserRecomList>
+            <MovieList
+              title={'My Recommendations'}
+              nullListMessage={`We don't have enough data to suggest any movies. You can help by rating movies
+              you've seen.`}
+              favoriteList={userProfileData.favorite_list}
+              movieIds={userProfileData.recommendation_list}
+            />
           </TabPanel>
           <TabPanel></TabPanel>
           <TabPanel></TabPanel>

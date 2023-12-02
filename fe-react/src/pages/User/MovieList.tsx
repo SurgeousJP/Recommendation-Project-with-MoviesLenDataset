@@ -6,19 +6,26 @@ import MovieCardUser from 'src/components/MovieCardUser';
 import { getMovieDetail } from 'src/helpers/api';
 import { buildImageUrl, formatDateToDDMMYYYY, mapJsonToMovie } from 'src/helpers/utils';
 
-interface UserRecomListProps {
+interface MovieListProps {
+  title: string;
+  nullListMessage: string;
   movieIds: number[];
+  canRemove?: boolean;
+  favoriteList?: number[];
 }
 
-const UserRecomList: React.FC<UserRecomListProps> = ({ movieIds }) => {
+const MovieList: React.FC<MovieListProps> = ({
+  movieIds,
+  nullListMessage,
+  title,
+  canRemove,
+  favoriteList
+}) => {
   console.log('movieIds', movieIds);
-  if (movieIds === null)
+  if (movieIds === null || movieIds === undefined)
     return (
       <div className='mt-4'>
-        <p>
-          We don&apos;t have enough data to suggest any movies. You can help by rating movies
-          you&apos;ve seen.
-        </p>
+        <p>{nullListMessage}</p>
       </div>
     );
 
@@ -35,7 +42,7 @@ const UserRecomList: React.FC<UserRecomListProps> = ({ movieIds }) => {
 
   return (
     <div className='mt-3'>
-      <h2 className='text-2xl font-bold mb-3'>My Recommendations</h2>
+      <h2 className='text-2xl font-bold mb-3'>{title}</h2>
       {isLoading ? (
         <LoadingIndicator></LoadingIndicator>
       ) : (
@@ -48,10 +55,11 @@ const UserRecomList: React.FC<UserRecomListProps> = ({ movieIds }) => {
                 movieId={movie.id}
                 posterPath={buildImageUrl(movie.posterPath, 'original')}
                 title={movie.title}
+                isFavourite={favoriteList?.includes(movie.id)}
                 releaseDate={formatDateToDDMMYYYY(movie.releaseDate)}
                 overview={movie.overview}
                 avgRating={movie.rating}
-                canRemove={false}
+                canRemove={canRemove}
               />
             );
           })}
@@ -61,4 +69,4 @@ const UserRecomList: React.FC<UserRecomListProps> = ({ movieIds }) => {
   );
 };
 
-export default UserRecomList;
+export default MovieList;

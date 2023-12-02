@@ -3,12 +3,13 @@ import { getColor } from 'src/helpers/utils';
 import { Rating } from 'react-simple-star-rating';
 import { Tooltip } from 'react-tooltip';
 import { deleteMovieRating, getMovieRatingByUser, updateMovieRating } from 'src/helpers/api';
-import { useUser } from 'src/hooks/useUser';
+import useUser from 'src/hooks/useUser';
 import { useMutation, useQuery } from 'react-query';
 import LoadingIndicator from '../LoadingIndicator';
 import { useState } from 'react';
 import useRating from 'src/hooks/useRating';
 import useUserId from 'src/hooks/useUserId';
+import useFavorite from 'src/hooks/useFavorite';
 
 type MovieCardUserProps = {
   movieId: number;
@@ -28,14 +29,21 @@ const MovieCardUser = ({
   releaseDate,
   overview,
   avgRating,
-  isFavourite,
+  isFavourite: isFavouriteInit,
   canRemove
 }: MovieCardUserProps) => {
   const [rating, setRating] = useState<number | undefined>(undefined);
   const [hasRated, setHasRated] = useState(false);
-
+  const [isFavorite, setIsFavorite] = useState(isFavouriteInit);
   const { userId, hasLogin } = useUserId();
-
+  const handleGetUserSuccess = data => {
+    console.log(data);
+    data.favorite_list.includes(movieId) && setIsFavorite(true);
+  };
+  const userQuery = useUser(userId, handleGetUserSuccess);
+  const handleAddFavoriteSuccess = () => {
+    setIsFavorite(!isFavorite);
+  };
   const handleCreateRatingSuccess = () => {
     setHasRated(true);
   };
@@ -46,6 +54,12 @@ const MovieCardUser = ({
     setRating(0);
     setHasRated(false);
     deleteRating({ userId: userId ?? 1, movieId: movieId.toString() });
+  };
+  const { mutate: toggleFavorite } = useFavorite(userId, movieId, handleAddFavoriteSuccess);
+  const handleAddFavorite = () => {
+    if (hasLogin) {
+      toggleFavorite();
+    }
   };
   const { isLoading: isRatingLoading, refetch: getUserRating } = useQuery(
     ['userRating', userId, movieId],
@@ -118,15 +132,16 @@ const MovieCardUser = ({
           </li>
           <li className='flex items-center'>
             <button
+              onClick={hasLogin ? handleAddFavorite : () => {}}
               className={`border-1  w-8 h-8 rounded-full group/favourite ${
-                isFavourite
+                isFavorite
                   ? 'bg-red-400 border-red-400 hover:bg-red-400'
                   : 'border-white/70 hover:bg-white/70 '
               }`}
             >
               <svg
                 className={
-                  isFavourite
+                  isFavorite
                     ? 'fill-white'
                     : 'fill-white/70 group-hover/favourite:fill-background/70'
                 }

@@ -19,21 +19,16 @@ export const instance = axios.create({
   baseURL: BASE_URL
 });
 
-instance.interceptors.request.use(request => {
-  console.log('Starting Request', JSON.stringify(request, null, 2));
-  return request;
-});
-authInstance.interceptors.request.use(request => {
-  console.log('Starting Request from auth', JSON.stringify(request, null, 2));
-  return request;
-});
-
 // 2. Define token refresh function.
 const requestRefresh: TokenRefreshRequest = async (
   refreshToken: string
 ): Promise<IAuthTokens | string> => {
-  const response = await axios.post(`${BASE_URL}/v1/refresh_token`, { token: refreshToken });
-
+  const response = await axios.get(`${BASE_URL}/refresh_token`, {
+    headers: {
+      Authorization: `Bearer ${refreshToken}`
+    }
+  });
+  console.log(response);
   return response.data.access_token;
 };
 const getStorage = getBrowserLocalStorage;

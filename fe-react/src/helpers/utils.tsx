@@ -9,8 +9,7 @@ export const getColor = (rating: number | undefined) => {
 };
 export function mapJsonToCrews(jsonData: any): Crew[] {
   return jsonData.slice(0, 3).map((crew: string) => {
-    const validJsonString = crew.replace('None', 'null').replace(/'/g, '"');
-    const crewData = JSON.parse(validJsonString);
+    const crewData = JSON.parse(crew);
     return {
       id: crewData.id,
       name: crewData.name,
@@ -21,9 +20,7 @@ export function mapJsonToCrews(jsonData: any): Crew[] {
 
 export function mapJsonToCasts(jsonData: any): Cast[] {
   return jsonData.slice(0, 9).map(cast => {
-    const validJsonString = cast.replace('None', 'null').replace(/'/g, '"').replace(/\\"/g, '"');
-
-    const castData = JSON.parse(validJsonString);
+    const castData = JSON.parse(cast);
     return {
       id: castData.id,
       name: castData.name,
