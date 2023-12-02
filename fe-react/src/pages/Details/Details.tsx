@@ -14,6 +14,8 @@ import { useEffect, useState } from 'react';
 import ReviewForm from './ReviewForm';
 import useUser from 'src/hooks/useUser';
 import useUserId from 'src/hooks/useUserId';
+import useMovieDiscussion from 'src/hooks/useMovieDiscussion';
+import LoadingIndicator from 'src/components/LoadingIndicator';
 
 export default function Details() {
   const { id } = useParams();
@@ -42,6 +44,7 @@ export default function Details() {
   const { data: movie } = useMovieDetail(id || '');
   const { data: casts } = useCast(id || '');
   const { data: keywords } = useKeyword(id || '');
+  const { isLoading: isDiscussionLoading, data: discussion } = useMovieDiscussion(id || '');
 
   const handleToggleReview = () => {
     setToggleReview(!toggleReview);
@@ -80,14 +83,26 @@ export default function Details() {
               </TabList>
 
               <TabPanel>
-                <DiscussionCard
-                  answerCount={MockDiscussionData.answerCount}
-                  profilePath={buildImageUrl(MockDiscussionData.profilePath, 'original')}
-                  status={MockDiscussionData.status}
-                  subject={MockDiscussionData.subject}
-                  time={MockDiscussionData.time.toLocaleString('en-US', options)}
-                  username={MockDiscussionData.username}
-                ></DiscussionCard>
+                {isDiscussionLoading ? (
+                  <LoadingIndicator />
+                ) : discussion === null ? (
+                  <p>No discussion yet</p>
+                ) : (
+                  <DiscussionCard
+                    answerCount={discussion[0].discussion_part.length - 1}
+                    profilePath={buildImageUrl(
+                      discussion[0].discussion_part[0].profile_path,
+                      'original'
+                    )}
+                    status={discussion[0].status}
+                    subject={discussion[0].subject}
+                    time={new Date(discussion[0].discussion_part[0].timestamp).toLocaleString(
+                      'en-US',
+                      options
+                    )}
+                    username={discussion[0].discussion_part[0].name}
+                  ></DiscussionCard>
+                )}
               </TabPanel>
               <TabPanel>
                 <div className='border-border border-b-1'>

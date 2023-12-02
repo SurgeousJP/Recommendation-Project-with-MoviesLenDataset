@@ -49,6 +49,21 @@ func (mc *MovieDiscussionController) GetMovieDiscussion(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, movieDiscussion)
 }
+func (mc *MovieDiscussionController) GetMovieDiscussionsByMovieId(ctx *gin.Context) {
+	movieId, err := strconv.Atoi(ctx.Param("movie_id"))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	movieDiscussions, err := mc.MovieDiscussionServices.GetMovieDiscussionsByMovieId(&movieId)
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, movieDiscussions)
+}
 
 func (mc *MovieDiscussionController) UpdateMovieDiscussion(ctx *gin.Context) {
 	var movieDiscussion models.MovieDiscussion
@@ -112,7 +127,7 @@ func (mc *MovieDiscussionController) GetMovieDiscussionPartInPage(ctx *gin.Conte
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	
+
 	pageNumber := ctx.Param("pageNumber")
 	pageNumberInt, err := strconv.Atoi(pageNumber)
 
@@ -176,13 +191,14 @@ func (mc *MovieDiscussionController) DeleteMovieDiscussionPart(ctx *gin.Context)
 	ctx.JSON(http.StatusOK, gin.H{"message": "Successful"})
 }
 
-
 func (mc *MovieDiscussionController) RegisterMovieDiscussionRoute(rg *gin.RouterGroup) {
 	movieDiscussionRoute := rg.Group("/movie_discussion")
 	// The URI must be diffent structure from each other !
 	movieDiscussionRoute.POST("/create", mc.CreateMovieDiscussion)
 
 	movieDiscussionRoute.GET("/get/:id", mc.GetMovieDiscussion)
+
+	movieDiscussionRoute.GET("/get-by-movie/:movie_id", mc.GetMovieDiscussionsByMovieId)
 
 	movieDiscussionRoute.PATCH("/update", mc.UpdateMovieDiscussion)
 

@@ -37,9 +37,9 @@ export interface User {
   id: number;
   username: string;
   password_hash: string;
-  favorite_list: any; // You can replace 'any' with the actual type of 'favorite_list'
-  recommendation_list: any; // You can replace 'any' with the actual type of 'recommendation_list'
-  watch_list: any; // You can replace 'any' with the actual type of 'watch_list'
+  favorite_list: number[]; // You can replace 'any' with the actual type of 'favorite_list'
+  recommendation_list: number[]; // You can replace 'any' with the actual type of 'recommendation_list'
+  watch_list: number[]; // You can replace 'any' with the actual type of 'watch_list'
   picture_profile: string;
 }
 

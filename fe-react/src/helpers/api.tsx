@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import Rating from 'src/types/Rating';
-import { PaginatedMovieResponse } from './type';
+import { PaginatedMovieResponse, User } from './type';
 import {
   TokenRefreshRequest,
   IAuthTokens,
@@ -78,6 +78,12 @@ export const getMovieDetail = async (movieId: string) => {
   const { data } = await instance.get(`movie/get/${movieId}`);
   return data;
 };
+
+export const getMovieDiscussion = async (movieId: string) => {
+  const { data } = await instance.get(`movie_discussion/get-by-movie/${movieId}`);
+  return data;
+};
+
 export const createMovieRating = async (rating: Rating) => {
   const { data } = await authInstance.post(`rating/create`, {
     movie_id: rating.movie_id,
@@ -125,6 +131,11 @@ export const deleteMovieRating = async (reqData: { userId: number; movieId: stri
 
 export const getUserProfile = async (userId: string) => {
   const { data } = await instance.get(`user/get/${userId}`);
+  return data;
+};
+
+export const updateUserProfile = async (user: User) => {
+  const { data } = await authInstance.patch(`user/update`, user);
   return data;
 };
 

@@ -5,6 +5,7 @@ import { Tooltip } from 'react-tooltip';
 import { updateMovieRating, deleteMovieRating, getMovieRatingByUser } from 'src/helpers/api';
 import { buildImageUrl, formatDateToDDMMYYYY, getColor } from 'src/helpers/utils';
 import useCrew from 'src/hooks/useCrew';
+import useFavorite from 'src/hooks/useFavorite';
 import useRating from 'src/hooks/useRating';
 import Movie from 'src/types/Movie';
 
@@ -18,13 +19,23 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
   const [isRatingVisible, setRatingVisible] = useState(false);
   const [rating, setRating] = useState(0);
   const [hasRated, setHasRated] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(true);
+
   const handleCreateRatingSuccess = () => {
     setHasRated(true);
+  };
+  const handleAddFavoriteSuccess = () => {
+    setIsFavorite(true);
   };
   const { createRating } = useRating(handleCreateRatingSuccess);
   const { mutate: updateRating } = useMutation(updateMovieRating);
   const { mutate: deleteRating } = useMutation(deleteMovieRating);
   const { data: crews } = useCrew(movie?.id.toString() || '');
+  const { mutate: addFavorite } = useFavorite(
+    userId && userId.toString(),
+    movie?.id || null,
+    handleAddFavoriteSuccess
+  );
 
   useEffect(() => {
     const fetchRating = async () => {
@@ -63,6 +74,11 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
 
   const handleRatingButton = () => {
     setRatingVisible(!isRatingVisible);
+  };
+  const handleAddFavorite = () => {
+    if (hasLogin) {
+      addFavorite();
+    }
   };
 
   return (
@@ -128,22 +144,31 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
               </svg>{' '}
             </button>
             <button
+              onClick={handleAddFavorite}
               data-tooltip-id='my-tooltip'
               data-tooltip-content={
                 hasLogin ? 'Mark as favourite' : 'Login to add this movie to your favourites list'
               }
               data-tooltip-place='bottom'
-              className='rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'
+              className={`border-1  w-12 h-12 rounded-full group/favourite ${
+                isFavorite
+                  ? 'bg-red-400 border-red-400 hover:bg-red-400'
+                  : 'border-white/70 hover:bg-white/70 '
+              }`}
             >
               <svg
+                className={
+                  isFavorite
+                    ? 'fill-white'
+                    : 'fill-white/70 group-hover/favourite:fill-background/70'
+                }
                 xmlns='http://www.w3.org/2000/svg'
                 width='20'
                 height='20'
-                fill='#f4ebeb'
                 viewBox='0 0 256 256'
               >
                 <path d='M240,94c0,70-103.79,126.66-108.21,129a8,8,0,0,1-7.58,0C119.79,220.66,16,164,16,94A62.07,62.07,0,0,1,78,32c20.65,0,38.73,8.88,50,23.89C139.27,40.88,157.35,32,178,32A62.07,62.07,0,0,1,240,94Z'></path>
-              </svg>{' '}
+              </svg>
             </button>
             <button
               data-tooltip-id='my-tooltip'

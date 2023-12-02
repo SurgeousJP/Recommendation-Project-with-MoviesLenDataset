@@ -13,7 +13,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <App />
     </BrowserRouter>
     <Tooltip style={{ backgroundColor: 'rgb(55, 65, 81)' }} id='my-tooltip' />
-
     <ReactQueryDevtools initialIsOpen={false} />
   </QueryClientProvider>
 );
