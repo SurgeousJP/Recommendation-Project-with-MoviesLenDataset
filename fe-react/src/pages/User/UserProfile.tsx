@@ -79,8 +79,8 @@ const UserProfile = () => {
           <TabPanel>
             <UserOverview ratingData={ratingData} favourites={[233, 3, 5, 6, 11]} />
             <MovieList
-              title={'My Favourite List'}
-              nullListMessage={`You don't have any favourite movie yet.`}
+              title={'My Favorite List'}
+              nullListMessage={`You don't have any favorite movie yet.`}
               favoriteList={userProfileData.favorite_list}
               canRemove
               movieIds={userProfileData.favorite_list}
@@ -102,7 +102,15 @@ const UserProfile = () => {
             />
           </TabPanel>
           <TabPanel></TabPanel>
-          <TabPanel></TabPanel>
+          <TabPanel>
+            <MovieList
+              title={'My Watchlist'}
+              nullListMessage={`You don't have any movie in your watchlist yet`}
+              favoriteList={userProfileData.favorite_list}
+              movieIds={userProfileData.watch_list}
+              canRemove={true}
+            />
+          </TabPanel>
         </Tabs>
       </div>
     </div>

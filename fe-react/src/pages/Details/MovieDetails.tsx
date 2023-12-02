@@ -8,7 +8,7 @@ import useCrew from 'src/hooks/useCrew';
 import useFavorite from 'src/hooks/useFavorite';
 import useRating from 'src/hooks/useRating';
 import useUser from 'src/hooks/useUser';
-import useUserId from 'src/hooks/useUserId';
+import useWatchList from 'src/hooks/useWatchList';
 import Movie from 'src/types/Movie';
 
 interface MovieDetailsProps {
@@ -22,15 +22,20 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
   const [rating, setRating] = useState(0);
   const [hasRated, setHasRated] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isWatchList, setIsWatchList] = useState(false);
   const handleGetUserSuccess = data => {
-    console.log(data);
+    console.log(data, movie?.id);
     data.favorite_list.includes(movie?.id) && setIsFavorite(true);
+    data.watch_list.includes(movie?.id) && setIsWatchList(true);
   };
   const handleCreateRatingSuccess = () => {
     setHasRated(true);
   };
   const handleAddFavoriteSuccess = () => {
     setIsFavorite(!isFavorite);
+  };
+  const handleAddWatchListSuccess = () => {
+    setIsWatchList(!isWatchList);
   };
   const userQuery = useUser(userId, handleGetUserSuccess);
   const { createRating } = useRating(handleCreateRatingSuccess);
@@ -42,7 +47,11 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
     movie?.id || null,
     handleAddFavoriteSuccess
   );
-
+  const { mutate: toggleWatchList } = useWatchList(
+    userId,
+    movie?.id || null,
+    handleAddWatchListSuccess
+  );
   useEffect(() => {
     const fetchRating = async () => {
       if (userId != null && movie?.id != null) {
@@ -86,6 +95,11 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
   const handleAddFavorite = () => {
     if (hasLogin) {
       toggleFavorite();
+    }
+  };
+  const handleAddWatchList = () => {
+    if (hasLogin) {
+      toggleWatchList();
     }
   };
 
@@ -158,14 +172,11 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
                 hasLogin ? 'Mark as favourite' : 'Login to add this movie to your favourites list'
               }
               data-tooltip-place='bottom'
-              className={`border-1  w-12 h-12 rounded-full ${
-                isFavorite
-                  ? 'bg-red-400 border-red-400 hover:bg-red-400'
-                  : 'border-none bg-gray-700 hover:bg-gray-600'
-              }`}
+              className={`border-1  w-12 h-12 border-none rounded-full bg-gray-700 hover:bg-gray-600
+              `}
             >
               <svg
-                className={isFavorite ? 'fill-white' : 'fill-white/70 '}
+                className={isFavorite ? 'fill-red-400' : 'fill-white/70 '}
                 xmlns='http://www.w3.org/2000/svg'
                 width='20'
                 height='20'
@@ -180,9 +191,11 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
                 hasLogin ? 'Add to your watchlist' : 'Login to add this movie to your watchlist'
               }
               data-tooltip-place='bottom'
+              onClick={handleAddWatchList}
               className='rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'
             >
               <svg
+                className={isWatchList ? 'fill-red-600' : 'fill-white/70 '}
                 xmlns='http://www.w3.org/2000/svg'
                 width='20'
                 height='20'

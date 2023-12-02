@@ -41,7 +41,7 @@ export default function Details() {
     hour12: true // use 12-hour time format
   };
 
-  const { data: movie } = useMovieDetail(id || '');
+  const { data: movie, isLoading: isMovieLoading } = useMovieDetail(id || '');
   const { data: casts } = useCast(id || '');
   const { data: keywords } = useKeyword(id || '');
   const { isLoading: isDiscussionLoading, data: discussion } = useMovieDiscussion(id || '');
@@ -52,7 +52,9 @@ export default function Details() {
 
   return (
     <div className='w-auto bg-background '>
-      <MovieDetails movie={movie} userId={userId} hasLogin={hasLogin} />
+      {isMovieLoading && <LoadingIndicator />}
+      {!isMovieLoading && <MovieDetails movie={movie} userId={userId} hasLogin={hasLogin} />}
+
       <div className='flex mt-6'>
         <div className='pl-24 pr-10 w-[calc(100vw_-_80px_-_268px)] '>
           <div className='border-border border-b-1'>
