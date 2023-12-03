@@ -50,6 +50,14 @@ var (
 	movieDiscussionCollection *mongo.Collection
 	movieDiscussionService    interfaces.MovieDiscussionServices
 	movieDiscussionController controllers.MovieDiscussionController
+
+	leaderboardCollection *mongo.Collection
+	leaderboardService    interfaces.LeaderboardServices
+	leaderboardController controllers.LeaderboardController
+
+	topRatedMoviesCollection *mongo.Collection
+	topRatedMoviesService    interfaces.TopRatedMovieServices
+	topRatedMoviesController controllers.TopRatedMoviesController
 	
 	ctx         context.Context
 	mongoClient *mongo.Client
@@ -118,6 +126,14 @@ func Init() {
 	movieDiscussionService = implementations.NewMovieDiscussionServices(movieDiscussionCollection, ctx)
 	movieDiscussionController = controllers.NewMovieDiscussionController(movieDiscussionService)
 
+	leaderboardCollection = mongoClient.Database(databaseName).Collection("leaderboard")
+	leaderboardService = implementations.NewLeaderboardService(leaderboardCollection, ctx)
+	leaderboardController = controllers.NewLeaderboardController(leaderboardService)
+
+	topRatedMoviesCollection = mongoClient.Database(databaseName).Collection("top_rated_movies")
+	topRatedMoviesService = implementations.NewTopRatedMoviesService(topRatedMoviesCollection, ctx)
+	topRatedMoviesController = controllers.NewTopRatedMoviesController(topRatedMoviesService)
+
 	server = gin.Default()
 	// Set up CORS (Cross-Origin Resource Sharing)
 	config := cors.DefaultConfig()
@@ -165,11 +181,11 @@ func main() {
 	basePath.GET("/currentUser", authMiddleware.MiddlewareFunc(), returnUser)
 
 	// Apply middleware to all routes under basePath, except for GET requests
-	// basePath.Use(func(c *gin.Context) {
-	// 	if c.Request.Method != "GET" {
-	// 		authMiddleware.MiddlewareFunc()(c)
-	// 	}
-	// })
+	basePath.Use(func(c *gin.Context) {
+		if c.Request.Method != "GET" {
+			authMiddleware.MiddlewareFunc()(c)
+		}
+	})
 
 	// Other route registrations without the middleware
 	userController.RegisterUserRoute(basePath)
@@ -179,6 +195,8 @@ func main() {
 	castController.RegisterCastRoute(basePath)
 	ratingController.RegisterRatingRoute(basePath)
 	movieDiscussionController.RegisterMovieDiscussionRoute(basePath)
+	leaderboardController.RegisterLeaderboardRoute(basePath)
+	topRatedMoviesController.RegisterTopRatedMoviesRoute(basePath)
 
 	log.Fatal(server.Run(":" + port))
 }
