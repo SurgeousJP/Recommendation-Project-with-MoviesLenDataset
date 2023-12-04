@@ -45,6 +45,9 @@ func (u *UserReviewServiceImpl) GetUserReviewByUserId(userId *int) ([]*models.Us
 		}
 		userReviews = append(userReviews, userReview)
 	}
+	if len(userReviews) == 0 {
+		return nil, errors.New("mongo: no documents in result")
+	}
 
 	if err := cursor.Err(); err != nil {
 		return nil, err
@@ -71,6 +74,9 @@ func (u *UserReviewServiceImpl) GetUserReviewByMovieId(movieId *int) ([]*models.
 			return nil, err
 		}
 		userReviews = append(userReviews, userReview)
+	}
+	if len(userReviews) == 0 {
+		return nil, errors.New("mongo: no documents in result")
 	}
 
 	if err := cursor.Err(); err != nil {
