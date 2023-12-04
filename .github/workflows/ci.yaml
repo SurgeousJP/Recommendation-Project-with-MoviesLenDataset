@@ -39,5 +39,5 @@ jobs:
         run: |
             cd backend-go
             cd controllers
-            go test
+            go test -cover
             gremlins unleash
