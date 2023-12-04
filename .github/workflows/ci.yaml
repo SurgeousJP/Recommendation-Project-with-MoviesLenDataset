@@ -4,7 +4,9 @@ on:
   pull_request:
 
 jobs:  
-  run-tests:  
+  run-tests: 
+    concurrency:
+        group: ${{ github.workflow }}-${{ matrix.os }}
     strategy: 
       fail-fast: false 
       matrix:
