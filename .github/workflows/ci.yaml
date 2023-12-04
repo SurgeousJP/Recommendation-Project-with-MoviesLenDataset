@@ -5,9 +5,8 @@ on:
 
 jobs:  
   run-tests: 
-    concurrency:
-        group: ${{ github.workflow }}-${{ matrix.os }}
     strategy: 
+      max-parallel: 1
       fail-fast: false 
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
