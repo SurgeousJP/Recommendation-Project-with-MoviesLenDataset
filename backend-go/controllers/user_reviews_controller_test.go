@@ -371,7 +371,7 @@ func (suite *UserReviewTestSuite) setupRouter() *gin.Engine {
 
 // TearDownSuite is called once after all tests in the suite have been run
 func (suite *UserReviewTestSuite) TearDownSuite() {
-	req, _ := http.NewRequest("DELETE", "/UserReview/delete/672/2048", nil)
+	req, _ := http.NewRequest("DELETE", "/userReview/delete/672/2048", nil)
 
 	w := httptest.NewRecorder()
 
