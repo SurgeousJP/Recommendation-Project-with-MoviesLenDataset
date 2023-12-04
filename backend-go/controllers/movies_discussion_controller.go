@@ -65,6 +65,22 @@ func (mc *MovieDiscussionController) GetMovieDiscussionsByMovieId(ctx *gin.Conte
 	ctx.JSON(http.StatusOK, movieDiscussions)
 }
 
+func (mc *MovieDiscussionController) GetMovieDiscussionsByUserId(ctx *gin.Context) {
+	userId, err := strconv.Atoi(ctx.Param("user_id"))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	movieDiscussions, err := mc.MovieDiscussionServices.GetMovieDiscussionsByUserId(&userId)
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, movieDiscussions)
+}
+
 func (mc *MovieDiscussionController) UpdateMovieDiscussion(ctx *gin.Context) {
 	var movieDiscussion models.MovieDiscussion
 
@@ -199,6 +215,8 @@ func (mc *MovieDiscussionController) RegisterMovieDiscussionRoute(rg *gin.Router
 	movieDiscussionRoute.GET("/get/:id", mc.GetMovieDiscussion)
 
 	movieDiscussionRoute.GET("/get-by-movie/:movie_id", mc.GetMovieDiscussionsByMovieId)
+
+	movieDiscussionRoute.GET("/get-by-user/:user_id", mc.GetMovieDiscussionsByUserId)
 
 	movieDiscussionRoute.PATCH("/update", mc.UpdateMovieDiscussion)
 

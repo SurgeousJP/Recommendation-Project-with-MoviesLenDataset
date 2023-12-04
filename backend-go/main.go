@@ -58,6 +58,10 @@ var (
 	topRatedMoviesCollection *mongo.Collection
 	topRatedMoviesService    interfaces.TopRatedMovieServices
 	topRatedMoviesController controllers.TopRatedMoviesController
+
+	userReviewCollection *mongo.Collection
+	userReviewService interfaces.UserReviewService
+	userReviewController controllers.UserReviewController
 	
 	ctx         context.Context
 	mongoClient *mongo.Client
@@ -134,6 +138,11 @@ func Init() {
 	topRatedMoviesService = implementations.NewTopRatedMoviesService(topRatedMoviesCollection, ctx)
 	topRatedMoviesController = controllers.NewTopRatedMoviesController(topRatedMoviesService)
 
+	userReviewCollection = mongoClient.Database(databaseName).Collection("user_reviews")
+	userReviewService = implementations.NewUserReviewService(userReviewCollection, ctx)
+	userReviewController = controllers.NewUserReviewController(userReviewService)
+	
+
 	server = gin.Default()
 	// Set up CORS (Cross-Origin Resource Sharing)
 	config := cors.DefaultConfig()
@@ -197,6 +206,7 @@ func main() {
 	movieDiscussionController.RegisterMovieDiscussionRoute(basePath)
 	leaderboardController.RegisterLeaderboardRoute(basePath)
 	topRatedMoviesController.RegisterTopRatedMoviesRoute(basePath)
+	userReviewController.RegisterUserReviewRoute(basePath)
 
 	log.Fatal(server.Run(":" + port))
 }

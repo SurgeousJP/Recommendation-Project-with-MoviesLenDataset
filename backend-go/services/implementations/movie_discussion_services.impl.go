@@ -58,6 +58,34 @@ func (m *MovieDiscussionServicesImpl) GetMovieDiscussionsByMovieId(movieId *int)
 
 	return movieDiscussions, nil
 }
+//------------------------------------------------------------
+func (m *MovieDiscussionServicesImpl) GetMovieDiscussionsByUserId(userId *int) ([]*models.MovieDiscussion, error) {
+	var movieDiscussions []*models.MovieDiscussion
+	query := bson.M{
+		"discussion_part.user_id": userId,
+	}
+	cursor, err := m.movieDiscussionCollection.Find(m.ctx, query)
+	
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(m.ctx)
+
+	for cursor.Next(m.ctx) {
+		var movieDiscussion *models.MovieDiscussion
+		if err := cursor.Decode(&movieDiscussion); err != nil {
+			return nil, err
+		}
+		movieDiscussions = append(movieDiscussions, movieDiscussion)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	return movieDiscussions, nil
+}
+//----------------------------------------------------------
 
 func (m *MovieDiscussionServicesImpl) UpdateMovieDiscussion(movieDiscussion *models.MovieDiscussion) error {
 	filter := bson.D{bson.E{Key: "discussion_id", Value: movieDiscussion.DiscussionId}}
