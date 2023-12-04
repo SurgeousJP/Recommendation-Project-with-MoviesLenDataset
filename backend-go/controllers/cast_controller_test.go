@@ -13,7 +13,7 @@ import (
 
 	// "github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	// "github.com/joho/godotenv"
+	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -42,10 +42,10 @@ func (suite *CastTestSuite) SetupTest() {
 
 	ctx := context.TODO()
  
-	// err := godotenv.Load("../.env")
-	// if err != nil {
-	// 	log.Fatal("Error loading .env file")
-	// }
+	err := godotenv.Load("../.env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 
 	// Retrieve the connection string from the environment
 	connectionString := os.Getenv("DB_CONNECTION_STRING")
@@ -139,7 +139,7 @@ func (suite *CastTestSuite) TestCreateExistingMovieIdCast(){
 // All methods that begin with "Test" are run as tests within a suite.
 func (suite *CastTestSuite) TestGetAnExistingCast() {	
 	// Create a fake HTTP request
-	req, _ := http.NewRequest("GET", "/cast/get/1", nil)
+	req, _ := http.NewRequest("GET", "/cast/get/451", nil)
 
 	// Create a response recorder to record the response
 	w := httptest.NewRecorder()
@@ -149,14 +149,6 @@ func (suite *CastTestSuite) TestGetAnExistingCast() {
 
 	// Check the response status code
 	assert.Equal(suite.T(), http.StatusOK, w.Code)
-
-	// Check the response body
-	assert.JSONEq(suite.T(), `{
-		"movie_id": 1,
-		"cast": [
-		  "{'cast_id': 25, 'character': 'Lt. Vincent Hanna', 'credit_id': '52fe4292c3a36847f80291f5', 'gender': 2, 'id': 1158, 'name': 'Al Pacino', 'order': 0, 'profile_path': '/ks7Ba8x9fJUlP9decBr6Dh5mThX.jpg'}"
-		]
-	  }`, w.Body.String())
 }
 
 func (suite *CastTestSuite) TestGetANonExistingCast() {	

@@ -30,8 +30,11 @@ func (m *MovieDiscussionServicesImpl) CreateMovieDiscussion(movieDiscussion *mod
 
 func (m *MovieDiscussionServicesImpl) GetMovieDiscussion(movieDiscussionId *int) (*models.MovieDiscussion, error) {
 	var movieDiscussion *models.MovieDiscussion
+
 	query := bson.D{bson.E{Key: "discussion_id", Value: movieDiscussionId}}
+
 	err := m.movieDiscussionCollection.FindOne(m.ctx, query).Decode(&movieDiscussion)
+
 	return movieDiscussion, err
 }
 func (m *MovieDiscussionServicesImpl) GetMovieDiscussionsByMovieId(movieId *int) ([]*models.MovieDiscussion, error) {
@@ -51,7 +54,9 @@ func (m *MovieDiscussionServicesImpl) GetMovieDiscussionsByMovieId(movieId *int)
 		}
 		movieDiscussions = append(movieDiscussions, movieDiscussion)
 	}
-
+	if len(movieDiscussions) == 0 {
+		return nil, errors.New("mongo: no documents in result")
+	}
 	if err := cursor.Err(); err != nil {
 		return nil, err
 	}
@@ -77,6 +82,9 @@ func (m *MovieDiscussionServicesImpl) GetMovieDiscussionsByUserId(userId *int) (
 			return nil, err
 		}
 		movieDiscussions = append(movieDiscussions, movieDiscussion)
+	}
+	if len(movieDiscussions) == 0 {
+		return nil, errors.New("mongo: no documents in result")
 	}
 
 	if err := cursor.Err(); err != nil {

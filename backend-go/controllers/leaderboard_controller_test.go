@@ -12,7 +12,7 @@ import (
 
 	// "github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	// "github.com/joho/godotenv"
+	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -36,10 +36,10 @@ func (suite *LeaderboardTestSuite) SetupTest() {
 
 	ctx := context.TODO()
  
-	// err := godotenv.Load("../.env")
-	// if err != nil {
-	// 	log.Fatal("Error loading .env file")
-	// }
+	err := godotenv.Load("../.env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 
 	// Retrieve the connection string from the environment
 	connectionString := os.Getenv("DB_CONNECTION_STRING")
@@ -82,7 +82,25 @@ func (suite *LeaderboardTestSuite) TestGetLeaderboardSuccessfully() {
 
 	// Check the response status code
 	assert.Equal(suite.T(), http.StatusOK, w.Code)	
+}
 
+func (suite *LeaderboardTestSuite) TestRegisterRouteSuccessfully() {
+	// Create a new gin router
+	router := gin.New()
+
+	// Create an instance of your UserReviewController
+	cc := suite.LeaderboardController // replace UserReviewController with your actual type
+
+	// Register the UserReview routes
+	cc.RegisterLeaderboardRoute(router.Group("/v2"))
+
+	// Perform a GET request to "/v2/UserReview/get/1"
+	w := performUserReviewRequest(router, "GET", "/v2/leaderboard/get")
+
+	// Assert the response status code
+	assert.Equal(suite.T(), http.StatusOK, w.Code)
+
+	// You can add more assertions for other routes if needed
 }
 
 func TestLeaderboardTestSuite (t *testing.T){
