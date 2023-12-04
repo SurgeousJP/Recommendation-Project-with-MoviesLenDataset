@@ -1,20 +1,19 @@
 import React, { useState } from 'react';
+import useUserReview from 'src/hooks/useUserReview';
 
 interface ReviewFormProps {
   className?: string;
   userId: number;
+  movieId: number;
   hidden?: boolean;
+  onSuccess?: () => void;
 }
 
 const ReviewForm: React.FC<ReviewFormProps> = props => {
   // Define the state variables here
-  const [title, setTitle] = useState<string>('');
   const [review, setReview] = useState<string>('');
-
+  const { mutate: createReview } = useUserReview(props.userId, props.movieId, props.onSuccess);
   // Define the event handlers here
-  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(event.target.value);
-  };
 
   const handleReviewChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setReview(event.target.value);
@@ -22,6 +21,7 @@ const ReviewForm: React.FC<ReviewFormProps> = props => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    createReview(review);
     // Handle form submission logic here
   };
 
@@ -32,22 +32,14 @@ const ReviewForm: React.FC<ReviewFormProps> = props => {
       hidden={props.hidden}
       onSubmit={handleSubmit}
     >
-      <input
-        className='w-full'
-        type='text'
-        placeholder='Title'
-        id='title'
-        value={title}
-        onChange={handleTitleChange}
-      />
       <textarea
-        className='mt-4 h-48 w-full text-area resize-none '
+        className=' h-48 w-full text-area resize-none '
         id='review'
         placeholder='Review'
         value={review}
         onChange={handleReviewChange}
       />
-      <button type='submit' className='w-fit px-6 mt-4'>
+      <button type='submit' className='primary-btn h-10 w-fit px-6 mt-4'>
         Send
       </button>
     </form>

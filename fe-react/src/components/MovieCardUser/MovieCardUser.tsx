@@ -116,7 +116,7 @@ const MovieCardUser = ({
             <button
               id={`rating-btn-${movieId}`}
               onClick={() => getUserRating()}
-              className='border-1 rating-btn border-white/70 w-8 h-8 rounded-full group/rating hover:bg-white/70'
+              className='flex justify-center items-center border-1 rating-btn border-white/70 w-8 h-8 rounded-full group/rating hover:bg-white/70'
             >
               <svg
                 className='fill-white/70 group-hover/rating:fill-background/70'
@@ -133,7 +133,7 @@ const MovieCardUser = ({
           <li className='flex items-center'>
             <button
               onClick={hasLogin ? handleAddFavorite : () => {}}
-              className={`border-1  w-8 h-8 rounded-full group/favourite ${
+              className={` flex justify-center items-center border-1  w-8 h-8 rounded-full group/favourite ${
                 isFavorite
                   ? 'bg-red-400 border-red-400 hover:bg-red-400'
                   : 'border-white/70 hover:bg-white/70 '
@@ -156,7 +156,7 @@ const MovieCardUser = ({
             <p className='ml-2'>Favourite</p>
           </li>
           <li className='flex items-center'>
-            <button className='border-1 border-white/70 w-8 h-8 rounded-full group/list hover:bg-white/70'>
+            <button className='flex justify-center items-center border-1 border-white/70 w-8 h-8 rounded-full group/list hover:bg-white/70'>
               <svg
                 className='fill-white/70 group-hover/list:fill-background/70'
                 xmlns='http://www.w3.org/2000/svg'
@@ -172,7 +172,7 @@ const MovieCardUser = ({
           <li hidden={!canRemove} className='flex items-center'>
             <button
               hidden={!canRemove}
-              className='border-1 border-white/70 w-8 h-8 rounded-full group/remove hover:bg-white/70'
+              className='flex justify-center items-center border-1 border-white/70 w-8 h-8 rounded-full group/remove hover:bg-white/70'
             >
               <svg
                 className='fill-white/70 group-hover/remove:fill-background/70'

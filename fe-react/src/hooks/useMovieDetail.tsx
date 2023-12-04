@@ -16,9 +16,7 @@ const useMovieDetail = (movieId: string) => {
           .getQueryData('movies')
           ?.movies?.find(movie => movie.id == movieId);
         if (movie) {
-          console.log('yes');
-
-          return mapJsonToMovie(movie);
+          return movie;
         } else {
           return undefined;
         }

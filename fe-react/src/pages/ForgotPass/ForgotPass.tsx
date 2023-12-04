@@ -16,14 +16,14 @@ export default function ForgotPass() {
       <form id='forgot-password' className='form-container'>
         <img src={logo} alt='Logo'></img>
         <input type='text' placeholder='Email'></input>
-        <div className='checkbox-container'>
+        <div className='checkbox-container mt-2'>
           <Checkbox checked={isChecked} onChange={handleCheckboxChange}>
             <span className='sign__text'>
               I agree to the <Link to='/privacy'>Privacy Policy</Link>
             </span>{' '}
           </Checkbox>
         </div>
-        <button className='mb-4 mt-9'>Send</button>
+        <button className='primary-btn h-11 mb-4 mt-9'>Send</button>
         <span className='sign__text'>We will send a password to your Email</span>
       </form>
     </div>

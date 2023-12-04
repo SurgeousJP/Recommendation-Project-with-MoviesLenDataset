@@ -185,7 +185,7 @@ export default function Header(props: HeaderProps) {
           </>
         ) : (
           <button
-            className='w-auto px-5 h-9 ml-6 mr-10 xl:ml-11 xl:mr-18'
+            className='primary-btn w-auto px-5 h-9 ml-6 mr-10 xl:ml-11 xl:mr-18 '
             onClick={() => navigate('/login')}
           >
             Sign in

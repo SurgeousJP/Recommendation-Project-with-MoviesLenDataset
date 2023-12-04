@@ -85,10 +85,10 @@ input:focus {
 .text-area:focus {
   @apply outline-none border-2 border-primary;
 }
-button {
-  @apply flex justify-center items-center h-11 w-full rounded-md border-primary border-2 text-white text-sm uppercase transition duration-300 ease-out;
+.primary-btn {
+  @apply flex justify-center items-center rounded-md border-primary border-2 text-white text-sm uppercase transition duration-300 ease-out;
 }
-button:hover {
+.primary-btn:hover {
   @apply bg-primary/10;
 }
 .triangle {

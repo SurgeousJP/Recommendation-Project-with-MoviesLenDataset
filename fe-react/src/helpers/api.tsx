@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import Rating from 'src/types/Rating';
+import { toast } from 'react-toastify';
 import { PaginatedMovieResponse, User } from './type';
 import {
   TokenRefreshRequest,
@@ -9,6 +10,8 @@ import {
   clearAuthTokens,
   setAuthTokens
 } from 'axios-jwt';
+import Toast from 'src/components/Toast';
+import Review from 'src/types/Review';
 
 const BASE_URL = 'http://localhost:9090/v1';
 
@@ -32,6 +35,33 @@ const requestRefresh: TokenRefreshRequest = async (
   return response.data.access_token;
 };
 const getStorage = getBrowserLocalStorage;
+
+authInstance.interceptors.response.use(
+  response => {
+    return response;
+  },
+  error => {
+    if (error.response && error.response.status === 401) {
+      logout();
+
+      toast.error(
+        <Toast title={'Session Expired'} content={'Please click here to log in again.'} />,
+        {
+          onClick: () => {
+            window.location.href = '/login';
+          },
+          onClose: () => {
+            window.location.reload();
+            console.log('onClose');
+          }
+        }
+      );
+    }
+
+    // If there's an error and it's not a 401 status code, reject the promise with the error
+    return Promise.reject(error);
+  }
+);
 
 applyAuthTokenInterceptor(authInstance, {
   requestRefresh,
@@ -79,6 +109,11 @@ export const getMovieDiscussion = async (movieId: string) => {
   return data;
 };
 
+export const getMovieReview = async (movieId: string) => {
+  const { data } = await instance.get(`userReview/get/movie/${movieId}`);
+  return data;
+};
+
 export const createMovieRating = async (rating: Rating) => {
   const { data } = await authInstance.post(`rating/create`, {
     movie_id: rating.movie_id,
@@ -86,6 +121,11 @@ export const createMovieRating = async (rating: Rating) => {
     rating: rating.rating,
     timestamp: Math.floor(Date.now() / 1000)
   });
+  return data;
+};
+
+export const createMovieReview = async (review: Review) => {
+  const { data } = await authInstance.post(`userReview/create`, review);
   return data;
 };
 

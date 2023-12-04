@@ -63,12 +63,12 @@ export default function Login() {
           required
           onChange={e => setPassword(e.target.value)}
         ></input>
-        <div className='checkbox-container mt-4'>
+        <div className='checkbox-container mt-2'>
           <Checkbox checked={isChecked} onChange={handleCheckboxChange}>
             Remember me
           </Checkbox>
         </div>
-        <button type='submit' className='mb-4 mt-9'>
+        <button type='submit' className='primary-btn h-11 mb-4 mt-9'>
           Sign in
         </button>
         <span className='sign__delimiter'>or</span>

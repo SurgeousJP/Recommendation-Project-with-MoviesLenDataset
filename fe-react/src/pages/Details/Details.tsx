@@ -2,7 +2,6 @@ import { buildImageUrl } from 'src/helpers/utils';
 import CastCard from 'src/components/CastCard/CastCard';
 import Scroller from 'src/components/Scroller/index';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import ReviewCard from 'src/components/ReviewCard/ReviewCard';
 import MovieCardRecom from 'src/components/MovieCardRecom';
 import { useParams } from 'react-router-dom';
 import DiscussionCard from 'src/components/Dicussion/DicussionCard';
@@ -10,27 +9,15 @@ import useMovieDetail from 'src/hooks/useMovieDetail';
 import useCast from 'src/hooks/useCasts';
 import useKeyword from 'src/hooks/useKeyword';
 import MovieDetails from './MovieDetails';
-import { useEffect, useState } from 'react';
-import ReviewForm from './ReviewForm';
-import useUser from 'src/hooks/useUser';
 import useUserId from 'src/hooks/useUserId';
 import useMovieDiscussion from 'src/hooks/useMovieDiscussion';
 import LoadingIndicator from 'src/components/LoadingIndicator';
+import ReviewTab from './Tab/ReviewTab';
 
 export default function Details() {
   const { id } = useParams();
-  const [toggleReview, setToggleReview] = useState(false);
 
   const { userId, hasLogin } = useUserId();
-
-  const MockDiscussionData = {
-    subject: 'Sample Discussion',
-    status: 'Open',
-    answerCount: 5,
-    profilePath: '/t/p/w45_and_h45_face/1kks3YnVkpyQxzw36CObFPvhL5f.jpg',
-    username: 'john_doe',
-    time: new Date(2023, 10, 12, 3, 4, 0)
-  };
 
   const options = {
     month: 'short', // abbreviated month name
@@ -46,10 +33,8 @@ export default function Details() {
   const { data: keywords } = useKeyword(id || '');
   const { isLoading: isDiscussionLoading, data: discussion } = useMovieDiscussion(id || '');
 
-  const handleToggleReview = () => {
-    setToggleReview(!toggleReview);
-  };
-
+  console.log(movie);
+  console.log(discussion);
   return (
     <div className='w-auto bg-background '>
       {isMovieLoading && <LoadingIndicator />}
@@ -87,7 +72,7 @@ export default function Details() {
               <TabPanel>
                 {isDiscussionLoading ? (
                   <LoadingIndicator />
-                ) : discussion === null ? (
+                ) : !discussion ? (
                   <p>No discussion yet</p>
                 ) : (
                   <DiscussionCard
@@ -107,29 +92,8 @@ export default function Details() {
                 )}
               </TabPanel>
               <TabPanel>
-                <div className='border-border border-b-1'>
-                  <ReviewCard
-                    avatar='1kks3YnVkpyQxzw36CObFPvhL5f.jpg'
-                    content="There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in
-                    some form, by injected humour, or randomised words which don't look even slightly believable. If you are going
-                    to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of
-                    text."
-                    rating={8.5}
-                    reviewTime='24.08.2018, 17:53'
-                    title='Best Marvel movie? in my opinion'
-                    username='Johnny Sin'
-                  ></ReviewCard>
-                  <a className='hover:opacity-70' href='reviews'>
-                    <h3 className='font-semibold my-5'>Read All Reviews</h3>
-                  </a>
-                </div>
-                <ReviewForm hidden={toggleReview} className='mt-4' userId={userId} />
-                <button
-                  className='font-semibold text-primary w-fit border-none hover:bg-transparent h-fit text-base normal-case my-3 hover:opacity-70'
-                  onClick={handleToggleReview}
-                >
-                  {!toggleReview ? 'Cancel' : 'Write a Review'}
-                </button>
+                {!isMovieLoading && <ReviewTab movieId={movie?.id} userId={userId} />}
+                {isMovieLoading && <LoadingIndicator />}
               </TabPanel>
             </Tabs>
           </div>

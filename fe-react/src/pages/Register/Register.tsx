@@ -17,16 +17,16 @@ export default function Register() {
       <form id='register' className='form-container'>
         <img src={logo} alt='Logo'></img>
         <input type='text' placeholder='Username'></input>
-        <input type='text' placeholder='Email'></input>
-        <input type='password' placeholder='Password'></input>
-        <div className='checkbox-container'>
+        <input type='text' className='mt-4' placeholder='Email'></input>
+        <input type='password' className='mt-4' placeholder='Password'></input>
+        <div className='checkbox-container mt-2'>
           <Checkbox checked={isChecked} onChange={handleCheckboxChange}>
             <span className='sign__text'>
               I agree to the <Link to='/privacy'>Privacy Policy</Link>
             </span>
           </Checkbox>
         </div>
-        <button className='mb-4 mt-9'>Sign up</button>
+        <button className='primary-btn h-11 mb-4 mt-9'>Sign up</button>
         <span className='sign__delimiter'>or</span>
         <SocialSign></SocialSign>
         <span className='sign__text'>

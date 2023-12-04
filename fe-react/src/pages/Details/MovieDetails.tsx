@@ -153,7 +153,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
                 hasLogin ? 'Add to list' : 'Login to create and edit custom lists'
               }
               data-tooltip-place='bottom'
-              className='rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'
+              className=' flex justify-center items-center rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'
             >
               <svg
                 xmlns='http://www.w3.org/2000/svg'
@@ -172,7 +172,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
                 hasLogin ? 'Mark as favourite' : 'Login to add this movie to your favourites list'
               }
               data-tooltip-place='bottom'
-              className={`border-1  w-12 h-12 border-none rounded-full bg-gray-700 hover:bg-gray-600
+              className={` flex justify-center items-center border-1  w-12 h-12 border-none rounded-full bg-gray-700 hover:bg-gray-600
               `}
             >
               <svg
@@ -192,7 +192,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
               }
               data-tooltip-place='bottom'
               onClick={handleAddWatchList}
-              className='rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'
+              className='flex justify-center items-center rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'
             >
               <svg
                 className={isWatchList ? 'fill-red-600' : 'fill-white/70 '}
@@ -208,7 +208,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
             <div className='relative'>
               <button
                 id='clickable'
-                className='rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'
+                className='flex justify-center items-center rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'
                 onClick={hasLogin ? handleRatingButton : () => {}}
               >
                 <svg
