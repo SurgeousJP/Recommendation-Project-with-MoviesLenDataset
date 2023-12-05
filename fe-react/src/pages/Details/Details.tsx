@@ -35,6 +35,10 @@ export default function Details() {
 
   console.log(movie);
   console.log(discussion);
+
+  function buildCastWikiReference(castName: string) {
+    return 'https://en.wikipedia.org/wiki/' + castName.split(' ').join('_');
+  }
   return (
     <div className='w-auto bg-background '>
       {isMovieLoading && <LoadingIndicator />}
@@ -51,7 +55,7 @@ export default function Details() {
                   imageUrl={buildImageUrl(cast.profilePath, 'w500')}
                   name={cast.name}
                   character={cast.character}
-                  profilePath={cast.profilePath}
+                  profilePath={buildCastWikiReference(cast.name)}
                 />
               ))}
             </Scroller>
