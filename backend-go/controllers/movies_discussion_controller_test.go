@@ -71,7 +71,7 @@ func (suite *MovieDiscussionTestSuite) SetupTest() {
 
 func (suite *MovieDiscussionTestSuite) TestCreateMovieDiscussionSuccessfully() {
 	id := primitive.NewObjectID().Hex()
-
+	log.Println("TestCreateMovieDiscussionSuccessfully " + id)
 	body := strings.NewReader(`{
 		"_id": "` + id + `",
 		"movie_id": 949,
@@ -109,7 +109,7 @@ func (suite *MovieDiscussionTestSuite) TestCreateWrongBindedJSONMovieDiscussion(
 
 func (suite *MovieDiscussionTestSuite) TestCreateExistingMovieIdMovieDiscussion() {
 	id := suite.discussionID
-
+	log.Println("TestCreateExistingMovieIdMovieDiscussion " + id)
 	body := strings.NewReader(`{
 		"_id": "` + id + `",
 		"movie_id": 949,
