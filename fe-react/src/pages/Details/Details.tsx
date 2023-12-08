@@ -1,4 +1,6 @@
+/* eslint-disable import/no-duplicates */
 import { buildImageUrl } from 'src/helpers/utils';
+import { buildCastWikiReference } from 'src/helpers/utils';
 import CastCard from 'src/components/CastCard/CastCard';
 import Scroller from 'src/components/Scroller/index';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
@@ -35,6 +37,7 @@ export default function Details() {
 
   console.log(movie);
   console.log(discussion);
+
   return (
     <div className='w-auto bg-background '>
       {isMovieLoading && <LoadingIndicator />}
@@ -51,7 +54,7 @@ export default function Details() {
                   imageUrl={buildImageUrl(cast.profilePath, 'w500')}
                   name={cast.name}
                   character={cast.character}
-                  profilePath={cast.profilePath}
+                  profilePath={buildCastWikiReference(cast.name)}
                 />
               ))}
             </Scroller>

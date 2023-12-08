@@ -95,6 +95,10 @@ function minutesToHourMinuteString(minutes: number): string {
   }
 }
 
+export function buildCastWikiReference(castName: string) {
+  return 'https://en.wikipedia.org/wiki/' + castName.split(' ').join('_');
+}
+
 // "backdrop_sizes": [
 //     "w300",
 //     "w780",
