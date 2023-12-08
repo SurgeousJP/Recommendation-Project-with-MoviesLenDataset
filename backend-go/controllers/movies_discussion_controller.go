@@ -181,10 +181,10 @@ func (mc *MovieDiscussionController) UpdateMovieDiscussionPart(ctx *gin.Context)
 	discussionIDString := ctx.Param("discussion_id")
 
 	// Convert the discussionId string to ObjectID
-	discussionId, _ := primitive.ObjectIDFromHex(discussionIDString)
+	discussionId, _err := primitive.ObjectIDFromHex(discussionIDString)
 	partId, err := strconv.Atoi(ctx.Param("part_id"))
 
-	if err != nil || int64(partId) < 0 {
+	if err != nil || _err != nil || int64(partId) < 0 {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Invalid discussion or part id"})
 		return
 	}
@@ -208,10 +208,10 @@ func (mc *MovieDiscussionController) DeleteMovieDiscussionPart(ctx *gin.Context)
 	discussionIDString := ctx.Param("discussion_id")
 
 	// Convert the discussionId string to ObjectID
-	discussionId, _ := primitive.ObjectIDFromHex(discussionIDString)
+	discussionId, _err := primitive.ObjectIDFromHex(discussionIDString)
 	partId, err := strconv.Atoi(ctx.Param("part_id"))
 
-	if err != nil || int64(partId) <= 0 {
+	if err != nil || _err != nil || int64(partId) <= 0 {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Invalid discussion or part id"})
 		return
 	}
