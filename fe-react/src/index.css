@@ -68,7 +68,49 @@
 .react-tabs__tab {
   @apply inline-block relative list-none px-4 py-2 cursor-pointer -bottom-px uppercase text-sm;
 }
-
+.discussion-part a {
+  @apply text-primary hover:underline;
+}
+.quill a {
+  @apply text-primary hover:underline;
+}
+.ql-toolbar.ql-snow,
+.ql-editor {
+  @apply border-[#CFCFCF];
+}
+.ql-snow .ql-stroke {
+  fill: none;
+  stroke: rgb(207, 207, 207);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+.ql-snow .ql-stroke-miter {
+  fill: none;
+  stroke: rgb(207, 207, 207);
+  stroke-miterlimit: 10;
+  stroke-width: 2;
+}
+.ql-snow .ql-fill,
+.ql-snow .ql-stroke.ql-fill {
+  fill: rgb(207, 207, 207);
+}
+.ql-snow .ql-picker {
+  color: rgb(207, 207, 207);
+  display: inline-block;
+  float: left;
+  font-size: 14px;
+  font-weight: 500;
+  height: 24px;
+  position: relative;
+  vertical-align: middle;
+}
+.ql-container.ql-snow {
+  @apply border-[#CFCFCF];
+}
+.quill {
+  @apply h-80 my-8;
+}
 .react-tabs__tab--selected {
   @apply border-b-3 border-primary text-primary;
 }

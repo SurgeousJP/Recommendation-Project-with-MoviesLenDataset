@@ -1,16 +1,20 @@
 package interfaces
 
-import "movies_backend/models"
+import (
+	"movies_backend/models"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type MovieDiscussionServices interface {
 	CreateMovieDiscussion(*models.MovieDiscussion) error
-	GetMovieDiscussion(*int) (*models.MovieDiscussion, error)
+	GetMovieDiscussion(*primitive.ObjectID) (*models.MovieDiscussion, error)
 	GetMovieDiscussionsByMovieId(*int) ([]*models.MovieDiscussion, error)
 	GetMovieDiscussionsByUserId(*int) ([]*models.MovieDiscussion, error)
 	UpdateMovieDiscussion(*models.MovieDiscussion) error
-	DeleteMovieDiscussion(*int) error
-	CreateMovieDiscussionPart(*models.DiscussionPart, *int) error
-	GetMovieDiscussionPartInPage(int, int, *int) ([]*models.DiscussionPart, error)
-	UpdateMovieDiscussionPart(*int, *int, *models.DiscussionPart) error
-	DeleteMovieDiscussionPart(*int, *int) error
+	DeleteMovieDiscussion(*primitive.ObjectID) error
+	CreateMovieDiscussionPart(*models.DiscussionPart, *primitive.ObjectID) error
+	GetMovieDiscussionPartInPage(int, int, *primitive.ObjectID) ([]*models.DiscussionPart, error)
+	UpdateMovieDiscussionPart(*primitive.ObjectID, *int, *models.DiscussionPart) error
+	DeleteMovieDiscussionPart(*primitive.ObjectID, *int) error
 }
