@@ -66,12 +66,14 @@ func (suite *MovieDiscussionTestSuite) SetupTest() {
 
 	suite.movieDiscussionController = NewMovieDiscussionController(suite.movieDiscussionService)
 
+	id := primitive.NewObjectID().Hex()
+	suite.discussionID = id
+
 	suite.setUpDone = true
 }
 
 func (suite *MovieDiscussionTestSuite) TestCreateMovieDiscussionSuccessfully() {
-	id := primitive.NewObjectID().Hex()
-
+	id := suite.discussionID
 	body := strings.NewReader(`{
 		"_id": "` + id + `",
 		"movie_id": 949,
@@ -89,8 +91,6 @@ func (suite *MovieDiscussionTestSuite) TestCreateMovieDiscussionSuccessfully() {
 	assert.Equal(suite.T(), http.StatusOK, w.Code)
 
 	assert.Equal(suite.T(), `{"message":"Successful"}`, w.Body.String())
-
-	suite.discussionID = id
 
 }
 
