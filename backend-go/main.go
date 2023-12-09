@@ -62,6 +62,10 @@ var (
 	userReviewCollection *mongo.Collection
 	userReviewService interfaces.UserReviewService
 	userReviewController controllers.UserReviewController
+
+	similarMoviesCollection *mongo.Collection
+	similarMoviesService interfaces.SimilarMoviesServices
+	similarMoviesController controllers.SimilarMoviesController
 	
 	ctx         context.Context
 	mongoClient *mongo.Client
@@ -141,6 +145,10 @@ func Init() {
 	userReviewCollection = mongoClient.Database(databaseName).Collection("user_reviews")
 	userReviewService = implementations.NewUserReviewService(userReviewCollection, ctx)
 	userReviewController = controllers.NewUserReviewController(userReviewService)
+
+	similarMoviesCollection = mongoClient.Database(databaseName).Collection("similar_movies")
+	similarMoviesService = implementations.NewSimilarMoviesService(similarMoviesCollection, ctx)
+	similarMoviesController = controllers.NewSimilarMoviesController(similarMoviesService)
 	
 
 	server = gin.Default()
@@ -207,6 +215,7 @@ func main() {
 	leaderboardController.RegisterLeaderboardRoute(basePath)
 	topRatedMoviesController.RegisterTopRatedMoviesRoute(basePath)
 	userReviewController.RegisterUserReviewRoute(basePath)
+	similarMoviesController.RegisterSimilarMoviesRoute(basePath)
 
 	log.Fatal(server.Run(":" + port))
 }
