@@ -9,6 +9,8 @@ import SearchResult from './pages/SearchResult';
 
 import UserProfile from './pages/User/UserProfile';
 import Logout from './pages/Logout/Logout';
+import DiscussionLayout from './layouts/DiscussionLayout/DiscussionLayout';
+import DiscussionPage from './pages/Discussion/DiscussionPage';
 
 export default function useRouteElement() {
   const routeElement = useRoutes([
@@ -67,6 +69,22 @@ export default function useRouteElement() {
     {
       path: '/logout',
       element: <Logout />
+    },
+    {
+      path: '/discussions',
+      element: (
+        <DiscussionLayout>
+          <div className='w-10 h-[50rem] bg-white'>TExt</div>
+        </DiscussionLayout>
+      )
+    },
+    {
+      path: '/discussions/:id',
+      element: (
+        <DiscussionLayout>
+          <DiscussionPage movieTitle='Test' />
+        </DiscussionLayout>
+      )
     }
   ]);
   return routeElement;

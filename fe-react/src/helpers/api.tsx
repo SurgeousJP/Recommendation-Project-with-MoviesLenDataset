@@ -12,6 +12,8 @@ import {
 } from 'axios-jwt';
 import Toast from 'src/components/Toast';
 import Review from 'src/types/Review';
+import Discussion from 'src/types/Discussion.type';
+import DiscussionPart from 'src/types/DiscussionPart.type';
 
 const BASE_URL = 'http://localhost:9090/v1';
 
@@ -104,13 +106,34 @@ export const getMovieDetail = async (movieId: string) => {
   return data;
 };
 
+export const getDiscussion = async (discussionId: string) => {
+  const { data } = await instance.get(`movieDiscussion/get/${discussionId}`);
+  return data;
+};
+
 export const getMovieDiscussion = async (movieId: string) => {
-  const { data } = await instance.get(`movie_discussion/get-by-movie/${movieId}`);
+  const { data } = await instance.get(`movieDiscussion/getByMovie/${movieId}`);
   return data;
 };
 
 export const getMovieReview = async (movieId: string) => {
   const { data } = await instance.get(`userReview/get/movie/${movieId}`);
+  return data;
+};
+
+export const createMovieDiscussion = async (discussion: Discussion) => {
+  const { data } = await authInstance.post(`movieDiscussion/create`, discussion);
+  return data;
+};
+
+export const createDiscussionPart = async (
+  discussionId: string,
+  discussionPart: DiscussionPart
+) => {
+  const { data } = await authInstance.post(
+    `movieDiscussion/create/part/${discussionId}`,
+    discussionPart
+  );
   return data;
 };
 

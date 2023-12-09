@@ -7,6 +7,7 @@ import (
 	"movies_backend/services/interfaces"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -28,10 +29,10 @@ func (m *MovieDiscussionServicesImpl) CreateMovieDiscussion(movieDiscussion *mod
 	return err
 }
 
-func (m *MovieDiscussionServicesImpl) GetMovieDiscussion(movieDiscussionId *int) (*models.MovieDiscussion, error) {
+func (m *MovieDiscussionServicesImpl) GetMovieDiscussion(movieDiscussionId *primitive.ObjectID) (*models.MovieDiscussion, error) {
 	var movieDiscussion *models.MovieDiscussion
 
-	query := bson.D{bson.E{Key: "discussion_id", Value: movieDiscussionId}}
+	query := bson.D{bson.E{Key: "_id", Value: movieDiscussionId}}
 
 	err := m.movieDiscussionCollection.FindOne(m.ctx, query).Decode(&movieDiscussion)
 
@@ -63,14 +64,15 @@ func (m *MovieDiscussionServicesImpl) GetMovieDiscussionsByMovieId(movieId *int)
 
 	return movieDiscussions, nil
 }
-//------------------------------------------------------------
+
+// ------------------------------------------------------------
 func (m *MovieDiscussionServicesImpl) GetMovieDiscussionsByUserId(userId *int) ([]*models.MovieDiscussion, error) {
 	var movieDiscussions []*models.MovieDiscussion
 	query := bson.M{
 		"discussion_part.user_id": userId,
 	}
 	cursor, err := m.movieDiscussionCollection.Find(m.ctx, query)
-	
+
 	if err != nil {
 		return nil, err
 	}
@@ -93,10 +95,11 @@ func (m *MovieDiscussionServicesImpl) GetMovieDiscussionsByUserId(userId *int) (
 
 	return movieDiscussions, nil
 }
+
 //----------------------------------------------------------
 
 func (m *MovieDiscussionServicesImpl) UpdateMovieDiscussion(movieDiscussion *models.MovieDiscussion) error {
-	filter := bson.D{bson.E{Key: "discussion_id", Value: movieDiscussion.DiscussionId}}
+	filter := bson.D{bson.E{Key: "_id", Value: movieDiscussion.ID}}
 	update := bson.D{
 		bson.E{Key: "$set",
 			Value: bson.D{
@@ -113,8 +116,8 @@ func (m *MovieDiscussionServicesImpl) UpdateMovieDiscussion(movieDiscussion *mod
 	return nil
 }
 
-func (m *MovieDiscussionServicesImpl) DeleteMovieDiscussion(movieDiscussionId *int) error {
-	filter := bson.D{bson.E{Key: "discussion_id", Value: movieDiscussionId}}
+func (m *MovieDiscussionServicesImpl) DeleteMovieDiscussion(movieDiscussionId *primitive.ObjectID) error {
+	filter := bson.D{bson.E{Key: "_id", Value: movieDiscussionId}}
 	result, _ := m.movieDiscussionCollection.DeleteOne(m.ctx, filter)
 	if result.DeletedCount != 1 {
 		return errors.New("no matched document found for delete")
@@ -122,20 +125,31 @@ func (m *MovieDiscussionServicesImpl) DeleteMovieDiscussion(movieDiscussionId *i
 	return nil
 }
 
-func (m *MovieDiscussionServicesImpl) CreateMovieDiscussionPart(discussionPart *models.DiscussionPart, discussionId *int) error {
+func (m *MovieDiscussionServicesImpl) CreateMovieDiscussionPart(discussionPart *models.DiscussionPart, discussionId *primitive.ObjectID) error {
+	// Fetch the MovieDiscussion document
+	var movieDiscussion models.MovieDiscussion
+	filter := bson.M{"_id": discussionId}
+	err := m.movieDiscussionCollection.FindOne(m.ctx, filter).Decode(&movieDiscussion)
+	if err != nil {
+		return err
+	}
 
-	filter := bson.M{"discussion_id": discussionId}
+	// Calculate the next part_id based on the count of existing DiscussionPart elements
+	nextPartID := len(movieDiscussion.DiscussionPart)
+	discussionPart.PartId = nextPartID
+
+	// Update the MovieDiscussion document with the new DiscussionPart
 	update := bson.M{
 		"$push": bson.M{"discussion_part": discussionPart},
 	}
-	_, err := m.movieDiscussionCollection.UpdateOne(m.ctx, filter, update)
+	_, err = m.movieDiscussionCollection.UpdateOne(m.ctx, filter, update)
 	return err
 }
 
-func (m *MovieDiscussionServicesImpl) GetMovieDiscussionPartInPage(pageNumber int, partPerPage int, discussionId *int) ([]*models.DiscussionPart, error) {
+func (m *MovieDiscussionServicesImpl) GetMovieDiscussionPartInPage(pageNumber int, partPerPage int, discussionId *primitive.ObjectID) ([]*models.DiscussionPart, error) {
 	var partsInPage []*models.DiscussionPart
 
-	filter := bson.M{"discussion_id": discussionId}
+	filter := bson.M{"_id": discussionId}
 
 	projection := bson.M{"discussion_parts": bson.M{"$slice": []interface{}{(pageNumber - 1) * partPerPage, partPerPage}}}
 
@@ -160,9 +174,9 @@ func (m *MovieDiscussionServicesImpl) GetMovieDiscussionPartInPage(pageNumber in
 	return partsInPage, nil
 }
 
-func (m *MovieDiscussionServicesImpl) UpdateMovieDiscussionPart(discussionId *int, partId *int, updatedPart *models.DiscussionPart) error {
+func (m *MovieDiscussionServicesImpl) UpdateMovieDiscussionPart(discussionId *primitive.ObjectID, partId *int, updatedPart *models.DiscussionPart) error {
 	filter := bson.M{
-		"discussion_id":           discussionId,
+		"_id":                     discussionId,
 		"discussion_part.part_id": partId,
 	}
 
@@ -184,9 +198,9 @@ func (m *MovieDiscussionServicesImpl) UpdateMovieDiscussionPart(discussionId *in
 	return nil
 }
 
-func (m *MovieDiscussionServicesImpl) DeleteMovieDiscussionPart(discussionId *int, partId *int) error {
+func (m *MovieDiscussionServicesImpl) DeleteMovieDiscussionPart(discussionId *primitive.ObjectID, partId *int) error {
 	filter := bson.M{
-		"discussion_id":           discussionId,
+		"_id":                     discussionId,
 		"discussion_part.part_id": partId,
 	}
 

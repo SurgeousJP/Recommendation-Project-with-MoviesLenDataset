@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type MovieDiscussionController struct {
@@ -36,7 +37,10 @@ func (mc *MovieDiscussionController) CreateMovieDiscussion(ctx *gin.Context) {
 }
 
 func (mc *MovieDiscussionController) GetMovieDiscussion(ctx *gin.Context) {
-	discussionId, err := strconv.Atoi(ctx.Param("id"))
+	discussionIDString := ctx.Param("id")
+
+	// Convert the discussionId string to ObjectID
+	discussionId, err := primitive.ObjectIDFromHex(discussionIDString)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
@@ -98,9 +102,12 @@ func (mc *MovieDiscussionController) UpdateMovieDiscussion(ctx *gin.Context) {
 }
 
 func (mc *MovieDiscussionController) DeleteMovieDiscussion(ctx *gin.Context) {
-	discussionId, err := strconv.Atoi(ctx.Param("id"))
+	discussionIDString := ctx.Param("id")
 
-	if err != nil || int64(discussionId) <= 0 {
+	// Convert the discussionId string to ObjectID
+	discussionId, err := primitive.ObjectIDFromHex(discussionIDString)
+
+	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Invalid movie id"})
 		return
 	}
@@ -116,7 +123,10 @@ func (mc *MovieDiscussionController) DeleteMovieDiscussion(ctx *gin.Context) {
 
 func (mc *MovieDiscussionController) CreateMovieDiscussionPart(ctx *gin.Context) {
 
-	discussionId, err := strconv.Atoi(ctx.Param("discussion_id"))
+	discussionIDString := ctx.Param("discussion_id")
+
+	// Convert the discussionId string to ObjectID
+	discussionId, err := primitive.ObjectIDFromHex(discussionIDString)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
@@ -137,7 +147,10 @@ func (mc *MovieDiscussionController) CreateMovieDiscussionPart(ctx *gin.Context)
 }
 
 func (mc *MovieDiscussionController) GetMovieDiscussionPartInPage(ctx *gin.Context) {
-	discussionId, err := strconv.Atoi(ctx.Param("discussion_id"))
+	discussionIDString := ctx.Param("discussion_id")
+
+	// Convert the discussionId string to ObjectID
+	discussionId, err := primitive.ObjectIDFromHex(discussionIDString)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
@@ -165,10 +178,13 @@ func (mc *MovieDiscussionController) GetMovieDiscussionPartInPage(ctx *gin.Conte
 
 func (mc *MovieDiscussionController) UpdateMovieDiscussionPart(ctx *gin.Context) {
 	var updatedPart models.DiscussionPart
-	discussionId, _ := strconv.Atoi(ctx.Param("discussion_id"))
+	discussionIDString := ctx.Param("discussion_id")
+
+	// Convert the discussionId string to ObjectID
+	discussionId, _err := primitive.ObjectIDFromHex(discussionIDString)
 	partId, err := strconv.Atoi(ctx.Param("part_id"))
 
-	if err != nil || int64(discussionId) <= 0 || int64(partId) <= 0 {
+	if err != nil || _err != nil || int64(partId) < 0 {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Invalid discussion or part id"})
 		return
 	}
@@ -189,10 +205,13 @@ func (mc *MovieDiscussionController) UpdateMovieDiscussionPart(ctx *gin.Context)
 }
 
 func (mc *MovieDiscussionController) DeleteMovieDiscussionPart(ctx *gin.Context) {
-	discussionId, _ := strconv.Atoi(ctx.Param("discussion_id"))
+	discussionIDString := ctx.Param("discussion_id")
+
+	// Convert the discussionId string to ObjectID
+	discussionId, _err := primitive.ObjectIDFromHex(discussionIDString)
 	partId, err := strconv.Atoi(ctx.Param("part_id"))
 
-	if err != nil || int64(discussionId) <= 0 || int64(partId) <= 0 {
+	if err != nil || _err != nil || int64(partId) <= 0 {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Invalid discussion or part id"})
 		return
 	}

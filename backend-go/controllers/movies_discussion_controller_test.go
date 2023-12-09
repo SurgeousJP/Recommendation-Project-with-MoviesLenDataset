@@ -13,9 +13,11 @@ import (
 
 	// "github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+
 	// "github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -27,6 +29,7 @@ type MovieDiscussionTestSuite struct {
 	movieDiscussionCollection *mongo.Collection
 	movieDiscussionService    interfaces.MovieDiscussionServices
 	movieDiscussionController MovieDiscussionController
+	discussionID              string
 	setUpDone                 bool
 }
 
@@ -41,7 +44,6 @@ func (suite *MovieDiscussionTestSuite) SetupTest() {
 	// if err != nil {
 	// 	log.Fatal("Error loading .env file")
 	// }
-
 	// Retrieve the connection string from the environment
 	connectionString := os.Getenv("DB_CONNECTION_STRING")
 
@@ -68,8 +70,10 @@ func (suite *MovieDiscussionTestSuite) SetupTest() {
 }
 
 func (suite *MovieDiscussionTestSuite) TestCreateMovieDiscussionSuccessfully() {
+	id := primitive.NewObjectID().Hex()
+
 	body := strings.NewReader(`{
-		"discussion_id": 200000,
+		"_id": "` + id + `",
 		"movie_id": 949,
 		"subject": "Thoughts on the Ending",
 		"status": true,
@@ -85,6 +89,9 @@ func (suite *MovieDiscussionTestSuite) TestCreateMovieDiscussionSuccessfully() {
 	assert.Equal(suite.T(), http.StatusOK, w.Code)
 
 	assert.Equal(suite.T(), `{"message":"Successful"}`, w.Body.String())
+
+	suite.discussionID = id
+
 }
 
 func (suite *MovieDiscussionTestSuite) TestCreateWrongBindedJSONMovieDiscussion() {
@@ -101,29 +108,11 @@ func (suite *MovieDiscussionTestSuite) TestCreateWrongBindedJSONMovieDiscussion(
 	assert.Equal(suite.T(), `{"message":"invalid character 'U' looking for beginning of object key string"}`, w.Body.String())
 }
 
-func (suite *MovieDiscussionTestSuite) TestCreateExistingMovieIdMovieDiscussion() {
-	body := strings.NewReader(`{
-		"discussion_id": 1,
-		"movie_id": 949,
-		"subject": "Thoughts on the Ending",
-		"status": true,
-		"discussion_part": []
-	}`)
-
-	req, _ := http.NewRequest("POST", "/movieDiscussion/create", body)
-
-	w := httptest.NewRecorder()
-
-	suite.r.ServeHTTP(w, req)
-
-	assert.Equal(suite.T(), http.StatusBadGateway, w.Code)
-
-	assert.Equal(suite.T(), `{"message":"write exception: write errors: [E11000 duplicate key error collection: moviesDB.discussion_movie index: discussion_id_1 dup key: { discussion_id: 1 }]"}`, w.Body.String())
-}
-
 func (suite *MovieDiscussionTestSuite) TestGetAnExistingMovieDiscussion() {
+	id := suite.discussionID
+
 	// Create a fake HTTP request
-	req, _ := http.NewRequest("GET", "/movieDiscussion/get/1", nil)
+	req, _ := http.NewRequest("GET", "/movieDiscussion/get/"+id, nil)
 
 	// Create a response recorder to record the response
 	w := httptest.NewRecorder()
@@ -136,7 +125,7 @@ func (suite *MovieDiscussionTestSuite) TestGetAnExistingMovieDiscussion() {
 
 	// Check the response body
 	assert.JSONEq(suite.T(), `{
-		"discussion_id": 1,
+		"_id": "`+id+`",
 		"movie_id": 949,
 		"subject": "Thoughts on the Ending",
 		"status": true,
@@ -146,7 +135,9 @@ func (suite *MovieDiscussionTestSuite) TestGetAnExistingMovieDiscussion() {
 
 func (suite *MovieDiscussionTestSuite) TestGetANonExistingMovieDiscussion() {
 	// Create a fake HTTP request
-	req, _ := http.NewRequest("GET", "/movieDiscussion/get/2000001", nil)
+	id := primitive.NewObjectID().Hex()
+
+	req, _ := http.NewRequest("GET", "/movieDiscussion/get/"+id, nil)
 
 	// Create a response recorder to record the response
 	w := httptest.NewRecorder()
@@ -175,7 +166,7 @@ func (suite *MovieDiscussionTestSuite) TestGetInvalidMovieIdMovieDiscussion() {
 	assert.Equal(suite.T(), http.StatusBadRequest, w.Code)
 
 	// Check the response body
-	assert.Equal(suite.T(), `{"message":"strconv.Atoi: parsing \"fsaf\": invalid syntax"}`, w.Body.String())
+	assert.Equal(suite.T(), `{"message":"the provided hex string is not a valid ObjectID"}`, w.Body.String())
 }
 
 func (suite *MovieDiscussionTestSuite) TestGetANonExistingMovieByMovieDiscussion() {
@@ -259,8 +250,10 @@ func (suite *MovieDiscussionTestSuite) TestUpdateUnbindJSONMovieDiscussion() {
 }
 
 func (suite *MovieDiscussionTestSuite) TestUpdateNonExistentMovieDiscussion() {
+	id := primitive.NewObjectID().Hex()
+
 	body := strings.NewReader(`{
-		"discussion_id": 2000001,
+		"_id": "` + id + `",
 		"movie_id": 123,
 		"subject": "Thoughts on the Ending",
 		"status": true,
@@ -283,8 +276,9 @@ func (suite *MovieDiscussionTestSuite) TestUpdateNonExistentMovieDiscussion() {
 }
 
 func (suite *MovieDiscussionTestSuite) TestUpdateSuccessfulMovieDiscussion() {
+	id := suite.discussionID
 	body := strings.NewReader(`{
-		"discussion_id": 1,
+		"_id": "` + id + `",
 		"movie_id": 123,
 		"subject": "Thoughts on the Ending",
 		"status": true,
@@ -321,7 +315,8 @@ func (suite *MovieDiscussionTestSuite) TestDeleteInvalidMovieIdMovieDiscussion()
 
 func (suite *MovieDiscussionTestSuite) TestDeleteNonExistentMovieDiscussion() {
 	// Create a fake HTTP request
-	req, _ := http.NewRequest("DELETE", "/movieDiscussion/delete/2000001", nil)
+	id := primitive.NewObjectID().Hex()
+	req, _ := http.NewRequest("DELETE", "/movieDiscussion/delete/"+id, nil)
 
 	// Create a response recorder to record the response
 	w := httptest.NewRecorder()
@@ -347,13 +342,13 @@ func (suite *MovieDiscussionTestSuite) TestCreatePartInInvalidDiscussion() {
 
 	assert.Equal(suite.T(), http.StatusBadRequest, w.Code)
 
-	assert.Equal(suite.T(), `{"message":"strconv.Atoi: parsing \"fsaf\": invalid syntax"}`, w.Body.String())
+	assert.Equal(suite.T(), `{"message":"the provided hex string is not a valid ObjectID"}`, w.Body.String())
 }
 
 func (suite *MovieDiscussionTestSuite) TestCreateWrongBindedJSONMovieDiscussionPart() {
 	body := strings.NewReader(`{UnbindedJSON}`)
-
-	req, _ := http.NewRequest("PATCH", "/movieDiscussion/create/part/1", body)
+	id := suite.discussionID
+	req, _ := http.NewRequest("PATCH", "/movieDiscussion/create/part/"+id, body)
 
 	w := httptest.NewRecorder()
 
@@ -381,7 +376,9 @@ func (suite *MovieDiscussionTestSuite) TestUpdateMovieDiscussionPartInvalidDiscu
 func (suite *MovieDiscussionTestSuite) TestUpdateWrongBindedJSONMovieDiscussionPart() {
 	body := strings.NewReader(`{UnbindedJSON}`)
 
-	req, _ := http.NewRequest("PATCH", "/movieDiscussion/update/part/1/1", body)
+	id := suite.discussionID
+
+	req, _ := http.NewRequest("PATCH", "/movieDiscussion/update/part/"+id+"/0", body)
 
 	w := httptest.NewRecorder()
 
@@ -395,7 +392,9 @@ func (suite *MovieDiscussionTestSuite) TestUpdateWrongBindedJSONMovieDiscussionP
 func (suite *MovieDiscussionTestSuite) TestDeleteInvalidDiscussionPart() {
 	body := strings.NewReader(``)
 
-	req, _ := http.NewRequest("PATCH", "/movieDiscussion/delete/part/1/fsaf", body)
+	id := suite.discussionID
+
+	req, _ := http.NewRequest("PATCH", "/movieDiscussion/delete/part/"+id+"/fsaf", body)
 
 	w := httptest.NewRecorder()
 
@@ -417,13 +416,14 @@ func (suite *MovieDiscussionTestSuite) TestGetMovieDiscussionInPageFromInvalidDi
 
 	assert.Equal(suite.T(), http.StatusBadRequest, w.Code)
 
-	assert.Equal(suite.T(), `{"message":"strconv.Atoi: parsing \"fsaf\": invalid syntax"}`, w.Body.String())
+	assert.Equal(suite.T(), `{"message":"the provided hex string is not a valid ObjectID"}`, w.Body.String())
 }
 
 func (suite *MovieDiscussionTestSuite) TestGetMovieDiscussionInPageFromInvalidPage() {
 	body := strings.NewReader(`{}`)
+	id := suite.discussionID
 
-	req, _ := http.NewRequest("GET", "/movieDiscussion/get/part/1/fsaf", body)
+	req, _ := http.NewRequest("GET", "/movieDiscussion/get/part/"+id+"/fsaf", body)
 
 	w := httptest.NewRecorder()
 
@@ -443,9 +443,9 @@ func (suite *MovieDiscussionTestSuite) TestRegisterMovieDiscussionRouteSuccessfu
 
 	// Register the cast routes
 	cc.RegisterMovieDiscussionRoute(router.Group("/v2"))
-
+	id := suite.discussionID
 	// Perform a GET request to "/v2/cast/get/1"
-	w := performMovieDiscussionRequest(router, "GET", "/v2/movieDiscussion/get/1")
+	w := performMovieDiscussionRequest(router, "GET", "/v2/movieDiscussion/get/"+id)
 
 	// Assert the response status code
 	assert.Equal(suite.T(), http.StatusOK, w.Code)

@@ -6,7 +6,7 @@ import Scroller from 'src/components/Scroller/index';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import MovieCardRecom from 'src/components/MovieCardRecom';
 import { useParams } from 'react-router-dom';
-import DiscussionCard from 'src/components/Dicussion/DicussionCard';
+import DiscussionCard from 'src/components/Discussion/DiscussionCard';
 import useMovieDetail from 'src/hooks/useMovieDetail';
 import useCast from 'src/hooks/useCasts';
 import useKeyword from 'src/hooks/useKeyword';
@@ -15,6 +15,7 @@ import useUserId from 'src/hooks/useUserId';
 import useMovieDiscussion from 'src/hooks/useMovieDiscussion';
 import LoadingIndicator from 'src/components/LoadingIndicator';
 import ReviewTab from './Tab/ReviewTab';
+import Discussion from './../../types/Discussion.type';
 
 export default function Details() {
   const { id } = useParams();
@@ -33,7 +34,7 @@ export default function Details() {
   const { data: movie, isLoading: isMovieLoading } = useMovieDetail(id || '');
   const { data: casts } = useCast(id || '');
   const { data: keywords } = useKeyword(id || '');
-  const { isLoading: isDiscussionLoading, data: discussion } = useMovieDiscussion(id || '');
+  const { isLoading: isDiscussionLoading, data: discussions } = useMovieDiscussion(id || '');
 
   console.log(movie);
   console.log(discussion);
@@ -75,23 +76,30 @@ export default function Details() {
               <TabPanel>
                 {isDiscussionLoading ? (
                   <LoadingIndicator />
-                ) : !discussion ? (
-                  <p>No discussion yet</p>
+                ) : !discussions ? (
+                  <p>No discussions yet</p>
                 ) : (
-                  <DiscussionCard
-                    answerCount={discussion[0].discussion_part.length - 1}
-                    profilePath={buildImageUrl(
-                      discussion[0].discussion_part[0].profile_path,
-                      'original'
-                    )}
-                    status={discussion[0].status}
-                    subject={discussion[0].subject}
-                    time={new Date(discussion[0].discussion_part[0].timestamp).toLocaleString(
-                      'en-US',
-                      options
-                    )}
-                    username={discussion[0].discussion_part[0].name}
-                  ></DiscussionCard>
+                  <div className='space-y-3 mt-3'>
+                    {discussions.slice(0, 3).map((discussion: Discussion) => {
+                      return (
+                        <DiscussionCard
+                          key={discussion.discussion_id}
+                          answerCount={discussion.discussion_part.length - 1}
+                          profilePath={buildImageUrl(
+                            discussion.discussion_part[0].profile_path,
+                            'original'
+                          )}
+                          status={discussion.status}
+                          subject={discussion.subject}
+                          time={new Date(discussion.discussion_part[0].timestamp).toLocaleString(
+                            'en-US',
+                            options
+                          )}
+                          username={discussion.discussion_part[0].name}
+                        ></DiscussionCard>
+                      );
+                    })}
+                  </div>
                 )}
               </TabPanel>
               <TabPanel>
