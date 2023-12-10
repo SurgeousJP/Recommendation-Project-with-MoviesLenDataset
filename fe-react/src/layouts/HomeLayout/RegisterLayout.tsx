@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
+import { Outlet } from 'react-router-dom';
 import Footer from 'src/components/Footer';
 import Header from 'src/components/Header';
 import SideBar from 'src/components/Sidebar/Sidebar';
-interface Props {
-  children?: React.ReactNode;
-}
 
-export default function Register({ children }: Props) {
+export default function Register() {
   const [isSideBarOpen, setSideBarOpen] = useState(false);
 
   const toggleSideBar = () => {
@@ -35,7 +33,7 @@ export default function Register({ children }: Props) {
     <div id='outer-container'>
       <Header onBurgerMenuClick={toggleSideBar} isOpen={isSideBarOpen} />
       <div className='mt-14 min-h-screen pb-4 bg-background' id='page-wrap'>
-        {children}
+        <Outlet />
       </div>
       <Footer />
       {isSideBarOpen && (

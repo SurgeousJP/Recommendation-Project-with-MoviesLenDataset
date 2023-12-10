@@ -1,23 +1,72 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Tooltip } from 'react-tooltip';
+import { options } from 'src/constant/time-option';
+import useUserId from 'src/hooks/useUserId';
 import DiscussionPart from 'src/types/DiscussionPart.type';
+import { deleteDiscussion, deleteDiscussionPart, updateDiscussionPart } from './../../helpers/api';
+import { useMutation } from 'react-query';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import QuillForm from '../QuillForm';
 
 interface DiscussionPartCardProps {
+  discussionId: string;
   discussionPart: DiscussionPart;
   subject: string;
   isReply?: boolean;
+  canDelete?: boolean;
+  onPartDeleteSuccess?: () => void;
+  onPartEditSuccess?: () => void;
 }
-function DiscussionPartCard({ discussionPart, subject, isReply }: DiscussionPartCardProps) {
-  const options = {
-    month: 'short', // abbreviated month name
-    day: 'numeric', // day of the month
-    year: 'numeric', // full year
-    hour: 'numeric', // hour in 12-hour format
-    minute: 'numeric', // minute
-    hour12: true // use 12-hour time format
+function DiscussionPartCard({
+  discussionPart,
+  subject,
+  isReply,
+  discussionId,
+  canDelete = true,
+  onPartDeleteSuccess,
+  onPartEditSuccess
+}: DiscussionPartCardProps) {
+  const { userId } = useUserId();
+  const [isEditting, setIsEditting] = useState(false);
+  const [value, setValue] = useState(discussionPart.description);
+
+  const navigate = useNavigate();
+
+  const { mutate: deletePart } = useMutation(
+    (partId: number) => deleteDiscussionPart(discussionId, partId),
+    {
+      onSuccess: onPartDeleteSuccess
+    }
+  );
+  const { mutate: deleteDiscussionMutation } = useMutation(() => deleteDiscussion(discussionId), {
+    onSuccess: () => {
+      toast.success('Discussion deleted successfully');
+      navigate(-1);
+    }
+  });
+  const { mutate: editDiscussion } = useMutation(
+    (discussionPart: DiscussionPart) => updateDiscussionPart(discussionId, discussionPart),
+    {
+      onSuccess: onPartEditSuccess
+    }
+  );
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const updateDiscussionPart = { ...discussionPart, description: value };
+    editDiscussion(updateDiscussionPart);
+    setIsEditting(false);
   };
 
+  const handleDelete = () => {
+    if (discussionPart.part_id === 0) {
+      deleteDiscussionMutation();
+    } else {
+      deletePart(discussionPart.part_id);
+    }
+  };
   return (
-    <div className='border-border border-1 '>
+    <div className='border-border border-1'>
       <div className='p-2 w-full bg-[#24232b] flex items-center border-border border-b-1'>
         <img className='rounded-full w-10 h-10' src={discussionPart.profile_path} alt='Profile' />
         <div className='ml-4 '>
@@ -28,16 +77,29 @@ function DiscussionPartCard({ discussionPart, subject, isReply }: DiscussionPart
             </h2>
           )}
 
-          <span className=' font-light'>
+          <span className='font-light'>
             {!isReply && <>posted by {discussionPart.name} </>}
             on {new Date(discussionPart.timestamp).toLocaleString('en-US', options)}
           </span>
         </div>
       </div>
-      <div
-        className='discussion-part p-4  border-border border-b-1'
-        dangerouslySetInnerHTML={{ __html: discussionPart.description }}
-      ></div>
+      {!isEditting && (
+        <div
+          className='discussion-part p-4  border-border border-b-1'
+          dangerouslySetInnerHTML={{ __html: discussionPart.description }}
+        ></div>
+      )}
+      {isEditting && (
+        <div className='p-3 border-border border-b-1'>
+          <QuillForm
+            hidden={!isEditting}
+            value={value}
+            setValue={setValue}
+            onSubmit={handleSubmit}
+            onCancel={() => setIsEditting(false)}
+          />
+        </div>
+      )}
       <div className='text-sm py-2 px-4 flex justify-between'>
         <div className='flex space-x-2'>
           <button className='flex items-center'>
@@ -51,10 +113,39 @@ function DiscussionPartCard({ discussionPart, subject, isReply }: DiscussionPart
           </button>
         </div>
         <div className='flex space-x-3'>
-          <button>Report</button>
-          <button>Ignore</button>
+          {userId === discussionPart.user_id && (
+            <button id={`edit-${discussionPart.part_id}`} className='w-5 h-5'>
+              <img src='/src/assets/images/edit.svg' alt='settings' />
+            </button>
+          )}
+          {userId !== discussionPart.user_id && (
+            <>
+              <button>Report</button>
+              <button>Ignore</button>
+            </>
+          )}
         </div>
       </div>
+
+      <Tooltip
+        style={{ backgroundColor: 'rgb(55, 65, 81)' }}
+        opacity={1}
+        anchorSelect={`#edit-${discussionPart.part_id}`}
+        place='bottom'
+        openOnClick
+        clickable
+      >
+        <ul className='space-y-2 py-1'>
+          <li>
+            <button onClick={() => setIsEditting(true)}>Edit</button>
+          </li>
+          <li>
+            <button hidden={!canDelete} onClick={handleDelete}>
+              Delete
+            </button>
+          </li>
+        </ul>
+      </Tooltip>
     </div>
   );
 }

@@ -38,7 +38,7 @@ const requestRefresh: TokenRefreshRequest = async (
 };
 const getStorage = getBrowserLocalStorage;
 
-authInstance.interceptors.response.use(
+axios.interceptors.response.use(
   response => {
     return response;
   },
@@ -122,6 +122,7 @@ export const getMovieReview = async (movieId: string) => {
 };
 
 export const createMovieDiscussion = async (discussion: Discussion) => {
+  console.log(discussion);
   const { data } = await authInstance.post(`movieDiscussion/create`, discussion);
   return data;
 };
@@ -130,9 +131,32 @@ export const createDiscussionPart = async (
   discussionId: string,
   discussionPart: DiscussionPart
 ) => {
-  const { data } = await authInstance.post(
+  const { data } = await authInstance.patch(
     `movieDiscussion/create/part/${discussionId}`,
     discussionPart
+  );
+  return data;
+};
+
+export const updateDiscussionPart = async (
+  discussionId: string,
+  discussionPart: DiscussionPart
+) => {
+  const { data } = await authInstance.patch(
+    `movieDiscussion/update/part/${discussionId}/${discussionPart.part_id}`,
+    discussionPart
+  );
+  return data;
+};
+
+export const deleteDiscussion = async (discussionId: string) => {
+  const { data } = await authInstance.delete(`movieDiscussion/delete/${discussionId}`);
+  return data;
+};
+
+export const deleteDiscussionPart = async (discussionId: string, partId: number) => {
+  const { data } = await authInstance.patch(
+    `movieDiscussion/delete/part/${discussionId}/${partId}`
   );
   return data;
 };

@@ -1,4 +1,4 @@
-import { Navigate, useRoutes } from 'react-router-dom';
+import { useRoutes } from 'react-router-dom';
 import ProductList from './pages/ProductList';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -10,81 +10,110 @@ import SearchResult from './pages/SearchResult';
 import UserProfile from './pages/User/UserProfile';
 import Logout from './pages/Logout/Logout';
 import DiscussionLayout from './layouts/DiscussionLayout/DiscussionLayout';
-import DiscussionPage from './pages/Discussion/DiscussionPage';
+import DiscussionDetails from './pages/Discussion/DiscussionDetails';
+import { path } from './constant/path';
+import NotFound from './pages/NotFound/NotFound';
+import DiscussionMovie from './pages/Discussion/DiscussionMovie';
 
 export default function useRouteElement() {
   const routeElement = useRoutes([
     {
-      path: '/',
-      element: (
-        <HomeLayout>
-          <ProductList />
-        </HomeLayout>
-      )
+      element: <HomeLayout />,
+      children: [
+        {
+          path: path.default,
+          element: <ProductList />
+        },
+        {
+          path: path.search,
+          element: <SearchResult />,
+          children: [
+            {
+              path: ':type'
+            }
+          ]
+        },
+        {
+          path: '/u/:id',
+          element: <UserProfile />
+        },
+        {
+          path: path.logout,
+          element: <Logout />
+        },
+        {
+          path: path.details,
+          children: [
+            {
+              path: path.default,
+              element: <NotFound />
+            },
+            {
+              path: path.id,
+              element: <Details />
+            },
+            {
+              path: ':id',
+              element: <Details />
+            }
+          ]
+        },
+        {
+          path: '*',
+          element: <NotFound />
+        }
+      ]
     },
+
     {
-      path: '/details/:id',
-      element: (
-        <HomeLayout>
-          <Details />
-        </HomeLayout>
-      )
-    },
-    {
-      path: '/search/:type',
-      element: (
-        <HomeLayout>
-          <SearchResult />
-        </HomeLayout>
-      )
-    },
-    {
-      path: '/search',
-      element: (
-        <HomeLayout>
-          <SearchResult />
-        </HomeLayout>
-      )
-    },
-    {
-      path: '/login',
+      path: path.login,
       element: <Login />
     },
     {
-      path: '/register',
+      path: path.register,
       element: <Register />
     },
     {
-      path: '/forgot',
+      path: path.forgot_password,
       element: <ForgotPass />
     },
     {
-      path: '/u/:id',
-      element: (
-        <HomeLayout>
-          <UserProfile />
-        </HomeLayout>
-      )
-    },
-    {
-      path: '/logout',
-      element: <Logout />
-    },
-    {
-      path: '/discussions',
-      element: (
-        <DiscussionLayout>
-          <div className='w-10 h-[50rem] bg-white'>TExt</div>
-        </DiscussionLayout>
-      )
-    },
-    {
-      path: '/discussions/:id',
-      element: (
-        <DiscussionLayout>
-          <DiscussionPage movieTitle='Test' />
-        </DiscussionLayout>
-      )
+      element: <DiscussionLayout />,
+      children: [
+        {
+          path: path.discussions,
+          element: <DiscussionDetails />,
+          children: [
+            {
+              path: path.discussion_id,
+              element: <DiscussionDetails />
+            }
+          ]
+        },
+        {
+          path: path.details,
+          children: [
+            {
+              path: path.id,
+              children: [
+                {
+                  path: path.discussions,
+                  children: [
+                    {
+                      path: path.default,
+                      element: <DiscussionMovie />
+                    },
+                    {
+                      path: path.discussion_id,
+                      element: <DiscussionDetails />
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]);
   return routeElement;

@@ -5,7 +5,6 @@ import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import 'react-tooltip/dist/react-tooltip.css';
-import { Tooltip } from 'react-tooltip';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -15,11 +14,10 @@ const queryClient = new QueryClient({
   }
 });
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <QueryClientProvider client={queryClient}>
-    <BrowserRouter>
+  <BrowserRouter>
+    <QueryClientProvider client={queryClient}>
       <App />
-    </BrowserRouter>
-    <Tooltip style={{ backgroundColor: 'rgb(55, 65, 81)' }} id='my-tooltip' />
-    <ReactQueryDevtools initialIsOpen={false} />
-  </QueryClientProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  </BrowserRouter>
 );

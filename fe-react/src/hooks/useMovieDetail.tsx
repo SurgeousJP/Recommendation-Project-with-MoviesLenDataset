@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from 'react-query';
 import { getMovieDetail } from 'src/helpers/api';
 import { mapJsonToMovie } from 'src/helpers/utils';
 
-const useMovieDetail = (movieId: string) => {
+const useMovieDetail = (movieId: string, onError?: (error) => void) => {
   const queryClient = useQueryClient();
   const { isLoading, isError, data, error } = useQuery(
     ['movieDetail', movieId],
@@ -11,6 +11,7 @@ const useMovieDetail = (movieId: string) => {
       select(data) {
         return mapJsonToMovie(data);
       },
+      onError: onError,
       initialData: () => {
         const movie = queryClient
           .getQueryData('movies')
@@ -20,7 +21,8 @@ const useMovieDetail = (movieId: string) => {
         } else {
           return undefined;
         }
-      }
+      },
+      enabled: !!movieId
     }
   );
 

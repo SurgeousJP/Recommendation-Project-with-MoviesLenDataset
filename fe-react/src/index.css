@@ -71,6 +71,18 @@
 .discussion-part a {
   @apply text-primary hover:underline;
 }
+.discussion-part h1 {
+  @apply text-2xl;
+}
+.discussion-part h2 {
+  @apply text-xl;
+}
+.discussion-part h3 {
+  @apply text-lg;
+}
+.discussion-part p {
+  @apply text-sm;
+}
 .quill a {
   @apply text-primary hover:underline;
 }
@@ -108,6 +120,7 @@
 .ql-container.ql-snow {
   @apply border-[#CFCFCF];
 }
+
 .quill {
   @apply h-80 my-8;
 }

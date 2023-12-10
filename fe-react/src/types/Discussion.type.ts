@@ -1,7 +1,8 @@
 import DiscussionPart from './DiscussionPart.type';
 
 interface Discussion {
-  discussion_id: number;
+  _id?: string;
+  discussion_id?: number;
   movie_id: number;
   subject: string;
   status: boolean;

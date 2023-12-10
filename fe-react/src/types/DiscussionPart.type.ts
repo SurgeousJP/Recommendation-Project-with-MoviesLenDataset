@@ -1,5 +1,4 @@
 interface DiscussionPart {
-  discussion_id: number;
   user_id: number;
   part_id: number;
   name: string;

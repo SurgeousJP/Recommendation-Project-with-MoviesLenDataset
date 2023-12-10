@@ -9,6 +9,7 @@ const Logout: React.FC = () => {
     logout();
     console.log('logout');
     navigate('/');
+    window.location.reload();
   };
 
   useEffect(() => {

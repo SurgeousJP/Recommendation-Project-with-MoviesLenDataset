@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import useUserId from 'src/hooks/useUserId';
 
@@ -6,12 +5,18 @@ interface SidebarDiscussionProps {
   previousPageUrl?: string;
   previousPageTitle?: string;
   className?: string;
+  onNewDiscussion?: () => void;
+  isOnMoviePage?: boolean;
+  isNewDiscussion?: boolean;
 }
 
 function SidebarDiscussion({
   previousPageUrl = '/',
   previousPageTitle = 'Back to TMDB',
-  className = 'w-60 min-h-screen bg-[#02121E] flex flex-col items-end'
+  className = 'w-60 min-h-screen bg-[#02121E] flex flex-col items-end',
+  onNewDiscussion,
+  isOnMoviePage,
+  isNewDiscussion
 }: SidebarDiscussionProps) {
   const { userId, hasLogin } = useUserId();
 
@@ -29,7 +34,11 @@ function SidebarDiscussion({
           <Link to={`/u/${userId}`} className=' mt-4  mr-10 hover:text-white/60 '>
             Notification
           </Link>
-          <button className='font-semibold mt-8 mr-10 bg-[#01b4e4] rounded-md px-4 py-1.5 hover:bg-opacity-0 transition duration-300'>
+          <button
+            onClick={onNewDiscussion}
+            hidden={isNewDiscussion || !isOnMoviePage}
+            className='font-semibold mt-8 mr-10 bg-[#01b4e4] rounded-md px-4 py-1.5 hover:bg-opacity-0 transition duration-300'
+          >
             New Discussion
           </button>
         </>

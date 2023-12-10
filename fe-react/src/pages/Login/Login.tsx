@@ -77,7 +77,7 @@ export default function Login() {
           Don&apos;t have an account? <Link to='/register'>Sign up!</Link>
         </span>
         <span className='sign__text'>
-          <Link to='/forgot'>Forgot password?</Link>
+          <Link to='/forgot-password'>Forgot password?</Link>
         </span>
       </form>
     </div>
