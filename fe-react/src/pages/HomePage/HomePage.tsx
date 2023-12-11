@@ -7,7 +7,7 @@ import { buildImageUrl, mapJsonToMovie } from 'src/helpers/utils';
 import { useQuery } from 'react-query';
 import { getMoviesByPage } from 'src/helpers/api';
 
-export default function ProductList() {
+export default function HomePage() {
   const [backdropURL, setBackdropURL] = useState('/src/assets/images/backdrop.png');
   let sliderRef = useRef(null);
   const onError = () => {

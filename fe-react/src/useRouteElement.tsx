@@ -1,5 +1,5 @@
 import { useRoutes } from 'react-router-dom';
-import ProductList from './pages/ProductList';
+import HomePage from './pages/HomePage';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPass from './pages/ForgotPass';
@@ -22,7 +22,7 @@ export default function useRouteElement() {
       children: [
         {
           path: path.default,
-          element: <ProductList />
+          element: <HomePage />
         },
         {
           path: path.search,

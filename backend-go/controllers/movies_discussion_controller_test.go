@@ -461,7 +461,10 @@ func performMovieDiscussionRequest(r http.Handler, method, path string) *httptes
 }
 
 func (suite *MovieDiscussionTestSuite) TearDownSuite() {
-	req, _ := http.NewRequest("DELETE", "/movieDiscussion/delete/200000", nil)
+
+	id := suite.discussionID
+
+	req, _ := http.NewRequest("DELETE", "/movieDiscussion/delete/"+id, nil)
 
 	w := httptest.NewRecorder()
 

@@ -14,17 +14,39 @@ import useUserId from 'src/hooks/useUserId';
 import LoadingIndicator from 'src/components/LoadingIndicator';
 import ReviewTab from './Tab/ReviewTab';
 import DiscussionTab from './Tab/DiscussionTab';
-import { AxiosError } from 'axios';
 import NotFound from '../NotFound/NotFound';
+import { useQueries, useQuery } from 'react-query';
+import { getMovieDetail, getSimilarMovies } from 'src/helpers/api';
+import { useState } from 'react';
 
 export default function Details() {
   const { id } = useParams();
+  const [similarMovies, setSimilarMovies] = useState([]);
 
   const { userId, hasLogin } = useUserId();
 
   const { data: movie, isLoading: isMovieLoading, isError } = useMovieDetail(id || '');
   const { data: casts } = useCast(id || '');
   const { data: keywords } = useKeyword(id || '');
+  const { data: similarMoviesData } = useQuery(['similarMovies', id], () => getSimilarMovies(id), {
+    enabled: !!id,
+    retry: false,
+    onSuccess: data => {
+      setSimilarMovies(data.similar_movies);
+      return data.similar_movies;
+    }
+  });
+
+  const similarMoviesQueries = useQueries(
+    similarMovies?.map((movieId: string) => {
+      return {
+        queryKey: ['movie', movieId],
+        queryFn: () => getMovieDetail(movieId.toString())
+      };
+    })
+  );
+
+  const isSimilarLoading = similarMoviesQueries.some(result => result.isLoading);
 
   if (isError) {
     return <NotFound></NotFound>;
@@ -76,36 +98,28 @@ export default function Details() {
             </Tabs>
           </div>
           <h2 className='text-2xl font-semibold mb-3 mt-3'>Recommendations</h2>
-          <Scroller>
-            <MovieCardRecom
-              posterUrl={buildImageUrl(movie?.backdropPath, 'original')}
-              rating={movie?.rating}
-              title={movie?.title ?? ''}
-              key={1}
-            ></MovieCardRecom>
-            <MovieCardRecom
-              posterUrl={buildImageUrl(movie?.backdropPath, 'original')}
-              rating={movie?.rating}
-              title={movie?.title ?? ''}
-              key={2}
-            ></MovieCardRecom>
-            <MovieCardRecom
-              posterUrl={buildImageUrl(movie?.backdropPath, 'original')}
-              rating={movie?.rating}
-              title={movie?.title ?? ''}
-              key={4}
-            ></MovieCardRecom>
-            <MovieCardRecom
-              posterUrl={buildImageUrl(movie?.backdropPath, 'original')}
-              rating={movie?.rating}
-              title={movie?.title ?? ''}
-              key={5}
-            ></MovieCardRecom>
-          </Scroller>
-          <p>
-            We don&apos;t have enough data to suggest any movies based on Reptile. You can help by
-            rating movies you&apos;ve seen.
-          </p>
+          {similarMoviesData && (
+            <Scroller>
+              {similarMoviesQueries.map((res, index) => {
+                const movie = res.data;
+                console.log(movie);
+                return (
+                  <MovieCardRecom
+                    posterUrl={buildImageUrl(movie?.backdrop_path, 'original')}
+                    rating={movie?.vote_average ?? 0}
+                    title={movie?.title ?? ''}
+                    key={index}
+                  ></MovieCardRecom>
+                );
+              })}
+            </Scroller>
+          )}
+          {!similarMoviesData && (
+            <p>
+              We don&apos;t have enough data to suggest any movies based on Reptile. You can help by
+              rating movies you&apos;ve seen.
+            </p>
+          )}
         </div>
         <div className='px-2 min-w-[15rem]'>
           <a href={movie?.homepage} rel='noreferrer' target='_blank'>

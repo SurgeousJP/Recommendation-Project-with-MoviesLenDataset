@@ -89,6 +89,12 @@ export const getMoviesByPage = async (
   const response = await instance.get(`/movie/get/page/${page}`);
   return response.data;
 };
+
+export const getTopRatedMovies = async () => {
+  const response = await instance.get(`topMovies/get`);
+  return response.data;
+};
+
 export const getMovieCast = async (movieId: string) => {
   const { data } = await instance.get(`cast/get/${movieId}`);
   return data;
@@ -118,6 +124,10 @@ export const getMovieDiscussion = async (movieId: string) => {
 
 export const getMovieReview = async (movieId: string) => {
   const { data } = await instance.get(`userReview/get/movie/${movieId}`);
+  return data;
+};
+export const getSimilarMovies = async (movieId: string) => {
+  const { data } = await instance.get(`similarMovie/get/${movieId}`);
   return data;
 };
 
