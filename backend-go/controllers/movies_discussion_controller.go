@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"math"
 	"movies_backend/constants"
 	"movies_backend/models"
 	"movies_backend/services/interfaces"
@@ -146,17 +147,7 @@ func (mc *MovieDiscussionController) CreateMovieDiscussionPart(ctx *gin.Context)
 	ctx.JSON(http.StatusOK, gin.H{"message": "Successful"})
 }
 
-func (mc *MovieDiscussionController) GetMovieDiscussionPartInPage(ctx *gin.Context) {
-	discussionIDString := ctx.Param("discussion_id")
-
-	// Convert the discussionId string to ObjectID
-	discussionId, err := primitive.ObjectIDFromHex(discussionIDString)
-
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
-		return
-	}
-
+func (mc *MovieDiscussionController) GetMovieDiscussionInPage(ctx *gin.Context) {
 	pageNumber := ctx.Param("pageNumber")
 	pageNumberInt, err := strconv.Atoi(pageNumber)
 
@@ -165,15 +156,20 @@ func (mc *MovieDiscussionController) GetMovieDiscussionPartInPage(ctx *gin.Conte
 		return
 	}
 
-	partsPerPage := constants.DISCUSSION_PART_PER_PAGE
+	discussionPerPage := constants.DISCUSSION_PER_PAGE
 
-	parts, err := mc.MovieDiscussionServices.GetMovieDiscussionPartInPage(pageNumberInt, partsPerPage, &discussionId)
+	movies, total_movies, err := mc.MovieDiscussionServices.GetMovieDiscussionInPage(pageNumberInt, discussionPerPage)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, parts)
+	ctx.JSON(http.StatusOK, gin.H{
+		"discussions": movies,
+		"page": pageNumber,
+		"page_size": discussionPerPage,
+		"total_page": math.Ceil(float64(total_movies) / float64(discussionPerPage)),
+	})
 }
 
 func (mc *MovieDiscussionController) UpdateMovieDiscussionPart(ctx *gin.Context) {
@@ -243,7 +239,7 @@ func (mc *MovieDiscussionController) RegisterMovieDiscussionRoute(rg *gin.Router
 
 	movieDiscussionRoute.PATCH("/create/part/:discussion_id", mc.CreateMovieDiscussionPart)
 
-	movieDiscussionRoute.GET("/get/part/:discussion_id/:pageNumber", mc.GetMovieDiscussionPartInPage)
+	movieDiscussionRoute.GET("/get/discussion/page/:pageNumber", mc.GetMovieDiscussionInPage)
 
 	movieDiscussionRoute.PATCH("/update/part/:discussion_id/:part_id", mc.UpdateMovieDiscussionPart)
 

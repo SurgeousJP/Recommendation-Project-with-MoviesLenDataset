@@ -408,22 +408,7 @@ func (suite *MovieDiscussionTestSuite) TestDeleteInvalidDiscussionPart() {
 func (suite *MovieDiscussionTestSuite) TestGetMovieDiscussionInPageFromInvalidDiscussionId() {
 	body := strings.NewReader(`{}`)
 
-	req, _ := http.NewRequest("GET", "/movieDiscussion/get/part/fsaf/1", body)
-
-	w := httptest.NewRecorder()
-
-	suite.r.ServeHTTP(w, req)
-
-	assert.Equal(suite.T(), http.StatusBadRequest, w.Code)
-
-	assert.Equal(suite.T(), `{"message":"the provided hex string is not a valid ObjectID"}`, w.Body.String())
-}
-
-func (suite *MovieDiscussionTestSuite) TestGetMovieDiscussionInPageFromInvalidPage() {
-	body := strings.NewReader(`{}`)
-	id := suite.discussionID
-
-	req, _ := http.NewRequest("GET", "/movieDiscussion/get/part/"+id+"/fsaf", body)
+	req, _ := http.NewRequest("GET", "/movieDiscussion/get/discussion/page/fsaf", body)
 
 	w := httptest.NewRecorder()
 
@@ -432,6 +417,20 @@ func (suite *MovieDiscussionTestSuite) TestGetMovieDiscussionInPageFromInvalidPa
 	assert.Equal(suite.T(), http.StatusBadRequest, w.Code)
 
 	assert.Equal(suite.T(), `{"message":"Invalid page number"}`, w.Body.String())
+}
+
+func (suite *MovieDiscussionTestSuite) TestGetMovieDiscussionInPageFromNonExistentPage() {
+	body := strings.NewReader(`{}`)
+
+	req, _ := http.NewRequest("GET", "/movieDiscussion/get/discussion/page/2000000", body)
+
+	w := httptest.NewRecorder()
+
+	suite.r.ServeHTTP(w, req)
+
+	assert.Equal(suite.T(), http.StatusBadGateway, w.Code)
+
+	assert.Equal(suite.T(), `{"message":"documents not found"}`, w.Body.String())
 }
 
 func (suite *MovieDiscussionTestSuite) TestRegisterMovieDiscussionRouteSuccessfully() {
@@ -487,7 +486,7 @@ func (suite *MovieDiscussionTestSuite) setupMovieDiscussionRouter() *gin.Engine 
 
 	r.PATCH("/movieDiscussion/create/part/:discussion_id", suite.movieDiscussionController.CreateMovieDiscussionPart)
 
-	r.GET("/movieDiscussion/get/part/:discussion_id/:pageNumber", suite.movieDiscussionController.GetMovieDiscussionPartInPage)
+	r.GET("/movieDiscussion/get/discussion/page/:pageNumber", suite.movieDiscussionController.GetMovieDiscussionInPage)
 
 	r.PATCH("/movieDiscussion/update/part/:discussion_id/:part_id", suite.movieDiscussionController.UpdateMovieDiscussionPart)
 
