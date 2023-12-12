@@ -2,6 +2,7 @@ import LoadingIndicator from '../LoadingIndicator';
 import { getLeaderboard } from 'src/helpers/api';
 import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
+import { buildImageUrl } from 'src/helpers/utils';
 
 function Leaderboard() {
   const { data: leaderBoardData, isLoading: isLeaderBoardLoading } = useQuery(
@@ -21,9 +22,9 @@ function Leaderboard() {
   if (isLeaderBoardLoading) return <LoadingIndicator />;
   console.log(leaderBoardData);
   return (
-    <div>
-      <div className='flex items-center'>
-        <h2 className='text-2xl font-semibold'>Leaderboard</h2>
+    <div className='pt-10 pb-10 pl-20 pr-10'>
+      <div className='flex items-center align-middle'>
+        <h2 className='ml-5 text-2xl font-semibold'>Leaderboard</h2>
         <span className='w-2 h-2 bg-gradient-to-r mx-2 from-lighterGreen rounded-full to-lightGreen' />
         <span className=' text-sm font-light'>Movie rated</span>
       </div>
@@ -34,7 +35,11 @@ function Leaderboard() {
               <Link className='w-12 h-12 mr-2' to={`/u/${user.user_id}`}>
                 <img
                   className='w-full h-full rounded-full overflow-hidden'
-                  src={user.picture_profile}
+                  src={
+                    user.picture_profile
+                      ? user.picture_profile
+                      : 'https://picsum.photos/id/' + user.id + '/200/300'
+                  }
                   alt={user.username}
                 />
               </Link>
