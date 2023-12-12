@@ -27,7 +27,7 @@ const SearchResult = () => {
   }
   const { data, isLoading } = useSearchMovie(query, parseInt(page));
   useEffect(() => {
-    window.scrollTo(0, 0); // Scroll to top when the page changes
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [page]);
   if (isLoading) return <LoadingIndicator />;
   const handlePageClick = (event: { selected: number }) => {

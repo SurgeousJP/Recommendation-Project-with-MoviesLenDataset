@@ -122,6 +122,11 @@ export const getDiscussion = async (discussionId: string) => {
   return data;
 };
 
+export const getDiscussionByPage = async (page: number) => {
+  const { data } = await instance.get(`movieDiscussion/get/discussion/page/${page}`);
+  return data;
+};
+
 export const getMovieDiscussion = async (movieId: string) => {
   const { data } = await instance.get(`movieDiscussion/getByMovie/${movieId}`);
   return data;

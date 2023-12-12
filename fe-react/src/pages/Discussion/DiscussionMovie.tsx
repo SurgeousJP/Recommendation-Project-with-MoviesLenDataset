@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from 'react-query';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import LoadingIndicator from 'src/components/LoadingIndicator';
 import Table from 'src/components/Table/Table';
 import { options } from 'src/constant/time-option';
@@ -26,21 +26,27 @@ const DiscussionMovie: React.FC = () => {
     select: data => {
       console.log(data);
       return data?.map((discussion: any) => {
-        console.log(discussion);
         return {
           _id: discussion._id,
           subject: (
             <div className='flex items-center'>
-              <img
-                className='w-10 h-10 mr-4 rounded-full'
-                src={discussion.discussion_part[0].profile_path}
-                alt='user profile'
-              />
-              {discussion.subject}
+              <Link to={`/u/${discussion.discussion_part[0].user_id}`}>
+                <img
+                  className='w-10 h-10 mr-4 rounded-full'
+                  src={discussion.discussion_part[0].profile_path}
+                  alt='user profile'
+                />
+              </Link>
+              <Link
+                className='hover:text-white/70'
+                to={`/details/${discussion.movie_id}/discussions/${discussion._id}`}
+              >
+                {discussion.subject}
+              </Link>
             </div>
           ),
           status: discussion.status ? 'Open' : 'Closed',
-          replies: discussion.discussion_part.length,
+          replies: discussion.discussion_part.length - 1,
           last_reply: (
             <div>
               <p>
@@ -57,13 +63,6 @@ const DiscussionMovie: React.FC = () => {
   });
   if (isLoading) return <LoadingIndicator />;
 
-  console.log(data);
-
-  const onRowClick = (row: any) => {
-    if (!row._id) return;
-    navigate(`/details/${id}/discussions/${row._id}`);
-  };
-
   return (
     <div className='w-full p-8'>
       {isMovieLoading && `Let's Chat`}
@@ -74,10 +73,10 @@ const DiscussionMovie: React.FC = () => {
         classNameBody='border-t border-[#01b4e4]/50'
         classNameRowSelected={data ? '' : 'bg-border/30 '}
         classNameHeader='bg-transparent text-white text-left'
-        classNameRow='bg-border/30 cursor-pointer'
-        classNameRowOdd='bg-transparent cursor-pointer'
+        classNameRow='bg-border/30 '
+        classNameRowOdd='bg-transparent '
         noDivider={true}
-        onRowClick={onRowClick}
+        canSelected={false}
         headers={headers}
         data={
           data

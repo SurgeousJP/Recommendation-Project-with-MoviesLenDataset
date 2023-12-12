@@ -96,6 +96,7 @@ function minutesToHourMinuteString(minutes: number): string {
 }
 
 export function buildCastWikiReference(castName: string) {
+  if (castName === undefined) return '';
   return 'https://en.wikipedia.org/wiki/' + castName.split(' ').join('_');
 }
 

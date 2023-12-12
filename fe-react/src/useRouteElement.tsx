@@ -15,6 +15,7 @@ import { path } from './constant/path';
 import NotFound from './pages/NotFound/NotFound';
 import DiscussionMovie from './pages/Discussion/DiscussionMovie';
 import Leaderboard from './pages/Leaderboard/Leaderboard';
+import Discussion from './pages/Discussion/Discussion';
 
 export default function useRouteElement() {
   const routeElement = useRoutes([
@@ -87,8 +88,11 @@ export default function useRouteElement() {
       children: [
         {
           path: path.discussions,
-          element: <DiscussionDetails />,
           children: [
+            {
+              path: path.default,
+              element: <Discussion />
+            },
             {
               path: path.discussion_id,
               element: <DiscussionDetails />

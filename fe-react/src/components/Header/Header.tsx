@@ -54,9 +54,12 @@ export default function Header(props: HeaderProps) {
               </Link>
             </li>
             <li>
-              <a className='hover:text-primary transition ease-out duration-300' href='/'>
+              <Link
+                className='hover:text-primary transition ease-out duration-300'
+                to='/discussions'
+              >
                 Discussion
-              </a>
+              </Link>
             </li>
           </ul>
         </nav>

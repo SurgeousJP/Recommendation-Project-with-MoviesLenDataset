@@ -16,6 +16,7 @@ interface TableProps {
   classNameRowSelected?: string;
   noDivider?: boolean;
   classNameRowOdd?: string;
+  canSelected?: boolean;
   onSelect?: (row: any) => void;
   selectedRow?: number;
   onRowClick?: (row: any) => void;
@@ -31,6 +32,7 @@ const Table: React.FC<TableProps> = ({
   classNameRow = 'hover:bg-[#F7F6FE] cursor-pointer',
   classNameRowSelected = 'bg-primary/10',
   classNameRowOdd,
+  canSelected,
   onSelect,
   selectedRow,
   noDivider,
@@ -47,6 +49,7 @@ const Table: React.FC<TableProps> = ({
     }
   };
 
+  console.log(data);
   return (
     <div className={className}>
       <table className={classNameTable}>
@@ -67,40 +70,48 @@ const Table: React.FC<TableProps> = ({
             <tr
               // if noDivider is true, then render the row with no divider
               className={
-                selected === index
-                  ? classNameRowSelected
-                  : noDivider
-                  ? index % 2 === 0
-                    ? classNameRow
-                    : classNameRowOdd
-                  : classNameRow
+                canSelected
+                  ? selected === index
+                    ? classNameRowSelected
+                    : noDivider
+                    ? index % 2 === 0
+                      ? classNameRow
+                      : classNameRowOdd
+                    : classNameRow
+                  : index % 2 === 0
+                  ? classNameRow
+                  : classNameRowOdd
               }
               key={index}
               onClick={() => handleRowClick(row, index)}
             >
-              {headers?.map(header => (
-                <td
-                  className={
-                    row[header.dataIndex]?.className
-                      ? row[header.dataIndex]?.className
-                      : 'px-4 py-2'
-                  }
-                  key={header.dataIndex}
-                >
-                  {
-                    // If it's not a component, render the text
-                    //row[header.dataIndex] !== undefined ? row[header.dataIndex] : 'N/A'
-                    //{ Check if the cell value is a React component
-                    typeof row[header.dataIndex] === 'object' ? (
-                      // If it's a component, render it
-                      <>{row[header.dataIndex]}</>
-                    ) : (
-                      // If it's not a component, render the text
-                      row[header.dataIndex]
-                    )
-                  }
-                </td>
-              ))}
+              {headers?.map(header => {
+                if (row[header.dataIndex] !== undefined)
+                  return (
+                    <td
+                      className={
+                        row[header.dataIndex]?.className
+                          ? row[header.dataIndex]?.className
+                          : 'px-4 py-2'
+                      }
+                      colSpan={row['colSpan'] ? row['colSpan'] : 1}
+                      key={header.dataIndex}
+                    >
+                      {
+                        // If it's not a component, render the text
+                        //row[header.dataIndex] !== undefined ? row[header.dataIndex] : 'N/A'
+                        //{ Check if the cell value is a React component
+                        typeof row[header.dataIndex] === 'object' ? (
+                          // If it's a component, render it
+                          <>{row[header.dataIndex]}</>
+                        ) : (
+                          // If it's not a component, render the text
+                          row[header.dataIndex]
+                        )
+                      }
+                    </td>
+                  );
+              })}
             </tr>
           ))}
         </tbody>
