@@ -42,22 +42,17 @@ export default function Header(props: HeaderProps) {
           <ul className=' text-white hidden lg:flex lg:space-x-14 md:ml-8 md:transform-none xl:ml-16 w-auto'>
             <li>
               <a className='hover:text-primary transition ease-out duration-300' href='/'>
-                Movies
+                Top Rated Movies
               </a>
             </li>
             <li>
               <a className='hover:text-primary transition ease-out duration-300' href='/'>
-                Tv shows
+                Leaderboard
               </a>
             </li>
             <li>
               <a className='hover:text-primary transition ease-out duration-300' href='/'>
-                People
-              </a>
-            </li>
-            <li>
-              <a className='hover:text-primary transition ease-out duration-300' href='/'>
-                More
+                Discussion
               </a>
             </li>
           </ul>
