@@ -2,6 +2,7 @@ import LoadingIndicator from '../LoadingIndicator';
 import { getLeaderboard } from 'src/helpers/api';
 import { useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
+import { buildImageUrl } from 'src/helpers/utils';
 
 function Leaderboard() {
   const { data: leaderBoardData, isLoading: isLeaderBoardLoading } = useQuery(
@@ -35,7 +36,11 @@ function Leaderboard() {
               <Link className='w-12 h-12 mr-2' to={`/u/${user.user_id}`}>
                 <img
                   className='w-full h-full rounded-full overflow-hidden'
-                  src={user.picture_profile}
+                  src={
+                    user.picture_profile
+                      ? user.picture_profile
+                      : 'https://picsum.photos/id/' + user.id + '/200/300'
+                  }
                   alt={user.username}
                 />
               </Link>
