@@ -65,9 +65,9 @@ const SearchResult = () => {
           </ul>
         </div>
       </div>
-      <div className='space-y-4 ml-12'>
-        {data ? (
-          data?.movies.map((movie: Movie) => (
+      {data ? (
+        <div className='space-y-4 ml-12'>
+          {data?.movies.map((movie: Movie) => (
             <div key={movie.id}>
               <MovieCardSearch
                 movieId={movie.id}
@@ -77,28 +77,27 @@ const SearchResult = () => {
                 overview={movie.overview}
               />
             </div>
-          ))
-        ) : (
-          <div className='flex flex-col space-y-4'>
-            <h1>
-              Oops! It looks like the search query is invalid. Please enter a valid keyword, actor,
-              or movie title and try again.
-            </h1>
-            <NotFound />
-          </div>
-        )}
-        <ReactPaginate
-          className='react-paginate'
-          breakLabel='...'
-          nextLabel='Next >'
-          onPageChange={handlePageClick}
-          pageRangeDisplayed={5}
-          initialPage={data?.page - 1}
-          pageCount={data?.total_page}
-          previousLabel='< Prev'
-          renderOnZeroPageCount={null}
-        />
-      </div>
+          ))}
+          <ReactPaginate
+            className='react-paginate'
+            breakLabel='...'
+            nextLabel='Next >'
+            onPageChange={handlePageClick}
+            pageRangeDisplayed={5}
+            initialPage={data?.page - 1}
+            pageCount={data?.total_page}
+            previousLabel='< Prev'
+            renderOnZeroPageCount={null}
+          />
+        </div>
+      ) : (
+        <div className='flex flex-col ml-12 space-y-4'>
+          <h1>
+            Oops! It looks like the search query is invalid. Please enter a valid keyword, actor, or
+            movie title and try again.
+          </h1>
+        </div>
+      )}
     </div>
   );
 };

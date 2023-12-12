@@ -8,7 +8,9 @@ export default {
         border: '#393643',
         primary: '#F9AB00',
         textbox: '#222028',
-        transColor: 'rgba(26, 25, 31, 0.85)'
+        transColor: 'rgba(26, 25, 31, 0.85)',
+        lighterGreen: '#C0FECF',
+        lightGreen: '#1ED5A9'
       },
       fontFamily: {
         icon: 'Ionicons',

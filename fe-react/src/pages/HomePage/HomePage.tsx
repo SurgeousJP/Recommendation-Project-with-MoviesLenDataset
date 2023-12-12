@@ -5,7 +5,8 @@ import 'slick-carousel/slick/slick-theme.css';
 import { useRef, useState } from 'react';
 import { buildImageUrl, mapJsonToMovie } from 'src/helpers/utils';
 import { useQuery } from 'react-query';
-import { getTopRatedMovies } from 'src/helpers/api';
+import { getLeaderboard, getTopRatedMovies } from 'src/helpers/api';
+import Leaderboard from 'src/components/Leaderboard/Leaderboard';
 
 export default function HomePage() {
   const [backdropURL, setBackdropURL] = useState('/src/assets/images/backdrop.png');
@@ -17,7 +18,6 @@ export default function HomePage() {
     staleTime: 1000 * 60 * 1, // 1 minutes
     onError: onError
   });
-  console.log(data);
 
   if (isLoading) return <div className='text-black'>Loading...</div>;
 
@@ -41,7 +41,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className='w-auto h-screen bg-background '>
+    <div className='w-auto  bg-background '>
       <div className='relative md:h-96 lg:h-[40rem] flex justify-center items-center lg:px-24 '>
         <div className='md:h-96 lg:h-[40rem] w-full overflow-hidden absolute left-0 top-0 '>
           <img
@@ -120,6 +120,7 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+      <Leaderboard />
     </div>
   );
 }

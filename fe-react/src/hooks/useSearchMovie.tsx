@@ -11,7 +11,8 @@ const useSearchMovie = (query: string, page: string) => {
         page_size: data?.page_size,
         total_page: data?.total_page
       };
-    }
+    },
+    retry: false
   });
 };
 

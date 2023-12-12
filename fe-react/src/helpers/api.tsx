@@ -95,6 +95,11 @@ export const getTopRatedMovies = async () => {
   return response.data;
 };
 
+export const getLeaderboard = async () => {
+  const response = await instance.get(`leaderboard/get`);
+  return response.data;
+};
+
 export const getMovieCast = async (movieId: string) => {
   const { data } = await instance.get(`cast/get/${movieId}`);
   return data;
