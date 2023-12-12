@@ -48,7 +48,7 @@ func (m *MovieServiceImpl) GetMovie(movieId *int) (*models.Movie, error) {
 func (m *MovieServiceImpl) GetMoviesInPage(pageNumber, moviesPerPage int) ([]*models.Movie, int, error) {
 	var moviesInPage []*models.Movie
 	options := options.Find().
-		SetSkip(int64(pageNumber - 1) * int64(moviesPerPage)).
+		SetSkip(int64(pageNumber-1) * int64(moviesPerPage)).
 		SetLimit(int64(moviesPerPage))
 
 	cursor, err := m.movieCollection.Find(m.ctx, bson.D{{}}, options)
@@ -81,8 +81,9 @@ func (m *MovieServiceImpl) GetMoviesInPage(pageNumber, moviesPerPage int) ([]*mo
 	return moviesInPage, int(totalMovies), nil
 }
 
-func (m *MovieServiceImpl) SearchMovieInPage(searchWord *string, pageNumber *int, moviesPerPage *int) ([]*models.Movie, error) {
+func (m *MovieServiceImpl) SearchMovieInPage(searchWord *string, pageNumber *int, moviesPerPage *int) ([]*models.Movie, int, error) {
 	var result []*models.Movie
+	var moviesCount []*models.Movie
 
 	filter := bson.A{
 		bson.D{
@@ -119,35 +120,96 @@ func (m *MovieServiceImpl) SearchMovieInPage(searchWord *string, pageNumber *int
 					{Key: "overview", Value: 1},
 					{Key: "highlight", Value: bson.D{
 						{Key: "$meta", Value: "searchHighlights"},
-				}},
+					}},
 				},
 			},
 		},
 		bson.D{{Key: "$skip", Value: int64((*pageNumber - 1) * (*moviesPerPage))}},
-    bson.D{{Key: "$limit", Value: int64(*moviesPerPage)}},
+		bson.D{{Key: "$limit", Value: int64(*moviesPerPage)}},
 	}
 
 	cursor, err := m.movieCollection.Aggregate(m.ctx, filter)
 
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer cursor.Close(m.ctx)
+
+	countFilter := bson.A{
+		bson.D{
+			{Key: "$search",
+				Value: bson.D{
+					{Key: "index", Value: "movie_search"},
+					{Key: "text",
+						Value: bson.D{
+							{Key: "query", Value: *searchWord},
+							{Key: "path",
+								Value: bson.A{
+									"title",
+									"overview",
+								},
+							},
+							{Key: "fuzzy",
+								Value: bson.D{
+									{Key: "maxEdits", Value: 2},
+									{Key: "prefixLength", Value: 3},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		bson.D{
+			{Key: "$project",
+				Value: bson.D{
+					{Key: "id", Value: 1},
+					{Key: "title", Value: 1},
+					{Key: "poster_path", Value: 1},
+					{Key: "release_date", Value: 1},
+					{Key: "overview", Value: 1},
+					{Key: "highlight", Value: bson.D{
+						{Key: "$meta", Value: "searchHighlights"},
+					}},
+				},
+			},
+		},
+	}
+
+	countCursor, _err := m.movieCollection.Aggregate(m.ctx, countFilter)
+
+	if _err != nil {
+		return nil, 0, _err
+	}
+	defer countCursor.Close(m.ctx)
+
+	totalMovies := 0
+
+	for countCursor.Next(m.ctx) {
+		var movie models.Movie
+		err := countCursor.Decode(&movie)
+		if err != nil {
+			return nil, 0, err
+		}
+		moviesCount = append(moviesCount, &movie)
+	}
+
+	totalMovies = len(moviesCount)
 
 	for cursor.Next(m.ctx) {
 		var movie models.Movie
 		err := cursor.Decode(&movie)
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 		result = append(result, &movie)
 	}
 
 	if len(result) == 0 {
-		return nil, errors.New("documents not found")
+		return nil, 0, errors.New("documents not found")
 	}
 
-	return result, nil
+	return result, totalMovies, nil
 }
 
 func (m *MovieServiceImpl) UpdateMovie(movie *models.Movie) error {

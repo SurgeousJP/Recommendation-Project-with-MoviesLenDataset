@@ -106,6 +106,7 @@ export default function Details() {
                 return (
                   <MovieCardRecom
                     posterUrl={buildImageUrl(movie?.backdrop_path, 'original')}
+                    movieId={movie?.id}
                     rating={movie?.vote_average ?? 0}
                     title={movie?.title ?? ''}
                     key={index}

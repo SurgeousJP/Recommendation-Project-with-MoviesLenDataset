@@ -5,7 +5,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import { useRef, useState } from 'react';
 import { buildImageUrl, mapJsonToMovie } from 'src/helpers/utils';
 import { useQuery } from 'react-query';
-import { getMoviesByPage } from 'src/helpers/api';
+import { getTopRatedMovies } from 'src/helpers/api';
 
 export default function HomePage() {
   const [backdropURL, setBackdropURL] = useState('/src/assets/images/backdrop.png');
@@ -13,10 +13,11 @@ export default function HomePage() {
   const onError = () => {
     setBackdropURL('/src/assets/images/backdrop.png');
   };
-  const { isLoading, data } = useQuery('movies', () => getMoviesByPage(1), {
+  const { isLoading, data } = useQuery('movies', getTopRatedMovies, {
     staleTime: 1000 * 60 * 1, // 1 minutes
     onError: onError
   });
+  console.log(data);
 
   if (isLoading) return <div className='text-black'>Loading...</div>;
 
@@ -29,7 +30,7 @@ export default function HomePage() {
     slidesToShow: 5,
     slidesToScroll: 1,
     afterChange: (current: number) => {
-      setBackdropURL(buildImageUrl(mapJsonToMovie(data?.movies[current]).backdropPath, 'original'));
+      setBackdropURL(buildImageUrl(data[current]?.backdrop_path, 'original'));
     }
   };
   const onClickNext = () => {
@@ -101,7 +102,7 @@ export default function HomePage() {
               }}
               {...settings}
             >
-              {data.movies.map((movie, index) => {
+              {data?.map((movie, index) => {
                 const card = mapJsonToMovie(movie);
                 return (
                   <MovieCard

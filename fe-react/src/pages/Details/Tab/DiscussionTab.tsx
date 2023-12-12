@@ -1,10 +1,4 @@
-import React, { useState } from 'react';
-import ReviewCard from 'src/components/ReviewCard/ReviewCard';
-import ReviewForm from '../ReviewForm';
-import { useQuery } from 'react-query';
-import { getMovieReview } from 'src/helpers/api';
 import LoadingIndicator from 'src/components/LoadingIndicator';
-import Review from 'src/types/Review';
 import DiscussionCard from 'src/components/Discussion/DiscussionCard';
 import { options } from 'src/constant/time-option';
 import { buildImageUrl } from 'src/helpers/utils';

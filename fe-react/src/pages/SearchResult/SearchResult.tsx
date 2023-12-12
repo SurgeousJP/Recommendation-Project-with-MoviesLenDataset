@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import MovieCardSearch from 'src/components/MovieCardSearch/MovieCardSearch';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { buildImageUrl, mapJsonToMovie } from 'src/helpers/utils';
 import { formatDateToDDMMYYYY } from './../../helpers/utils';
 import Movie from 'src/types/Movie';
 import './search.css';
 import useSearchMovie from 'src/hooks/useSearchMovie';
+import ReactPaginate from 'react-paginate';
+import LoadingIndicator from 'src/components/LoadingIndicator';
 
 const SearchResult = () => {
-  const [cardData, setCardData] = useState<Array<Movie>>([]);
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Access the query parameters from location.search
   const queryParams = new URLSearchParams(location.search);
@@ -24,9 +26,17 @@ const SearchResult = () => {
     page = '1';
   }
   const { data, isLoading } = useSearchMovie(query, parseInt(page));
+  useEffect(() => {
+    window.scrollTo(0, 0); // Scroll to top when the page changes
+  }, [page]);
+  if (isLoading) return <LoadingIndicator />;
+  const handlePageClick = (event: { selected: number }) => {
+    const newPage = event.selected + 1;
 
-  if (isLoading) return <div className='text-black'>Loading...</div>;
-
+    // Update the URL with the new page parameter
+    queryParams.set('page', newPage.toString());
+    navigate(`${window.location.pathname}?${queryParams.toString()}`);
+  };
   return (
     <div className='w-auto min-h-screen bg-background flex px-24 pt-20'>
       <div className='w-64 min-w-[15rem] rounded-md border-border border-1 h-fit overflow-hidden'>
@@ -55,7 +65,7 @@ const SearchResult = () => {
         </div>
       </div>
       <div className='space-y-4 ml-12'>
-        {data.map((movie: Movie) => {
+        {data?.movies.map((movie: Movie) => {
           return (
             <MovieCardSearch
               key={movie.id}
@@ -67,6 +77,17 @@ const SearchResult = () => {
             ></MovieCardSearch>
           );
         })}
+        <ReactPaginate
+          className='react-paginate'
+          breakLabel='...'
+          nextLabel='Next >'
+          onPageChange={handlePageClick}
+          pageRangeDisplayed={5}
+          initialPage={data?.page - 1}
+          pageCount={data?.total_page}
+          previousLabel='< Prev'
+          renderOnZeroPageCount={null}
+        />
       </div>
     </div>
   );

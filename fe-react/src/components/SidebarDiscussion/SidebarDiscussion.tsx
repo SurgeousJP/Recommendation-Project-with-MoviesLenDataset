@@ -22,7 +22,9 @@ function SidebarDiscussion({
 
   return (
     <div className={className}>
-      <img src='/src/assets/images/sidebarIcon.svg' alt='logo' className='w-1/2 h-20 mt-10 mr-10' />
+      <Link to='/' className='w-1/2 h-20 mt-10 mr-10'>
+        <img src='/src/assets/images/sidebarIcon.svg' alt='logo' />
+      </Link>
       <Link to={previousPageUrl} className=' mt-10  mr-10 hover:text-white/60 '>
         &larr; {previousPageTitle}
       </Link>

@@ -28,7 +28,7 @@ func (mc *MovieController) CreateMovie(ctx *gin.Context) {
 		return
 	}
 
-	if !CheckValidMovie(&movie){
+	if !CheckValidMovie(&movie) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": "wrong input structure"})
 		return
 	}
@@ -63,7 +63,7 @@ func (mc *MovieController) GetMovie(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	
+
 	movie, err := mc.MovieService.GetMovie(&movieId)
 
 	if err != nil {
@@ -91,9 +91,9 @@ func (mc *MovieController) GetMoviesInPage(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{
-		"movies": movies,
-		"page": pageNumber,
-		"page_size": moviesPerPage,
+		"movies":     movies,
+		"page":       pageNumber,
+		"page_size":  moviesPerPage,
 		"total_page": math.Ceil(float64(total_movies) / float64(moviesPerPage)),
 	})
 }
@@ -110,13 +110,18 @@ func (mc *MovieController) SearchMovie(ctx *gin.Context) {
 
 	moviesPerPage := (constants.MOVIES_PER_PAGE)
 
-	movies, err := mc.MovieService.SearchMovieInPage(&searchWord, &pageNumberInt, &moviesPerPage)
+	movies, total_movies, err := mc.MovieService.SearchMovieInPage(&searchWord, &pageNumberInt, &moviesPerPage)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, movies)
+	ctx.JSON(http.StatusOK, gin.H{
+		"movies":     movies,
+		"page":       pageNumber,
+		"page_size":  moviesPerPage,
+		"total_page": math.Ceil(float64(total_movies) / float64(moviesPerPage)),
+	})
 }
 
 func (mc *MovieController) UpdateMovie(ctx *gin.Context) {
@@ -127,7 +132,7 @@ func (mc *MovieController) UpdateMovie(ctx *gin.Context) {
 		return
 	}
 
-	if !CheckValidMovie(&movie){
+	if !CheckValidMovie(&movie) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": "wrong input structure"})
 		return
 	}
@@ -157,7 +162,7 @@ func (mc *MovieController) DeleteMovie(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "Successful"})
 }
 
-func CheckValidMovie(movie *models.Movie) bool{
+func CheckValidMovie(movie *models.Movie) bool {
 	// Check required fields
 	if movie.Title == "" || movie.ReleaseDate == "" {
 		return false
