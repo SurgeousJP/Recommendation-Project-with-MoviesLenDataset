@@ -1,7 +1,7 @@
 package constants
 
 const MOVIES_PER_PAGE = 20
-const DISCUSSION_PART_PER_PAGE = int(10)
+const DISCUSSION_PER_PAGE = int(20)
 
 const MOVIE_JSON_FOR_TESTING = `{
 	"adult": false,

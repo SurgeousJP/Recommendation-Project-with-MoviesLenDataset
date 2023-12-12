@@ -146,32 +146,40 @@ func (m *MovieDiscussionServicesImpl) CreateMovieDiscussionPart(discussionPart *
 	return err
 }
 
-func (m *MovieDiscussionServicesImpl) GetMovieDiscussionPartInPage(pageNumber int, partPerPage int, discussionId *primitive.ObjectID) ([]*models.DiscussionPart, error) {
-	var partsInPage []*models.DiscussionPart
+func (m *MovieDiscussionServicesImpl) GetMovieDiscussionInPage(pageNumber int, discussionPerPage int) ([]*models.MovieDiscussion, int, error) {
+	var movieDiscussionInPage []*models.MovieDiscussion
+	options := options.Find().
+		SetSkip(int64(pageNumber - 1) * int64(pageNumber)).
+		SetLimit(int64(discussionPerPage))
 
-	filter := bson.M{"_id": discussionId}
+	cursor, err := m.movieDiscussionCollection.Find(m.ctx, bson.D{{}}, options)
 
-	projection := bson.M{"discussion_parts": bson.M{"$slice": []interface{}{(pageNumber - 1) * partPerPage, partPerPage}}}
-
-	result := m.movieDiscussionCollection.FindOne(m.ctx, filter, options.FindOne().SetProjection(projection))
-	if result.Err() != nil {
-		return nil, result.Err()
+	if err != nil {
+		return nil, 0, err
+	}
+	for cursor.Next(m.ctx) {
+		var movieDiscussion models.MovieDiscussion
+		err := cursor.Decode(&movieDiscussion)
+		if err != nil {
+			return nil, 0, err
+		}
+		movieDiscussionInPage = append(movieDiscussionInPage, &movieDiscussion)
+	}
+	if err := cursor.Err(); err != nil {
+		return nil, 0, err
+	}
+	cursor.Close(m.ctx)
+	if len(movieDiscussionInPage) == 0 {
+		return nil, 0, errors.New("documents not found")
 	}
 
-	var movieDiscussion models.MovieDiscussion
-	if err := result.Decode(&movieDiscussion); err != nil {
-		return nil, err
+	// Fetch total movies
+	totalMovies, err := m.movieDiscussionCollection.CountDocuments(m.ctx, bson.D{{}})
+	if err != nil {
+		return nil, 0, err
 	}
 
-	for _, part := range movieDiscussion.DiscussionPart {
-		partsInPage = append(partsInPage, &part)
-	}
-
-	if len(partsInPage) == 0 {
-		return nil, errors.New("documents not found")
-	}
-
-	return partsInPage, nil
+	return movieDiscussionInPage, int(totalMovies), nil
 }
 
 func (m *MovieDiscussionServicesImpl) UpdateMovieDiscussionPart(discussionId *primitive.ObjectID, partId *int, updatedPart *models.DiscussionPart) error {
