@@ -22,14 +22,14 @@ function Leaderboard() {
   if (isLeaderBoardLoading) return <LoadingIndicator />;
   console.log(leaderBoardData);
   return (
-    <div>
+    <div className='mt-4'>
       <div className='flex items-center'>
         <h2 className='text-2xl font-semibold'>Leaderboard</h2>
         <span className='w-2 h-2 bg-gradient-to-r mx-2 from-lighterGreen rounded-full to-lightGreen' />
         <span className=' text-sm font-light'>Movie rated</span>
       </div>
       <ul className='w-full flex flex-wrap'>
-        {leaderBoardData?.map((user: any) => {
+        {leaderBoardData?.slice(0, 10).map((user: any) => {
           return (
             <li className='w-1/2 pl-5 flex mt-5' key={user.user_id}>
               <Link className='w-12 h-12 mr-2' to={`/u/${user.user_id}`}>

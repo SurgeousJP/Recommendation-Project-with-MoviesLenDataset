@@ -46,9 +46,12 @@ export default function Header(props: HeaderProps) {
               </a>
             </li>
             <li>
-              <a className='hover:text-primary transition ease-out duration-300' href='/'>
+              <Link
+                className='hover:text-primary transition ease-out duration-300'
+                to='/leaderboard'
+              >
                 Leaderboard
-              </a>
+              </Link>
             </li>
             <li>
               <a className='hover:text-primary transition ease-out duration-300' href='/'>

@@ -7,9 +7,12 @@ import { buildImageUrl, mapJsonToMovie } from 'src/helpers/utils';
 import { useQuery } from 'react-query';
 import { getLeaderboard, getTopRatedMovies } from 'src/helpers/api';
 import Leaderboard from 'src/components/Leaderboard/Leaderboard';
+import MovieCardList from 'src/components/MovieCardList/MovieCardList';
 
 export default function HomePage() {
   const [backdropURL, setBackdropURL] = useState('/src/assets/images/backdrop.png');
+  const [page, setPage] = useState(1);
+
   let sliderRef = useRef(null);
   const onError = () => {
     setBackdropURL('/src/assets/images/backdrop.png');
@@ -104,6 +107,7 @@ export default function HomePage() {
             >
               {data?.map((movie, index) => {
                 const card = mapJsonToMovie(movie);
+                console.log(movie);
                 return (
                   <MovieCard
                     key={index}
@@ -120,7 +124,11 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-      <Leaderboard />
+      <div className='py-10 px-24'>
+        <MovieCardList page={page} setPage={setPage} />
+
+        <Leaderboard />
+      </div>
     </div>
   );
 }

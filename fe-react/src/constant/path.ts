@@ -10,5 +10,6 @@ export const path = {
   reset_password: 'reset-password',
   all: '*',
   id: ':id',
-  discussion_id: ':discussion_id'
+  discussion_id: ':discussion_id',
+  leaderboard: 'leaderboard'
 };

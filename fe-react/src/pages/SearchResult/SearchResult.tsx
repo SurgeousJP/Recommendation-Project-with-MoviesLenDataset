@@ -8,7 +8,6 @@ import './search.css';
 import useSearchMovie from 'src/hooks/useSearchMovie';
 import ReactPaginate from 'react-paginate';
 import LoadingIndicator from 'src/components/LoadingIndicator';
-import NotFound from '../NotFound/NotFound';
 
 const SearchResult = () => {
   const location = useLocation();

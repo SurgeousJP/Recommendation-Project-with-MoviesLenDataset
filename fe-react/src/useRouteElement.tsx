@@ -14,6 +14,7 @@ import DiscussionDetails from './pages/Discussion/DiscussionDetails';
 import { path } from './constant/path';
 import NotFound from './pages/NotFound/NotFound';
 import DiscussionMovie from './pages/Discussion/DiscussionMovie';
+import Leaderboard from './pages/Leaderboard/Leaderboard';
 
 export default function useRouteElement() {
   const routeElement = useRoutes([
@@ -23,6 +24,10 @@ export default function useRouteElement() {
         {
           path: path.default,
           element: <HomePage />
+        },
+        {
+          path: path.leaderboard,
+          element: <Leaderboard />
         },
         {
           path: path.search,
