@@ -6,6 +6,7 @@ import { formatDateToDDMMYYYY } from './../../helpers/utils';
 import Movie from 'src/types/Movie';
 import './search.css';
 import useSearchMovie from 'src/hooks/useSearchMovie';
+import NotFound from '../NotFound/NotFound';
 
 const SearchResult = () => {
   const [cardData, setCardData] = useState<Array<Movie>>([]);
@@ -55,18 +56,27 @@ const SearchResult = () => {
         </div>
       </div>
       <div className='space-y-4 ml-12'>
-        {data.map((movie: Movie) => {
-          return (
-            <MovieCardSearch
-              key={movie.id}
-              movieId={movie.id}
-              posterPath={buildImageUrl(movie.posterPath, 'original')}
-              title={movie.title}
-              releaseDate={formatDateToDDMMYYYY(movie.releaseDate)}
-              overview={movie.overview}
-            ></MovieCardSearch>
-          );
-        })}
+        {data ? (
+          data.map((movie: Movie) => (
+            <div key={movie.id}>
+              <MovieCardSearch
+                movieId={movie.id}
+                posterPath={buildImageUrl(movie.posterPath, 'original')}
+                title={movie.title}
+                releaseDate={formatDateToDDMMYYYY(movie.releaseDate)}
+                overview={movie.overview}
+              />
+            </div>
+          ))
+        ) : (
+          <div className='flex flex-col space-y-4'>
+            <h1>
+              Oops! It looks like the search query is invalid. Please enter a valid keyword, actor,
+              or movie title and try again.
+            </h1>
+            <NotFound />
+          </div>
+        )}
       </div>
     </div>
   );
