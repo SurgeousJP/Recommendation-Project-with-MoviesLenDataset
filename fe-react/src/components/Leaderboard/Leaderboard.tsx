@@ -9,6 +9,7 @@ function Leaderboard() {
     getLeaderboard,
     {
       select(data) {
+        if (!data) return data;
         const maxMoviesRated = Math.max(...data.map((user: any) => user.movies_rated));
         const updatedData = data.map((user: any) => ({
           ...user,
