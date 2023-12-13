@@ -21,7 +21,7 @@ Project gồm một số chức năng sau:<br>
 - ...
 
 # Preview:
-<img src="" alt="Demo Screen" width="98" height="200" />
+<img src="https://raw.githubusercontent.com/SurgeousJP/GearshopApp/main/Demo_Screen.png" alt="Demo Screen" width="98" height="200" />
 
 ## Testing
 
