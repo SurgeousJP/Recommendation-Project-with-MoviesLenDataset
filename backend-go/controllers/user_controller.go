@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"movies_backend/constants"
 	"movies_backend/helper"
 	"movies_backend/models"
 	"movies_backend/services/interfaces"
@@ -32,7 +33,9 @@ func (uc *UserController) CreateUser(ctx *gin.Context) {
 		return
 	}
 
-	user.UserId = uc.UserService.GetNewUserId()
+	if (user.UserId != constants.USERID_FOR_TESTING){
+		user.UserId = uc.UserService.GetNewUserId()
+	}
 
 	hashPassword, err := helper.HashPassword(user.PasswordHash)
 	if err != nil {

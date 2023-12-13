@@ -68,7 +68,7 @@ func (suite *UserTestSuite) SetupTest() {
 func (suite *UserTestSuite) TestCreateUserSuccessfully() {
 	body := strings.NewReader(`{
 		"id": 20000,
-		"username": "Surgeous",
+		"username": "test20000",
 		"password_hash": "abcxyz",
 		"favorite_list": [2,3,5,6,11],
 		"recommendation_list": [2,3,5,6,11],
@@ -86,10 +86,10 @@ func (suite *UserTestSuite) TestCreateUserSuccessfully() {
 	assert.Equal(suite.T(), `{"message":"Successful"}`, w.Body.String())
 }
 
-func (suite *UserTestSuite) TestCreateExistingRating() {
+func (suite *UserTestSuite) TestCreateExistingUserUsername() {
 	body := strings.NewReader(`{
 		"id": 10001,
-		"username": "Surgeous",
+		"username": "test",
 		"password_hash": "abcxyz",
 		"favorite_list": [2,3,5,6,11],
 		"recommendation_list": [2,3,5,6,11],
@@ -104,7 +104,7 @@ func (suite *UserTestSuite) TestCreateExistingRating() {
 
 	assert.Equal(suite.T(), http.StatusBadGateway, w.Code)
 
-	assert.Equal(suite.T(), `{"message":"write exception: write errors: [E11000 duplicate key error collection: moviesDB.users index: id_1 dup key: { id: 10001 }]"}`, w.Body.String())
+	assert.Equal(suite.T(), `{"message":"write exception: write errors: [E11000 duplicate key error collection: ***.users index: username_1 dup key: {username:"test"}]"}`, w.Body.String())
 }
 
 func (suite *UserTestSuite) TestCreateWrongBindedJSONUser() {
