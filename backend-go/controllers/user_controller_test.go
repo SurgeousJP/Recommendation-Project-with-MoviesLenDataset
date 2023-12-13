@@ -256,7 +256,7 @@ func (suite *UserTestSuite) TestUpdateNonExistentUser() {
 	assert.Equal(suite.T(), http.StatusBadGateway, w.Code)
 
 	// Check the response body
-	assert.Equal(suite.T(), `{"message":"no matched document found for update"}`, w.Body.String())
+	assert.Equal(suite.T(), `{"message":"mongo: no documents in result"}`, w.Body.String())
 }
 
 func (suite *UserTestSuite) TestUpdateSuccessfulUser() {
