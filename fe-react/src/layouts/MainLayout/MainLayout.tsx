@@ -4,7 +4,7 @@ import Footer from 'src/components/Footer';
 import Header from 'src/components/Header';
 import SideBar from 'src/components/Sidebar/Sidebar';
 
-export default function Register() {
+export default function MainLayout() {
   const [isSideBarOpen, setSideBarOpen] = useState(false);
 
   const toggleSideBar = () => {
@@ -32,7 +32,7 @@ export default function Register() {
   return (
     <div id='outer-container'>
       <Header onBurgerMenuClick={toggleSideBar} isOpen={isSideBarOpen} />
-      <div className='mt-14 min-h-screen pb-4 bg-background' id='page-wrap'>
+      <div className='mt-16 min-h-screen pb-4 bg-background' id='page-wrap'>
         <Outlet />
       </div>
       <Footer />

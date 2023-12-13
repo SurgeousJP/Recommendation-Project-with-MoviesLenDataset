@@ -79,6 +79,10 @@ export function buildImageUrl(imagePath: string | null | undefined, size: string
   }
 }
 
+export function buildUserImageUrl(username: string, background = '13b6dc', color: 'fff'): string {
+  return `https://ui-avatars.com/api/?background=${background}&name=${username}&color=${color}`;
+}
+
 function minutesToHourMinuteString(minutes: number): string {
   if (minutes < 0) {
     throw new Error('Input must be a non-negative number of minutes.');

@@ -171,11 +171,11 @@ export default function Header(props: HeaderProps) {
                 <hr className='border-white/30'></hr>
                 <ul className='my-1'>
                   <li className=' hover:bg-gray-800 py-1.5 px-3'>
-                    <Link to={`/settings/profiles`}>Edit Profile</Link>
+                    <Link to={`/profiles`}>Edit Profile</Link>
                   </li>
-                  <li className=' hover:bg-gray-800 py-1.5 px-3'>
+                  {/* <li className=' hover:bg-gray-800 py-1.5 px-3'>
                     <Link to={`/settings/accounts`}>Settings</Link>
-                  </li>
+                  </li> */}
                 </ul>
                 <hr className='border-white/30'></hr>
                 <p className=' mt-1 hover:bg-gray-800 py-1.5 px-3'>

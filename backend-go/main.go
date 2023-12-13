@@ -60,13 +60,13 @@ var (
 	topRatedMoviesController controllers.TopRatedMoviesController
 
 	userReviewCollection *mongo.Collection
-	userReviewService interfaces.UserReviewService
+	userReviewService    interfaces.UserReviewService
 	userReviewController controllers.UserReviewController
 
 	similarMoviesCollection *mongo.Collection
-	similarMoviesService interfaces.SimilarMoviesServices
+	similarMoviesService    interfaces.SimilarMoviesServices
 	similarMoviesController controllers.SimilarMoviesController
-	
+
 	ctx         context.Context
 	mongoClient *mongo.Client
 )
@@ -149,7 +149,6 @@ func Init() {
 	similarMoviesCollection = mongoClient.Database(databaseName).Collection("similar_movies")
 	similarMoviesService = implementations.NewSimilarMoviesService(similarMoviesCollection, ctx)
 	similarMoviesController = controllers.NewSimilarMoviesController(similarMoviesService)
-	
 
 	server = gin.Default()
 	// Set up CORS (Cross-Origin Resource Sharing)
@@ -197,9 +196,9 @@ func main() {
 	// Apply middleware only to the /currentUser route
 	basePath.GET("/currentUser", authMiddleware.MiddlewareFunc(), returnUser)
 
-	// Apply middleware to all routes under basePath, except for GET requests
+	// Apply middleware to all routes under basePath, except for GET requests, and /v1/user/create
 	basePath.Use(func(c *gin.Context) {
-		if c.Request.Method != "GET" {
+		if c.Request.Method != "GET" && c.FullPath() != "/v1/user/create" {
 			authMiddleware.MiddlewareFunc()(c)
 		}
 	})

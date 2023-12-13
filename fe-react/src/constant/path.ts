@@ -15,5 +15,6 @@ export const path = {
   leaderboard: 'leaderboard',
   cast: 'cast',
   user: 'u',
-  type: ':type'
+  type: ':type',
+  profiles: 'profiles'
 };
