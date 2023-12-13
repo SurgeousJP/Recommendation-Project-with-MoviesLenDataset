@@ -3,7 +3,7 @@ import HomePage from './pages/HomePage';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPass from './pages/ForgotPass';
-import HomeLayout from './layouts/HomeLayout';
+import HomeLayout from './layouts/MainLayout';
 import Details from './pages/Details';
 import SearchResult from './pages/SearchResult';
 
@@ -17,13 +17,14 @@ import DiscussionMovie from './pages/Discussion/DiscussionMovie';
 import Leaderboard from './pages/Leaderboard/Leaderboard';
 import Discussion from './pages/Discussion/Discussion';
 import CastPage from './pages/CastPage/CastPage';
-import { type } from './pages/User/UserOverView';
 import TopRatedMovies from './pages/TopRatedMovies/TopRatedMovies';
+import EditProfile from './pages/EditProfile/EditProfile';
+import MainLayout from './layouts/MainLayout';
 
 export default function useRouteElement() {
   const routeElement = useRoutes([
     {
-      element: <HomeLayout />,
+      element: <MainLayout />,
       children: [
         {
           path: path.default,
@@ -32,6 +33,10 @@ export default function useRouteElement() {
         {
           path: path.leaderboard,
           element: <Leaderboard />
+        },
+        {
+          path: path.profiles,
+          element: <EditProfile />
         },
         {
           path: path.top_rated,

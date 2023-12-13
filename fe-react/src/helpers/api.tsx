@@ -242,6 +242,7 @@ export const getUserProfile = async (userId: string) => {
 };
 
 export const updateUserProfile = async (user: User) => {
+  console.log(user);
   const { data } = await authInstance.patch(`user/update`, user);
   return data;
 };
