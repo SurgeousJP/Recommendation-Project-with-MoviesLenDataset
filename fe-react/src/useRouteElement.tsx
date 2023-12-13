@@ -16,6 +16,7 @@ import NotFound from './pages/NotFound/NotFound';
 import DiscussionMovie from './pages/Discussion/DiscussionMovie';
 import Leaderboard from './pages/Leaderboard/Leaderboard';
 import Discussion from './pages/Discussion/Discussion';
+import CastPage from './pages/CastPage/CastPage';
 
 export default function useRouteElement() {
   const routeElement = useRoutes([
@@ -59,8 +60,13 @@ export default function useRouteElement() {
               element: <Details />
             },
             {
-              path: ':id',
-              element: <Details />
+              path: path.id,
+              children: [
+                {
+                  path: path.cast,
+                  element: <CastPage />
+                }
+              ]
             }
           ]
         },

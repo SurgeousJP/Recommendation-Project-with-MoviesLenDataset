@@ -11,5 +11,6 @@ export const path = {
   all: '*',
   id: ':id',
   discussion_id: ':discussion_id',
-  leaderboard: 'leaderboard'
+  leaderboard: 'leaderboard',
+  cast: 'cast'
 };

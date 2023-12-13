@@ -6,17 +6,18 @@ interface CastCardProps {
   name: string;
   character: string;
   profilePath: string;
+  gender: boolean;
 }
 
-const CastCard: React.FC<CastCardProps> = ({ imageUrl, name, character, profilePath }) => {
+const CastCard: React.FC<CastCardProps> = ({ imageUrl, name, character, profilePath, gender }) => {
   return (
     <div className='hover:shadow-gray-800/70 hover:shadow-lg shadow-none transition border-border rounded-lg border-1 h-72 w-[8rem] bg-textbox overflow-clip'>
       <a href={profilePath} target='_blank' rel='noreferrer'>
         <img
           className='w-[8.6rem] h-[10.9rem]'
-          src={imageUrl || '/src/assets/images/placeholder.svg'}
+          src={imageUrl || `/src/assets/images/placeholder${gender ? '' : '-female'}.svg`}
           onError={e => {
-            e.currentTarget.src = '/src/assets/images/placeholder.svg';
+            e.currentTarget.src = `/src/assets/images/placeholder${gender ? '' : '-female'}.svg`;
           }}
           alt={`${name} as ${character}`}
         />

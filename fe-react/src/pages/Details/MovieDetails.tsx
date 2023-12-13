@@ -24,7 +24,6 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
   const [isFavorite, setIsFavorite] = useState(false);
   const [isWatchList, setIsWatchList] = useState(false);
   const handleGetUserSuccess = data => {
-    console.log(data, movie?.id);
     data.favorite_list.includes(movie?.id) && setIsFavorite(true);
     data.watch_list.includes(movie?.id) && setIsWatchList(true);
   };
@@ -70,9 +69,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
   }, [userId, movie?.id]);
 
   const handleRating = (rate: number) => {
-    console.log(rate);
     setRating(rate);
-    console.log(hasRated);
     if (hasRated === true) {
       updateRating({ user_id: userId, movie_id: movie?.id, rating: rate });
     } else {
@@ -266,7 +263,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
             <h3 className='font-bold text-xl'>Overview</h3>
             <p className=''>{movie?.overview}</p>
             <ol className='flex md:space-x-16 lg:space-x-20 xl:space-x-44 mt-4'>
-              {crews?.map((crew, index) => (
+              {crews?.splice(0, 3).map((crew, index) => (
                 <li key={index}>
                   <p className='font-bold'>{crew.name}</p>
                   <p className='text-sm'>{crew.job}</p>

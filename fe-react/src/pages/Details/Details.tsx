@@ -51,7 +51,6 @@ export default function Details() {
   if (isError) {
     return <NotFound></NotFound>;
   }
-  console.log(movie);
 
   return (
     <div className='w-auto bg-background '>
@@ -70,11 +69,12 @@ export default function Details() {
                   name={cast.name}
                   character={cast.character}
                   profilePath={buildCastWikiReference(cast.name)}
+                  gender={cast.gender}
                 />
               ))}
             </Scroller>
             <h3 className='font-semibold my-6'>
-              <a className='hover:opacity-70' href='cast'>
+              <a className='hover:opacity-70' href={`/details/${id}/cast`}>
                 Full Cast & Crew
               </a>
             </h3>
@@ -102,7 +102,6 @@ export default function Details() {
             <Scroller>
               {similarMoviesQueries.map((res, index) => {
                 const movie = res.data;
-                console.log(movie);
                 return (
                   <MovieCardRecom
                     posterUrl={buildImageUrl(movie?.backdrop_path, 'original')}

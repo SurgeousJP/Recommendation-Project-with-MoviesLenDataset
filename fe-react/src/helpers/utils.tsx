@@ -8,12 +8,15 @@ export const getColor = (rating: number | undefined) => {
   return 'border-red-600';
 };
 export function mapJsonToCrews(jsonData: any): Crew[] {
-  return jsonData.slice(0, 3).map((crew: string) => {
+  return jsonData.map((crew: string) => {
     const crewData = JSON.parse(crew);
     return {
       id: crewData.id,
       name: crewData.name,
-      job: crewData.job
+      job: crewData.job,
+      department: crewData.department,
+      profile_path: crewData.profile_path,
+      gender: crewData.gender !== 0
     };
   });
 }
@@ -26,7 +29,8 @@ export function mapJsonToCasts(jsonData: any): Cast[] {
       name: castData.name,
       character: castData.character,
       profilePath: castData.profile_path,
-      order: castData.order
+      order: castData.order,
+      gender: castData.gender !== 0
     };
   });
 }
@@ -63,10 +67,8 @@ export function buildImageUrl(imagePath: string | null | undefined, size: string
   if (!imagePath) {
     return '';
   }
-
   const baseURL = 'https://image.tmdb.org/t/p/';
   const validSizes = ['w92', 'w154', 'w185', 'w342', 'w500', 'w780', 'original'];
-
   if (validSizes.includes(size)) {
     imagePath = imagePath.replace(/^\//, '');
 
