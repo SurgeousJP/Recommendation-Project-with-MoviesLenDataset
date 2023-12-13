@@ -31,6 +31,9 @@ func (uc *UserController) CreateUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": "wrong input structure"})
 		return
 	}
+
+	user.UserId = uc.UserService.GetNewUserId()
+
 	hashPassword, err := helper.HashPassword(user.PasswordHash)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": "failed to hash the password"})

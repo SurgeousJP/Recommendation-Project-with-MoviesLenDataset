@@ -70,3 +70,13 @@ func (u *UserServiceImpl) GetUserFromUsername(username *string) (*models.User, e
 	err := u.userCollection.FindOne(u.ctx, query).Decode(&user)
 	return user, err
 }
+
+func (u *UserServiceImpl) GetNewUserId() (int) {
+	// Fetch total movies
+	totalUsers, err := u.userCollection.CountDocuments(u.ctx, bson.D{{}})
+	if err != nil {
+		return 0
+	}
+
+	return int(totalUsers)
+}

@@ -8,4 +8,5 @@ type UserService interface {
 	UpdateUser(*models.User) error
 	DeleteUser(*int) error
 	GetUserFromUsername(*string) (*models.User, error)
+	GetNewUserId() (int)
 }
