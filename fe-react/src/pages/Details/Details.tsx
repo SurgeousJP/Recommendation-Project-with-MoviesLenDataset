@@ -61,7 +61,7 @@ export default function Details() {
         <div className='pl-24 pr-10 w-[calc(100vw_-_80px_-_268px)] '>
           <div className='border-border border-b-1'>
             <h2 className='text-2xl font-semibold mb-3'>Top Billed Cast</h2>
-            <Scroller viewMore>
+            <Scroller viewMore viewMoreLink='cast'>
               {casts?.map((cast, index) => (
                 <CastCard
                   key={index}

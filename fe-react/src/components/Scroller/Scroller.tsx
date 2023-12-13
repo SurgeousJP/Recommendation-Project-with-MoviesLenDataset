@@ -1,11 +1,13 @@
 import React, { ReactNode, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 interface ScrollerProps {
   viewMore?: boolean;
+  viewMoreLink?: string;
   children?: ReactNode[];
 }
 
-const Scroller: React.FC<ScrollerProps> = ({ children, viewMore }) => {
+const Scroller: React.FC<ScrollerProps> = ({ children, viewMore, viewMoreLink }) => {
   const [scrolled, setScrolled] = useState(false);
   const [showViewMore, setShowViewMore] = useState(viewMore);
 
@@ -25,7 +27,7 @@ const Scroller: React.FC<ScrollerProps> = ({ children, viewMore }) => {
   }, [children]);
   return (
     <div
-      className={`relative after:content-[""] after:w-14 after:h-full after:absolute after:top-0 after:right-0 after:bg-gradient-to-r after:transition-opacity after:duration-500 from-textbox/0 to-textbox ${
+      className={`relative after:content-[""] after:w-14 after:h-full after:absolute after:top-0 after:right-0 after:bg-gradient-to-r after:transition-opacity after:duration-500 from-textbox/0 to-textbox after:pointer-events-none ${
         scrolled ? 'after:opacity-0' : 'after:opacity-100'
       }`}
     >
@@ -36,9 +38,9 @@ const Scroller: React.FC<ScrollerProps> = ({ children, viewMore }) => {
       >
         {children?.map((child, index) => <li key={index}>{child}</li>)}
         {showViewMore && (
-          <a className='font-bold flex items-center' href='cast'>
+          <Link className='font-bold flex items-center' to={viewMoreLink || ''}>
             <span className='w-24'>View more &rarr;</span>
-          </a>
+          </Link>
         )}
       </ol>
     </div>
