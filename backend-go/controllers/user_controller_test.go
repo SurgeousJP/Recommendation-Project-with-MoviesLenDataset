@@ -104,7 +104,7 @@ func (suite *UserTestSuite) TestCreateExistingUserUsername() {
 
 	assert.Equal(suite.T(), http.StatusBadGateway, w.Code)
 
-	assert.Equal(suite.T(), `{"message":"write exception: write errors: [E11000 duplicate key error collection: ***.users index: username_1 dup key: {username:"test"}]"}`, w.Body.String())
+	assert.Equal(suite.T(), `{"message":"write exception: write errors: [E11000 duplicate key error collection: moviesDB.users index: username_1 dup key: { username: \"test\" }]"}`, w.Body.String())
 }
 
 func (suite *UserTestSuite) TestCreateWrongBindedJSONUser() {
