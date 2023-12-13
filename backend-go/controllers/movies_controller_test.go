@@ -23,10 +23,11 @@ import (
 )
 
 var (
-	movieJSONForTesting = constants.MOVIE_JSON_FOR_TESTING
+	movieJSONForTesting          = constants.MOVIE_JSON_FOR_TESTING
+	movieJSONForTestingPopular   = constants.MOVIE_JSON_FOR_TESTING_POPULAR
 	movieDuplicateJSONForTesting = constants.MOVIE_DUPLICATE_FOR_TESTING
-	movieNonExistent = constants.MOVIE_NON_EXISTENT
-	movieForEdit = constants.MOVIE_EDIT
+	movieNonExistent             = constants.MOVIE_NON_EXISTENT
+	movieForEdit                 = constants.MOVIE_EDIT
 )
 
 type MovieTestSuite struct {
@@ -129,7 +130,7 @@ func (suite *MovieTestSuite) TestCreateWrongBodyStructureInputMovie() {
 	assert.Equal(suite.T(), `{"message":"wrong input structure"}`, w.Body.String())
 }
 
-func (suite *MovieTestSuite) TestCreateWrongBindedJSONMovies(){
+func (suite *MovieTestSuite) TestCreateWrongBindedJSONMovies() {
 	body := strings.NewReader(`{UnbindedJSON}`)
 
 	req, _ := http.NewRequest("POST", "/movie/createMany", body)
@@ -211,7 +212,37 @@ func (suite *MovieTestSuite) TestNotFoundMovie() {
 	assert.Equal(suite.T(), "404 page not found", w.Body.String())
 }
 
-func (suite *MovieTestSuite) TestGetInvalidPageNumberMovies(){
+func (suite *MovieTestSuite) TestGetPopularMoviesSuccessfully() {
+	// Create a fake HTTP request
+	req, _ := http.NewRequest("GET", "/movie/get/popular/1", nil)
+
+	// Create a response recorder to record the response
+	w := httptest.NewRecorder()
+
+	// Perform the request
+	suite.r.ServeHTTP(w, req)
+	assert.Equal(suite.T(), http.StatusOK, w.Code)
+
+	// Check the response body
+	assert.Equal(suite.T(), movieJSONForTestingPopular, w.Body.String())
+}
+
+func (suite *MovieTestSuite) TestGetInvalidNumberOfMoviesPopularMovies() {
+	// Create a fake HTTP request
+	req, _ := http.NewRequest("GET", "/movie/get/popular/-1", nil)
+
+	// Create a response recorder to record the response
+	w := httptest.NewRecorder()
+
+	// Perform the request
+	suite.r.ServeHTTP(w, req)
+	assert.Equal(suite.T(), http.StatusBadRequest, w.Code)
+
+	// Check the response body
+	assert.Equal(suite.T(), `{"message":"Invalid number of movies"}`, w.Body.String())
+}
+
+func (suite *MovieTestSuite) TestGetInvalidPageNumberMovies() {
 	// Create a fake HTTP request
 	req, _ := http.NewRequest("GET", "/movie/get/page/-1", nil)
 
@@ -228,7 +259,7 @@ func (suite *MovieTestSuite) TestGetInvalidPageNumberMovies(){
 	assert.JSONEq(suite.T(), `{"message":"Invalid page number"}`, w.Body.String())
 }
 
-func (suite *MovieTestSuite) TestGetBadGatewayPageMovies(){
+func (suite *MovieTestSuite) TestGetBadGatewayPageMovies() {
 	// Create a fake HTTP request
 	req, _ := http.NewRequest("GET", "/movie/get/page/20000", nil)
 
@@ -245,7 +276,7 @@ func (suite *MovieTestSuite) TestGetBadGatewayPageMovies(){
 	assert.JSONEq(suite.T(), `{"message":"documents not found"}`, w.Body.String())
 }
 
-func (suite *MovieTestSuite) TestSearchInvalidPageNumberMovies(){
+func (suite *MovieTestSuite) TestSearchInvalidPageNumberMovies() {
 	// Create a fake HTTP request
 	req, _ := http.NewRequest("GET", "/movie/search/cutthro/-1", nil)
 
@@ -262,7 +293,7 @@ func (suite *MovieTestSuite) TestSearchInvalidPageNumberMovies(){
 	assert.JSONEq(suite.T(), `{"message":"Invalid page number"}`, w.Body.String())
 }
 
-func (suite *MovieTestSuite) TestSearchBadGatewayPageMovies(){
+func (suite *MovieTestSuite) TestSearchBadGatewayPageMovies() {
 	// Create a fake HTTP request
 	req, _ := http.NewRequest("GET", "/movie/search/cutthroat/20000", nil)
 
@@ -413,7 +444,7 @@ func (suite *MovieTestSuite) setupMovieRouter() *gin.Engine {
 	r.POST("/movie/createMany", suite.movieController.CreateMovies)
 
 	r.GET("/movie/get/:id", suite.movieController.GetMovie)
-
+	r.GET("/movie/get/popular/:numberOfMovies", suite.movieController.GetPopularMovies)
 	r.GET("/movie/get/page/:pageNumber", suite.movieController.GetMoviesInPage)
 	r.GET("/movie/search/:search_word/:pageNumber", suite.movieController.SearchMovie)
 

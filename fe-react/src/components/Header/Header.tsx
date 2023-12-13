@@ -41,7 +41,7 @@ export default function Header(props: HeaderProps) {
         <nav>
           <ul className=' text-white hidden lg:flex lg:space-x-14 md:ml-8 md:transform-none xl:ml-16 w-auto'>
             <li>
-              <a className='hover:text-primary transition ease-out duration-300' href='/'>
+              <a className='hover:text-primary transition ease-out duration-300' href='/top-rated'>
                 Top Rated Movies
               </a>
             </li>
@@ -159,7 +159,7 @@ export default function Header(props: HeaderProps) {
                     <Link to={`/u/${userId}/disscussion`}>Disscussion</Link>
                   </li>
                   <li className=' hover:bg-gray-800 py-1.5 px-3'>
-                    <Link to={`/u/${userId}/lists`}>Lists</Link>
+                    <Link to={`/u/${userId}/recommendations`}>Recommendation</Link>
                   </li>
                   <li className=' hover:bg-gray-800 py-1.5 px-3'>
                     <Link to={`/u/${userId}/ratings`}>Ratings</Link>

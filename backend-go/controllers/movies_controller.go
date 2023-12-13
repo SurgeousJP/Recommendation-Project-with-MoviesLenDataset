@@ -73,6 +73,23 @@ func (mc *MovieController) GetMovie(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, movie)
 }
 
+func (mc *MovieController) GetPopularMovies(ctx *gin.Context) {
+	numberOfMovies, err := strconv.Atoi(ctx.Param("numberOfMovies"))
+
+	if err != nil || numberOfMovies <= 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Invalid number of movies"})
+		return
+	}
+
+	movies, err := mc.MovieService.GetPopularMovies(numberOfMovies)
+
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, movies)
+}
+
 func (mc *MovieController) GetMoviesInPage(ctx *gin.Context) {
 	pageNumber := ctx.Param("pageNumber")
 	pageNumberInt, err := strconv.Atoi(pageNumber)
@@ -205,6 +222,8 @@ func (mc *MovieController) RegisterMovieRoute(rg *gin.RouterGroup) {
 	movieRoute.POST("/createMany", mc.CreateMovies)
 
 	movieRoute.GET("/get/:id", mc.GetMovie)
+
+	movieRoute.GET("/get/popular/:numberOfMovies", mc.GetPopularMovies)
 
 	movieRoute.GET("/get/page/:pageNumber", mc.GetMoviesInPage)
 

@@ -5,7 +5,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import { useRef, useState } from 'react';
 import { buildImageUrl, mapJsonToMovie } from 'src/helpers/utils';
 import { useQuery } from 'react-query';
-import { getLeaderboard, getTopRatedMovies } from 'src/helpers/api';
+import { getMoviePopular } from 'src/helpers/api';
 import Leaderboard from 'src/components/Leaderboard/Leaderboard';
 import MovieCardList from 'src/components/MovieCardList/MovieCardList';
 
@@ -17,7 +17,7 @@ export default function HomePage() {
   const onError = () => {
     setBackdropURL('/src/assets/images/backdrop.png');
   };
-  const { isLoading, data } = useQuery('movies', getTopRatedMovies, {
+  const { isLoading, data } = useQuery('movies', () => getMoviePopular(), {
     staleTime: 1000 * 60 * 1, // 1 minutes
     onError: onError
   });

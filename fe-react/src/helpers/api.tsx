@@ -117,6 +117,11 @@ export const getMovieDetail = async (movieId: string) => {
   return data;
 };
 
+export const getMoviePopular = async (numOfMovie = 10) => {
+  const { data } = await instance.get(`movie/get/popular/${numOfMovie}`);
+  return data;
+};
+
 export const getDiscussion = async (discussionId: string) => {
   const { data } = await instance.get(`movieDiscussion/get/${discussionId}`);
   return data;

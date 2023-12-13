@@ -17,6 +17,8 @@ import DiscussionMovie from './pages/Discussion/DiscussionMovie';
 import Leaderboard from './pages/Leaderboard/Leaderboard';
 import Discussion from './pages/Discussion/Discussion';
 import CastPage from './pages/CastPage/CastPage';
+import { type } from './pages/User/UserOverView';
+import TopRatedMovies from './pages/TopRatedMovies/TopRatedMovies';
 
 export default function useRouteElement() {
   const routeElement = useRoutes([
@@ -32,17 +34,35 @@ export default function useRouteElement() {
           element: <Leaderboard />
         },
         {
+          path: path.top_rated,
+          element: <TopRatedMovies />
+        },
+        {
           path: path.search,
           element: <SearchResult />,
           children: [
             {
-              path: ':type'
+              path: path.type
             }
           ]
         },
         {
-          path: '/u/:id',
-          element: <UserProfile />
+          path: path.user,
+          children: [
+            {
+              path: path.id,
+              element: <UserProfile />
+            },
+            {
+              path: path.id,
+              children: [
+                {
+                  path: path.type,
+                  element: <UserProfile />
+                }
+              ]
+            }
+          ]
         },
         {
           path: path.logout,

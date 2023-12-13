@@ -1,21 +1,40 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import { getColor } from 'src/helpers/utils';
-import useUserProfile from 'src/hooks/useUserProfile';
 import useUserRating from 'src/hooks/useUserRating';
 import UserOverview from './UserOverView';
 import UserRatingPanel from './UserRatingPanel';
-import UserRecomList from './MovieList';
 import useUser from 'src/hooks/useUser';
 import MovieList from './MovieList';
 
 const UserProfile = () => {
-  const { id } = useParams();
+  const { id, type } = useParams();
+
+  const getSelectedIndex = () => {
+    switch (type) {
+      case 'ratings':
+        return 1;
+      case 'recommendations':
+        return 2;
+      case 'discussion':
+        return 3;
+      case 'watchlist':
+        return 4;
+      default:
+        return 0;
+    }
+  };
+
+  const [selectedIndex, setSelectedIndex] = useState(getSelectedIndex());
 
   const { data: userProfileData, isLoading } = useUser(parseInt(id));
 
   const [avarageRating, setAvarageRating] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    setSelectedIndex(getSelectedIndex());
+  }, [type]);
 
   const { data: ratingData, isLoading: isRatingLoading } = useUserRating({
     id: id ?? '',
@@ -29,6 +48,9 @@ const UserProfile = () => {
     }
   });
 
+  const onSelect = (index: number, lastIndex: number, event: Event) => {
+    setSelectedIndex(index);
+  };
   if (isLoading || isRatingLoading) {
     return <p>Loading...</p>;
   }
@@ -68,7 +90,7 @@ const UserProfile = () => {
         </div>
       </div>
       <div className='py-3 px-24 '>
-        <Tabs>
+        <Tabs onSelect={onSelect} selectedIndex={selectedIndex}>
           <TabList className={'flex justify-center border-border border-b-1 react-tabs__tab-list '}>
             <Tab>Overview</Tab>
             <Tab>Ratings</Tab>

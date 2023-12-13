@@ -45,6 +45,32 @@ func (m *MovieServiceImpl) GetMovie(movieId *int) (*models.Movie, error) {
 	return movie, err
 }
 
+func (m *MovieServiceImpl) GetPopularMovies(numberOfMovies int) ([]*models.Movie, error) {
+	var movies []*models.Movie
+	options := options.Find().SetSort(bson.D{{Key: "popularity", Value: -1}}).SetLimit(int64(numberOfMovies))
+	cursor, err := m.movieCollection.Find(m.ctx, bson.D{{}}, options)
+
+	if err != nil {
+		return nil, err
+	}
+	for cursor.Next(m.ctx) {
+		var movie models.Movie
+		err := cursor.Decode(&movie)
+		if err != nil {
+			return nil, err
+		}
+		movies = append(movies, &movie)
+	}
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+	cursor.Close(m.ctx)
+	if len(movies) == 0 {
+		return nil, errors.New("documents not found")
+	}
+	return movies, nil
+}
+
 func (m *MovieServiceImpl) GetMoviesInPage(pageNumber, moviesPerPage int) ([]*models.Movie, int, error) {
 	var moviesInPage []*models.Movie
 	options := options.Find().
