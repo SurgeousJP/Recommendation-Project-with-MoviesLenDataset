@@ -80,7 +80,7 @@ export function buildImageUrl(imagePath: string | null | undefined, size: string
 }
 
 export function buildUserImageUrl(username: string, background = '13b6dc', color: 'fff'): string {
-  return `https://ui-avatars.com/api/?background=${background}&name=${username}&color=${color}`;
+  return `https://ui-avatars.com/api/?background=${background}&name=${username}&color=${color}&size=256`;
 }
 
 function minutesToHourMinuteString(minutes: number): string {

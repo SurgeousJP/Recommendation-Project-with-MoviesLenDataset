@@ -43,6 +43,7 @@ const MovieList: React.FC<MovieListProps> = ({
   return (
     <div className='mt-3'>
       <h2 className='text-2xl font-bold mb-3'>{title}</h2>
+      {movieIds.length === 0 && <p>{nullListMessage}</p>}
       {isLoading ? (
         <LoadingIndicator></LoadingIndicator>
       ) : (

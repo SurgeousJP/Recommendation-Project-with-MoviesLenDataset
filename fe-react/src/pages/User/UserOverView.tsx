@@ -1,10 +1,7 @@
 import React from 'react';
 import { AxisOptions, Chart } from 'react-charts';
 import { useQueries } from 'react-query';
-import LoadingIndicator from 'src/components/LoadingIndicator';
-import MovieCardUser from 'src/components/MovieCardUser';
 import { getMovieDetail } from 'src/helpers/api';
-import { buildImageUrl, formatDateToDDMMYYYY, mapJsonToMovie } from 'src/helpers/utils';
 
 export type RatingData = {
   rate: string;
@@ -20,7 +17,7 @@ export type Series = {
 export type RatingRawData = {
   movie_id: string;
   rating: number;
-  timestamp: number;
+  year: number;
 };
 
 export interface UserOverviewProps {

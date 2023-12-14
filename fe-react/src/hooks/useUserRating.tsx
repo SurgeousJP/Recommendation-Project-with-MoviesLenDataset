@@ -13,10 +13,11 @@ const useUserRating = (data: {
     refetchOnWindowFocus: false,
     select: data => {
       console.log('data', data);
-      return data.map(item => {
+      return data.map(rating => {
         return {
-          movieId: item.movie_id,
-          rating: item.rating * 2
+          rating: rating.rating,
+          movie_id: rating.movie_id,
+          year: new Date(rating.timestamp * 1000).getFullYear()
         };
       });
     }

@@ -241,6 +241,11 @@ export const getUserProfile = async (userId: string) => {
   return data;
 };
 
+export const createUserProfile = async (user: User) => {
+  const { data } = await instance.post(`user/create`, user);
+  return data;
+};
+
 export const updateUserProfile = async (user: User) => {
   console.log(user);
   const { data } = await authInstance.patch(`user/update`, user);

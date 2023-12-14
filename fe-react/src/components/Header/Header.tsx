@@ -124,7 +124,7 @@ export default function Header(props: HeaderProps) {
             <img
               id='user-avatar'
               className='w-8 h-8 mr-12 rounded-full'
-              src='https://picsum.photos/200'
+              src={user?.picture_profile}
               alt='Avatar'
             ></img>
             <Tooltip

@@ -67,7 +67,7 @@ const UserProfile = () => {
         </div>
         <div className='relative flex w-full lg:scale-100 scale-75 items-center'>
           <img
-            className='rounded-full overflow-hidden'
+            className='rounded-full w-48 h-48 overflow-hidden'
             src={userProfileData.picture_profile}
             alt='user profile'
           />
@@ -110,9 +110,16 @@ const UserProfile = () => {
           </TabPanel>
           <TabPanel>
             <UserRatingPanel
-              userId={id}
+              ratingData={ratingData}
               favoriteList={userProfileData.favorite_list}
             ></UserRatingPanel>
+            <MovieList
+              movieIds={ratingData?.map(rating => parseInt(rating.movie_id)) ?? []}
+              nullListMessage={`You haven't rate any movie yet`}
+              title='My Ratings'
+              canRemove
+              favoriteList={userProfileData.favorite_list}
+            />
           </TabPanel>
           <TabPanel>
             <MovieList

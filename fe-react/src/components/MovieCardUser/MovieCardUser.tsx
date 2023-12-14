@@ -37,7 +37,6 @@ const MovieCardUser = ({
   const [isFavorite, setIsFavorite] = useState(isFavouriteInit);
   const { userId, hasLogin } = useUserId();
   const handleGetUserSuccess = data => {
-    console.log(data);
     data.favorite_list.includes(movieId) && setIsFavorite(true);
   };
   const userQuery = useUser(userId, handleGetUserSuccess);

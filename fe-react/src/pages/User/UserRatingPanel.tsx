@@ -1,11 +1,9 @@
 import React from 'react';
 import { AxisOptions, Chart } from 'react-charts';
 import { useQueries, useQuery } from 'react-query';
-import LoadingIndicator from 'src/components/LoadingIndicator';
-import MovieCardUser from 'src/components/MovieCardUser';
 import { getMovieDetail, getUserRating } from 'src/helpers/api';
-import { buildImageUrl } from 'src/helpers/utils';
 import MovieList from './MovieList';
+import { RatingRawData } from './UserOverView';
 
 export type Series = {
   label: string;
@@ -13,17 +11,12 @@ export type Series = {
 };
 
 interface UserRatingPanelProps {
-  userId: string;
+  ratingData: RatingRawData[];
   favoriteList?: number[];
 }
 type RatingData = {
   rateCount: number;
   year: string;
-};
-type RatingRawData = {
-  movie_id: string;
-  rating: number;
-  year: number;
 };
 
 function countRatings(ratings: RatingRawData[]): RatingData[] {
@@ -55,18 +48,7 @@ function countRatings(ratings: RatingRawData[]): RatingData[] {
   return result;
 }
 
-const UserRatingPanel = ({ userId, favoriteList }: UserRatingPanelProps) => {
-  const { data: ratingData } = useQuery(['userRating', userId], () => getUserRating(userId), {
-    select: (data): RatingRawData[] => {
-      return data.map(rating => {
-        return {
-          rating: rating.rating,
-          movie_id: rating.movie_id,
-          year: new Date(rating.timestamp * 1000).getFullYear()
-        };
-      });
-    }
-  });
+const UserRatingPanel = ({ ratingData, favoriteList }: UserRatingPanelProps) => {
   const primaryAxis = React.useMemo(
     (): AxisOptions<RatingData> => ({
       position: 'bottom',
@@ -110,24 +92,21 @@ const UserRatingPanel = ({ userId, favoriteList }: UserRatingPanelProps) => {
 
   return (
     <div className='mt-3'>
-      <h2 className='text-2xl font-bold'>Rating By Year</h2>
-      <div className='w-full h-24'>
-        <Chart
-          options={{
-            data: data,
-            primaryAxis: primaryAxis,
-            secondaryAxes: secondaryAxes,
-            dark: true
-          }}
-        />
-      </div>
-      <MovieList
-        movieIds={ratingData?.map(rating => parseInt(rating.movie_id)) ?? []}
-        nullListMessage={`You haven't rate any movie yet`}
-        title='My Ratings'
-        canRemove
-        favoriteList={favoriteList}
-      />
+      {ratingData && (
+        <>
+          <h2 className='text-2xl font-bold'>Rating By Year</h2>
+          <div className='w-full h-24'>
+            <Chart
+              options={{
+                data: data,
+                primaryAxis: primaryAxis,
+                secondaryAxes: secondaryAxes,
+                dark: true
+              }}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 };
