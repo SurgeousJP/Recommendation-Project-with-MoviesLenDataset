@@ -240,7 +240,7 @@ func (suite *UserTestSuite) TestUpdateWrongStructureKeyword() {
 
 func (suite *UserTestSuite) TestUpdateNonExistentUser() {
 	body := strings.NewReader(`{
-		"id": 30000,
+		"id": 30001,
 		"username": "Surgeous",
 		"password_hash": "abcxyz"}`)
 	// Create a fake HTTP request
@@ -256,7 +256,7 @@ func (suite *UserTestSuite) TestUpdateNonExistentUser() {
 	assert.Equal(suite.T(), http.StatusBadGateway, w.Code)
 
 	// Check the response body
-	assert.Equal(suite.T(), `{"message":"mongo: no documents in result"}`, w.Body.String())
+	assert.Equal(suite.T(), `{"message":"no matched document found for update"}`, w.Body.String())
 }
 
 func (suite *UserTestSuite) TestUpdateSuccessfulUser() {
