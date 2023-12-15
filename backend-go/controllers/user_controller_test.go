@@ -335,7 +335,7 @@ func (suite *UserTestSuite) TestChangePasswordNonExistentUser() {
 
 func (suite *UserTestSuite) TestChangePasswordWrongOldPassword() {
 	body := strings.NewReader(`{
-		"id": 20000,
+		"id": 10001,
 		"old_password": "1234",
 		"new_password": "abcxyz"}`)
 	// Create a fake HTTP request
