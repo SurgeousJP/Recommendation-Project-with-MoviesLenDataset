@@ -3,7 +3,6 @@ package implementations
 import (
 	"context"
 	"errors"
-	"log"
 	"movies_backend/helper"
 	"movies_backend/models"
 	"movies_backend/services/interfaces"
@@ -66,15 +65,10 @@ func (u *UserServiceImpl) ChangePassword(userId *int, OldPassword *string, NewPa
 		return err
 	}
 	// Compare password with password hash
-	log.Println(existingUser.PasswordHash)
-	log.Println(*OldPassword)
-	log.Println(*NewPassword)
-	log.Println(helper.CheckPassword(existingUser.PasswordHash, *OldPassword))
 	if !helper.CheckPassword(existingUser.PasswordHash, *OldPassword) {
 		return errors.New("wrong password")
 	}
 	hashedPassword, err := helper.HashPassword(*NewPassword)
-	log.Println(hashedPassword)
 	if err != nil {
 		return err
 	}

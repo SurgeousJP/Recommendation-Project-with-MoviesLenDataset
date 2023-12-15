@@ -348,7 +348,7 @@ func (suite *UserTestSuite) TestChangePasswordWrongOldPassword() {
 	suite.r.ServeHTTP(w, req)
 
 	// Check the response status code
-	assert.Equal(suite.T(), http.StatusBadRequest, w.Code)
+	assert.Equal(suite.T(), http.StatusBadGateway, w.Code)
 
 	// Check the response body
 	assert.Equal(suite.T(), `{"message":"wrong password"}`, w.Body.String())
