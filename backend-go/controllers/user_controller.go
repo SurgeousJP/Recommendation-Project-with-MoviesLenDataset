@@ -15,6 +15,12 @@ type UserController struct {
 	UserService interfaces.UserService
 }
 
+type ResetPassword struct {
+	ID          int    `form:"id" json:"id" binding:"required"`
+	OldPassword string `form:"old_password" json:"old_password" binding:"required"`
+	NewPassword string `form:"new_password" json:"new_password" binding:"required"`
+}
+
 func NewUserController(userService interfaces.UserService) UserController {
 	return UserController{
 		UserService: userService,
@@ -33,7 +39,7 @@ func (uc *UserController) CreateUser(ctx *gin.Context) {
 		return
 	}
 
-	if (user.UserId != constants.USERID_FOR_TESTING){
+	if user.UserId != constants.USERID_FOR_TESTING {
 		user.UserId = uc.UserService.GetNewUserId()
 	}
 
@@ -87,6 +93,23 @@ func (uc *UserController) UpdateUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "Successful"})
 }
 
+func (uc *UserController) ChangePassword(ctx *gin.Context) {
+	var resetPassword ResetPassword
+
+	if err := ctx.ShouldBindJSON(&resetPassword); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	if err := uc.UserService.ChangePassword(&resetPassword.ID, &resetPassword.OldPassword, &resetPassword.NewPassword); err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Successful"})
+
+}
+
 func (uc *UserController) DeleteUser(ctx *gin.Context) {
 	userId, err := strconv.Atoi(ctx.Param("id"))
 
@@ -112,6 +135,8 @@ func (uc *UserController) RegisterUserRoute(rg *gin.RouterGroup) {
 	userRoute.GET("/get/:id", uc.GetUser)
 
 	userRoute.PATCH("/update", uc.UpdateUser)
+
+	userRoute.PATCH("/change_password", uc.ChangePassword)
 
 	userRoute.DELETE("/delete/:id", uc.DeleteUser)
 }

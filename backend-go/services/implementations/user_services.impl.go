@@ -3,6 +3,7 @@ package implementations
 import (
 	"context"
 	"errors"
+	"log"
 	"movies_backend/helper"
 	"movies_backend/models"
 	"movies_backend/services/interfaces"
@@ -36,25 +37,7 @@ func (u *UserServiceImpl) GetUser(userId *int) (*models.User, error) {
 }
 
 func (u *UserServiceImpl) UpdateUser(user *models.User) error {
-	// Retrieve the user by ID
 	filter := bson.D{bson.E{Key: "id", Value: user.UserId}}
-	var existingUser *models.User
-	err := u.userCollection.FindOne(u.ctx, filter).Decode(&existingUser)
-	if err != nil {
-		return err
-	}
-
-	// Compare password with password hash
-	if !helper.CheckPassword(existingUser.PasswordHash, user.PasswordHash) {
-		// Hash the new password
-		hashedPassword, err := helper.HashPassword(user.PasswordHash)
-		if err != nil {
-			return err
-		}
-		user.PasswordHash = string(hashedPassword)
-	}
-
-	// Update the user
 	update := bson.D{
 		bson.E{Key: "$set",
 			Value: bson.D{
@@ -67,10 +50,46 @@ func (u *UserServiceImpl) UpdateUser(user *models.User) error {
 			},
 		},
 	}
-	result, err := u.userCollection.UpdateOne(u.ctx, filter, update)
+	result, _ := u.userCollection.UpdateOne(u.ctx, filter, update)
+	if result.MatchedCount != 1 {
+		return errors.New("no matched document found for update")
+	}
+	return nil
+}
+
+func (u *UserServiceImpl) ChangePassword(userId *int, OldPassword *string, NewPassword *string) error {
+	// Retrieve the user by ID
+	filter := bson.D{bson.E{Key: "id", Value: userId}}
+	var existingUser *models.User
+	err := u.userCollection.FindOne(u.ctx, filter).Decode(&existingUser)
 	if err != nil {
 		return err
 	}
+	// Compare password with password hash
+	log.Println(existingUser.PasswordHash)
+	log.Println(*OldPassword)
+	log.Println(*NewPassword)
+	log.Println(helper.CheckPassword(existingUser.PasswordHash, *OldPassword))
+	if !helper.CheckPassword(existingUser.PasswordHash, *OldPassword) {
+		return errors.New("wrong password")
+	}
+	hashedPassword, err := helper.HashPassword(*NewPassword)
+	log.Println(hashedPassword)
+	if err != nil {
+		return err
+	}
+	existingUser.PasswordHash = string(hashedPassword)
+
+	update := bson.D{
+		bson.E{Key: "$set",
+
+			Value: bson.D{
+				bson.E{Key: "password_hash", Value: existingUser.PasswordHash},
+			},
+		},
+	}
+
+	result, _ := u.userCollection.UpdateOne(u.ctx, filter, update)
 	if result.MatchedCount != 1 {
 		return errors.New("no matched document found for update")
 	}
@@ -93,7 +112,7 @@ func (u *UserServiceImpl) GetUserFromUsername(username *string) (*models.User, e
 	return user, err
 }
 
-func (u *UserServiceImpl) GetNewUserId() (int) {
+func (u *UserServiceImpl) GetNewUserId() int {
 	// Fetch total movies
 	totalUsers, err := u.userCollection.CountDocuments(u.ctx, bson.D{{}})
 	if err != nil {

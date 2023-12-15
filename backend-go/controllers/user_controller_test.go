@@ -280,6 +280,80 @@ func (suite *UserTestSuite) TestUpdateSuccessfulUser() {
 	assert.Equal(suite.T(), `{"message":"Successful"}`, w.Body.String())
 }
 
+func (suite *UserTestSuite) TestChangePasswordUnbindJSONUser() {
+	body := strings.NewReader(`{UnbindedJSON}`)
+
+	req, _ := http.NewRequest("PATCH", "/user/change_password", body)
+
+	w := httptest.NewRecorder()
+
+	suite.r.ServeHTTP(w, req)
+
+	assert.Equal(suite.T(), http.StatusBadRequest, w.Code)
+
+	assert.Equal(suite.T(), `{"message":"invalid character 'U' looking for beginning of object key string"}`, w.Body.String())
+}
+
+func (suite *UserTestSuite) TestChangePasswordWrongStructureKeyword() {
+	body := strings.NewReader(`{
+		"old_password": "12345",
+		"new_password": "12345"
+	}`)
+
+	req, _ := http.NewRequest("PATCH", "/user/change_password", body)
+
+	w := httptest.NewRecorder()
+
+	suite.r.ServeHTTP(w, req)
+
+	assert.Equal(suite.T(), http.StatusBadRequest, w.Code)
+
+	assert.Equal(suite.T(), `{"message":"Key: 'ResetPassword.ID' Error:Field validation for 'ID' failed on the 'required' tag"}`, w.Body.String())
+}
+
+func (suite *UserTestSuite) TestChangePasswordNonExistentUser() {
+	body := strings.NewReader(`{
+		"id": 30000,
+		"old_password": "abcxyz",
+		"new_password": "abcxyz"}`)
+	// Create a fake HTTP request
+	req, _ := http.NewRequest("PATCH", "/user/change_password", body)
+
+	// Create a response recorder to record the response
+	w := httptest.NewRecorder()
+
+	// Perform the request
+	suite.r.ServeHTTP(w, req)
+
+	// Check the response status code
+	assert.Equal(suite.T(), http.StatusBadGateway, w.Code)
+
+	// Check the response body
+	assert.Equal(suite.T(), `{"message":"mongo: no documents in result"}`, w.Body.String())
+
+}
+
+func (suite *UserTestSuite) TestChangePasswordWrongOldPassword() {
+	body := strings.NewReader(`{
+		"id": 20000,
+		"old_password": "1234",
+		"new_password": "abcxyz"}`)
+	// Create a fake HTTP request
+	req, _ := http.NewRequest("PATCH", "/user/change_password", body)
+
+	// Create a response recorder to record the response
+	w := httptest.NewRecorder()
+
+	// Perform the request
+	suite.r.ServeHTTP(w, req)
+
+	// Check the response status code
+	assert.Equal(suite.T(), http.StatusBadRequest, w.Code)
+
+	// Check the response body
+	assert.Equal(suite.T(), `{"message":"wrong password"}`, w.Body.String())
+}
+
 func (suite *UserTestSuite) TestDeleteInvalidUserIdUser() {
 	// Create a fake HTTP request
 	req, _ := http.NewRequest("DELETE", "/user/delete/fsaf", nil)
@@ -353,6 +427,7 @@ func (suite *UserTestSuite) setupUserRouter() *gin.Engine {
 	r.GET("/user/get/:id", suite.userController.GetUser)
 	r.POST("/user/create", suite.userController.CreateUser)
 	r.PATCH("/user/update", suite.userController.UpdateUser)
+	r.PATCH("/user/change_password", suite.userController.ChangePassword)
 	r.DELETE("/user/delete/:id", suite.userController.DeleteUser)
 	return r
 }
