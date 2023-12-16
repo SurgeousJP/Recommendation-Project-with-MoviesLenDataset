@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import { Rating } from 'react-simple-star-rating';
+import { toast } from 'react-toastify';
 import { Tooltip } from 'react-tooltip';
+import {
+  LOGIN_TO_ADD_FAVORITE,
+  LOGIN_TO_ADD_WATCHLIST,
+  LOGIN_TO_RATE_MOVIE,
+  RATING_REMOVED,
+  RATING_UPDATED,
+  SERVER_UNAVAILABLE
+} from 'src/constant/error';
 import { updateMovieRating, deleteMovieRating, getMovieRatingByUser } from 'src/helpers/api';
 import { buildImageUrl, formatDateToDDMMYYYY, getColor } from 'src/helpers/utils';
 import useCrew from 'src/hooks/useCrew';
@@ -38,8 +47,22 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
   };
   const userQuery = useUser(userId, handleGetUserSuccess);
   const { createRating } = useRating(handleCreateRatingSuccess);
-  const { mutate: updateRating } = useMutation(updateMovieRating);
-  const { mutate: deleteRating } = useMutation(deleteMovieRating);
+  const { mutate: updateRating } = useMutation(updateMovieRating, {
+    onSuccess: () => {
+      toast.success(RATING_UPDATED);
+    },
+    onError: () => {
+      toast.error(SERVER_UNAVAILABLE);
+    }
+  });
+  const { mutate: deleteRating } = useMutation(deleteMovieRating, {
+    onSuccess: () => {
+      toast.success(RATING_REMOVED);
+    },
+    onError: () => {
+      toast.error(SERVER_UNAVAILABLE);
+    }
+  });
   const { data: crews } = useCrew(movie?.id.toString() || '');
   const { mutate: toggleFavorite } = useFavorite(
     userId,
@@ -165,9 +188,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
             <button
               onClick={hasLogin ? handleAddFavorite : () => {}}
               data-tooltip-id='my-tooltip'
-              data-tooltip-content={
-                hasLogin ? 'Mark as favourite' : 'Login to add this movie to your favourites list'
-              }
+              data-tooltip-content={hasLogin ? 'Mark as favourite' : LOGIN_TO_ADD_FAVORITE}
               data-tooltip-place='bottom'
               className={` flex justify-center items-center border-1  w-12 h-12 border-none rounded-full bg-gray-700 hover:bg-gray-600
               `}
@@ -184,9 +205,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
             </button>
             <button
               data-tooltip-id='my-tooltip'
-              data-tooltip-content={
-                hasLogin ? 'Add to your watchlist' : 'Login to add this movie to your watchlist'
-              }
+              data-tooltip-content={hasLogin ? 'Add to your watchlist' : LOGIN_TO_ADD_WATCHLIST}
               data-tooltip-place='bottom'
               onClick={handleAddWatchList}
               className='flex justify-center items-center rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'
@@ -224,7 +243,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
                 anchorSelect='#clickable'
                 place='bottom'
               >
-                {hasLogin ? 'Rate this movie' : 'Login to rate this movie'}
+                {hasLogin ? 'Rate this movie' : LOGIN_TO_RATE_MOVIE}
               </Tooltip>
 
               <Tooltip

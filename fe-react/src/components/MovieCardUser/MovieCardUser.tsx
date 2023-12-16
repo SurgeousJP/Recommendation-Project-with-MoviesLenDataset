@@ -10,6 +10,8 @@ import { useState } from 'react';
 import useRating from 'src/hooks/useRating';
 import useUserId from 'src/hooks/useUserId';
 import useFavorite from 'src/hooks/useFavorite';
+import { toast } from 'react-toastify';
+import { RATING_UPDATED, SERVER_UNAVAILABLE, RATING_REMOVED } from 'src/constant/error';
 
 type MovieCardUserProps = {
   movieId: number;
@@ -47,8 +49,22 @@ const MovieCardUser = ({
     setHasRated(true);
   };
   const { createRating } = useRating(handleCreateRatingSuccess);
-  const { mutate: updateRating } = useMutation(updateMovieRating);
-  const { mutate: deleteRating } = useMutation(deleteMovieRating);
+  const { mutate: updateRating } = useMutation(updateMovieRating, {
+    onSuccess: () => {
+      toast.success(RATING_UPDATED);
+    },
+    onError: () => {
+      toast.error(SERVER_UNAVAILABLE);
+    }
+  });
+  const { mutate: deleteRating } = useMutation(deleteMovieRating, {
+    onSuccess: () => {
+      toast.success(RATING_REMOVED);
+    },
+    onError: () => {
+      toast.error(SERVER_UNAVAILABLE);
+    }
+  });
   const handleDeleteRating = () => {
     setRating(0);
     setHasRated(false);

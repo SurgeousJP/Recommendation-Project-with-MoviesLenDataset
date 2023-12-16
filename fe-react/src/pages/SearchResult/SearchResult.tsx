@@ -8,6 +8,7 @@ import './search.css';
 import useSearchMovie from 'src/hooks/useSearchMovie';
 import ReactPaginate from 'react-paginate';
 import LoadingIndicator from 'src/components/LoadingIndicator';
+import { INVALID_SEARCH_QUERY } from './../../constant/error';
 
 const SearchResult = () => {
   const location = useLocation();
@@ -91,10 +92,7 @@ const SearchResult = () => {
         </div>
       ) : (
         <div className='flex flex-col ml-12 space-y-4'>
-          <h1>
-            Oops! It looks like the search query is invalid. Please enter a valid keyword, actor, or
-            movie title and try again.
-          </h1>
+          <h1>{INVALID_SEARCH_QUERY}</h1>
         </div>
       )}
     </div>

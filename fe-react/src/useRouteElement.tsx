@@ -20,6 +20,7 @@ import CastPage from './pages/CastPage/CastPage';
 import TopRatedMovies from './pages/TopRatedMovies/TopRatedMovies';
 import EditProfile from './pages/EditProfile/EditProfile';
 import MainLayout from './layouts/MainLayout';
+import ChangePass from './pages/EditProfile/ChangePass';
 
 export default function useRouteElement() {
   const routeElement = useRoutes([
@@ -37,6 +38,10 @@ export default function useRouteElement() {
         {
           path: path.profiles,
           element: <EditProfile />
+        },
+        {
+          path: path.change_password,
+          element: <ChangePass />
         },
         {
           path: path.top_rated,

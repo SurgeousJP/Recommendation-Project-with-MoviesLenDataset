@@ -16,5 +16,6 @@ export const path = {
   cast: 'cast',
   user: 'u',
   type: ':type',
-  profiles: 'profiles'
+  profiles: 'profiles',
+  change_password: 'change-password'
 };

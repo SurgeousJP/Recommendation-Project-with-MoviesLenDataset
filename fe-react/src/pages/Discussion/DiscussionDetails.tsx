@@ -5,13 +5,13 @@ import DiscussionPartCard from 'src/components/Discussion/DiscussionPartCard';
 import LoadingIndicator from 'src/components/LoadingIndicator';
 import { getDiscussion } from 'src/helpers/api';
 import DiscussionPart from 'src/types/DiscussionPart.type';
-import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import useUserId from 'src/hooks/useUserId';
 import useDiscussionPart from 'src/hooks/useDiscussionPart';
 import { toast } from 'react-toastify';
 import useMovieDetail from 'src/hooks/useMovieDetail';
 import QuillForm from 'src/components/QuillForm';
+import { DISCUSSION_EDITED, REPLY_DELETED, REPLY_EDITED } from 'src/constant/error';
 
 function DiscussionDetails() {
   const { discussion_id, id } = useParams();
@@ -28,18 +28,19 @@ function DiscussionDetails() {
     userId,
     discussion_id,
     () => {
-      toast.success('Your reply added successfully');
       setValue('');
       setIsOpen(false);
       refetch();
     }
   );
   const onPartDeleteSuccess = () => {
-    toast.success('Your reply deleted successfully');
+    toast.success(REPLY_DELETED);
     refetch();
   };
-  const onPartEditSuccess = () => {
-    toast.success('Your reply updated successfully');
+  const onPartEditSuccess = (partId: number) => {
+    if (partId === 0) {
+      toast.success(DISCUSSION_EDITED);
+    } else toast.success(REPLY_EDITED);
     refetch();
   };
   const toggleOpen = () => {

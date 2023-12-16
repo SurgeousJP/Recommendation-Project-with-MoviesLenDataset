@@ -252,6 +252,23 @@ export const updateUserProfile = async (user: User) => {
   return data;
 };
 
+export const changePassword = async ({
+  userId,
+  oldPassword,
+  newPassword
+}: {
+  userId: number;
+  oldPassword: string;
+  newPassword: string;
+}) => {
+  const { data } = await authInstance.patch(`user/change_password`, {
+    id: userId,
+    old_password: oldPassword,
+    new_password: newPassword
+  });
+  return data;
+};
+
 export const buildApiUrl = (endpoint: string, params?: Record<string, string>): string => {
   const baseUrl = 'http://localhost:9090/v1';
   let url = `${baseUrl}/${endpoint}`;

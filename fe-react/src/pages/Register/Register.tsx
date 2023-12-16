@@ -3,31 +3,58 @@ import Checkbox from 'src/components/Checkbox';
 import logo from 'src/assets/images/Logo.png';
 import SocialSign from 'src/components/SocialSign';
 import '../Login/Login.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { createUserProfile } from 'src/helpers/api';
 import { User } from 'src/helpers/type';
 import { buildUserImageUrl } from 'src/helpers/utils';
+import Input from 'src/components/Input/Input';
+import { toast } from 'react-toastify';
+import {
+  PASSWORDS_DONT_MATCH,
+  PASSWORDS_MIN_LENGTH,
+  REGISTER_FAILED,
+  REGISTER_SUCCESSFULLY,
+  USERNAME_TAKEN
+} from 'src/constant/error';
 
 export default function Register() {
-  const [isChecked, setIsChecked] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
 
-  const handleCheckboxChange = (selected: boolean) => {
-    setIsChecked(selected);
-  };
+  const navigate = useNavigate();
+
+  const [usernameError, setUsernameError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [repeatPasswordError, setRepeatPasswordError] = useState('');
 
   const { mutate: register } = useMutation(createUserProfile, {
     onSuccess: () => {
-      window.location.href = '/login';
+      toast.success(REGISTER_SUCCESSFULLY);
+      navigate('/login');
+    },
+    onError: error => {
+      if (error.response.status === 502) setUsernameError(USERNAME_TAKEN);
+
+      toast.error(REGISTER_FAILED);
     }
   });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (password !== repeatPassword) return;
+    setPasswordError('');
+    setUsernameError('');
+    setRepeatPasswordError('');
+
+    if (password.length < 8) {
+      setPasswordError(PASSWORDS_MIN_LENGTH);
+      return;
+    }
+    if (password !== repeatPassword) {
+      setRepeatPasswordError(PASSWORDS_DONT_MATCH);
+      return;
+    }
     const userProfile: User = {
       id: 1,
       username: username,
@@ -44,33 +71,31 @@ export default function Register() {
     <div id='container'>
       <form id='register' onSubmit={handleSubmit} className='form-container'>
         <img src={logo} alt='Logo'></img>
-        <input
+        <Input
           type='text'
           placeholder='Username'
           value={username}
+          errorMessage={usernameError}
+          required
           onChange={e => setUsername(e.target.value)}
         />
-        <input
+        <Input
           type='password'
-          className='mt-4'
           placeholder='Password'
           value={password}
+          errorMessage={passwordError}
+          required
           onChange={e => setPassword(e.target.value)}
         />
-        <input
+        <Input
           type='password'
-          className='mt-4'
           placeholder='Repeat Password'
           value={repeatPassword}
+          errorMessage={repeatPasswordError}
+          required
           onChange={e => setRepeatPassword(e.target.value)}
         />
-        <div className='checkbox-container mt-2'>
-          <Checkbox checked={isChecked} onChange={handleCheckboxChange}>
-            <span className='sign__text'>
-              I agree to the <Link to='/privacy'>Privacy Policy</Link>
-            </span>
-          </Checkbox>
-        </div>
+
         <button type='submit' className='primary-btn h-11 mb-4 mt-9'>
           Sign up
         </button>

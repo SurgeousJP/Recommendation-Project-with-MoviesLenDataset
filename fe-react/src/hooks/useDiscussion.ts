@@ -5,6 +5,11 @@ import Discussion from 'src/types/Discussion.type';
 import ObjectID from 'bson-objectid';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import {
+  DELETE_DISCUSSION_FAILED,
+  DISCUSSION_POSTED,
+  POST_DISCUSSION_FAILED
+} from 'src/constant/error';
 
 const useDiscussion = (movieId: string, userId: number, onSuccess?: () => void) => {
   const { data: user } = useUser(userId);
@@ -13,7 +18,10 @@ const useDiscussion = (movieId: string, userId: number, onSuccess?: () => void) 
     onSuccess: () => {
       onSuccess && onSuccess();
       navigate(`/details/${movieId}/discussions/${id}`);
-      toast.success('Your discussion has been created');
+      toast.success(DISCUSSION_POSTED);
+    },
+    onError: () => {
+      toast.error(POST_DISCUSSION_FAILED);
     }
   });
   let id = '';

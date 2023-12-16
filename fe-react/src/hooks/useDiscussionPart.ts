@@ -2,13 +2,21 @@ import { useMutation } from 'react-query';
 import { createDiscussionPart } from 'src/helpers/api';
 import useUser from './useUser';
 import DiscussionPart from 'src/types/DiscussionPart.type';
+import { toast } from 'react-toastify';
+import { POST_DISCUSSION_FAILED, REPLY_POSTED } from 'src/constant/error';
 
 const useDiscussionPart = (userId: number, discussionId: string, onSuccess?: () => void) => {
   const { data: user } = useUser(userId);
   const mutation = useMutation(
     (discussionPart: DiscussionPart) => createDiscussionPart(discussionId, discussionPart),
     {
-      onSuccess: onSuccess
+      onSuccess: () => {
+        onSuccess && onSuccess();
+        toast.success(REPLY_POSTED);
+      },
+      onError: () => {
+        toast.error(POST_DISCUSSION_FAILED);
+      }
     }
   );
 

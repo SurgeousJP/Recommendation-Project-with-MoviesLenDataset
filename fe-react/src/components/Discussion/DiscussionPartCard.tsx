@@ -8,6 +8,13 @@ import { useMutation } from 'react-query';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import QuillForm from '../QuillForm';
+import {
+  DELETE_DISCUSSION_FAILED,
+  DELETE_REPLY_FAILED,
+  DISCUSSION_DELETED,
+  EDIT_DISCUSSION_FAILED,
+  EDIT_REPLY_FAILED
+} from 'src/constant/error';
 
 interface DiscussionPartCardProps {
   discussionId: string;
@@ -16,7 +23,7 @@ interface DiscussionPartCardProps {
   isReply?: boolean;
   canDelete?: boolean;
   onPartDeleteSuccess?: () => void;
-  onPartEditSuccess?: () => void;
+  onPartEditSuccess?: (partId: number) => void;
 }
 function DiscussionPartCard({
   discussionPart,
@@ -36,19 +43,34 @@ function DiscussionPartCard({
   const { mutate: deletePart } = useMutation(
     (partId: number) => deleteDiscussionPart(discussionId, partId),
     {
-      onSuccess: onPartDeleteSuccess
+      onSuccess: onPartDeleteSuccess,
+      onError: () => {
+        toast.error(DELETE_REPLY_FAILED);
+      }
     }
   );
   const { mutate: deleteDiscussionMutation } = useMutation(() => deleteDiscussion(discussionId), {
     onSuccess: () => {
-      toast.success('Discussion deleted successfully');
+      toast.success(DISCUSSION_DELETED);
       navigate(-1);
+    },
+    onError: () => {
+      toast.error(DELETE_DISCUSSION_FAILED);
     }
   });
   const { mutate: editDiscussion } = useMutation(
     (discussionPart: DiscussionPart) => updateDiscussionPart(discussionId, discussionPart),
     {
-      onSuccess: onPartEditSuccess
+      onSuccess: () => {
+        onPartEditSuccess && onPartEditSuccess(discussionPart.part_id);
+      },
+      onError: () => {
+        if (discussionPart.part_id === 0) {
+          toast.error(EDIT_DISCUSSION_FAILED);
+        } else {
+          toast.error(EDIT_REPLY_FAILED);
+        }
+      }
     }
   );
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {

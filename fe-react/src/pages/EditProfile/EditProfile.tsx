@@ -1,6 +1,9 @@
 import React from 'react';
 import { useMutation } from 'react-query';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import LoadingIndicator from 'src/components/LoadingIndicator';
+import { PROFILE_UPDATED_SUCCESS, SERVER_UNAVAILABLE } from 'src/constant/error';
 import { updateUserProfile } from 'src/helpers/api';
 import { buildUserImageUrl } from 'src/helpers/utils';
 import useUser from 'src/hooks/useUser';
@@ -20,26 +23,29 @@ const accentColors = [
 ];
 
 function EditProfile() {
-  const { userId, hasLogin } = useUserId();
+  const { userId } = useUserId();
 
   const [selectedColor, setSelectedColor] = React.useState(0);
-  const [changePassword, setChangePassword] = React.useState(false);
-  const [newPassword, setNewPassword] = React.useState('');
-  const [repeatPassword, setRepeatPassword] = React.useState('');
 
   const { data: user, isLoading } = useUser(userId);
 
-  const { mutate: updateUser, isLoading: updateUserLoading } = useMutation(updateUserProfile);
+  const navigate = useNavigate();
+
+  const { mutate: updateUser, isLoading: updateUserLoading } = useMutation(updateUserProfile, {
+    onSuccess: () => {
+      navigate('/');
+      toast.success(PROFILE_UPDATED_SUCCESS);
+    },
+    onError: () => {
+      toast.error(SERVER_UNAVAILABLE);
+    }
+  });
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (newPassword !== repeatPassword) {
-      return;
-    }
-    const password = changePassword ? newPassword : user?.password_hash;
+
     updateUser({
       ...user,
-      password_hash: password,
       picture_profile: buildUserImageUrl(user?.username, accentColors[selectedColor], 'fff')
     });
   };
@@ -60,38 +66,6 @@ function EditProfile() {
           value={user?.username}
         ></input>
       )}
-
-      <div hidden={!changePassword}>
-        <label htmlFor='new-pass' className='block mt-4 text-lg'>
-          New Password
-        </label>
-        <input
-          id='new-pass'
-          className='border-border border-1 py-1.5 mt-2'
-          placeholder='New Password'
-          type='password'
-          value={newPassword}
-          onChange={e => setNewPassword(e.target.value)}
-        ></input>
-        <label htmlFor='repeat-pass' className='block mt-4 text-lg'>
-          Repeat New Password
-        </label>
-        <input
-          id='repeat-pass'
-          className='border-border border-1 py-1.5 mt-2'
-          placeholder='Repeat New Password'
-          type='password'
-          value={repeatPassword}
-          onChange={e => setRepeatPassword(e.target.value)}
-        />
-      </div>
-      <button
-        type='button'
-        onClick={() => setChangePassword(!changePassword)}
-        className='block mt-4 px-4 py-1 mt-4 border-primary hover:bg-primary/10 border-2 rounded-md'
-      >
-        {!changePassword ? 'Change Password' : 'Cancel'}
-      </button>
 
       <p className='block mt-4 text-lg'>Current Avatar</p>
       {!isLoading && (
