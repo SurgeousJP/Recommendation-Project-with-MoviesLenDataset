@@ -27,7 +27,7 @@ export default function DiscussionTab({ movieId }: DiscussionTabProps) {
               <DiscussionCard
                 key={discussion.discussion_id}
                 answerCount={discussion.discussion_part.length - 1}
-                profilePath={buildImageUrl(discussion.discussion_part[0].profile_path, 'original')}
+                profilePath={discussion.discussion_part[0].profile_path}
                 status={discussion.status}
                 subject={discussion.subject}
                 time={new Date(discussion.discussion_part[0].timestamp).toLocaleString(

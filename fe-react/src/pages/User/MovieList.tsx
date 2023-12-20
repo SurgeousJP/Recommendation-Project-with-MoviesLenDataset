@@ -39,7 +39,7 @@ const MovieList: React.FC<MovieListProps> = ({
   );
 
   const isLoading = movieQueries.some(result => result.isLoading);
-
+  console.log(title);
   return (
     <div className='mt-3'>
       <h2 className='text-2xl font-bold mb-3'>{title}</h2>
@@ -50,6 +50,7 @@ const MovieList: React.FC<MovieListProps> = ({
         <div className='space-y-3'>
           {movieQueries.map((res, index) => {
             const movie = mapJsonToMovie(res.data);
+            console.log(movie.id, favoriteList?.includes(movie.id));
             return (
               <MovieCardUser
                 key={index}

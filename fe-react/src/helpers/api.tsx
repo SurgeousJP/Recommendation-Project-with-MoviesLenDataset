@@ -241,6 +241,11 @@ export const getUserProfile = async (userId: string) => {
   return data;
 };
 
+export const getUserDiscussion = async (userId: string) => {
+  const { data } = await instance.get(`movieDiscussion/getByUser/${userId}`);
+  return data;
+};
+
 export const createUserProfile = async (user: User) => {
   const { data } = await instance.post(`user/create`, user);
   return data;

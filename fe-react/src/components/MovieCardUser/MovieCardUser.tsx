@@ -31,19 +31,16 @@ const MovieCardUser = ({
   releaseDate,
   overview,
   avgRating,
-  isFavourite: isFavouriteInit,
+  isFavourite,
   canRemove
 }: MovieCardUserProps) => {
   const [rating, setRating] = useState<number | undefined>(undefined);
   const [hasRated, setHasRated] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(isFavouriteInit);
   const { userId, hasLogin } = useUserId();
-  const handleGetUserSuccess = data => {
-    data.favorite_list.includes(movieId) && setIsFavorite(true);
-  };
-  const userQuery = useUser(userId, handleGetUserSuccess);
+
+  const userQuery = useUser(userId);
   const handleAddFavoriteSuccess = () => {
-    setIsFavorite(!isFavorite);
+    console.log(movieId);
   };
   const handleCreateRatingSuccess = () => {
     setHasRated(true);
@@ -149,14 +146,14 @@ const MovieCardUser = ({
             <button
               onClick={hasLogin ? handleAddFavorite : () => {}}
               className={` flex justify-center items-center border-1  w-8 h-8 rounded-full group/favourite ${
-                isFavorite
+                isFavourite
                   ? 'bg-red-400 border-red-400 hover:bg-red-400'
                   : 'border-white/70 hover:bg-white/70 '
               }`}
             >
               <svg
                 className={
-                  isFavorite
+                  isFavourite
                     ? 'fill-white'
                     : 'fill-white/70 group-hover/favourite:fill-background/70'
                 }
@@ -184,25 +181,22 @@ const MovieCardUser = ({
             </button>
             <p className='ml-2'>Add to list</p>
           </li>
-          <li hidden={!canRemove} className='flex items-center'>
-            <button
-              hidden={!canRemove}
-              className='flex justify-center items-center border-1 border-white/70 w-8 h-8 rounded-full group/remove hover:bg-white/70'
-            >
-              <svg
-                className='fill-white/70 group-hover/remove:fill-background/70'
-                xmlns='http://www.w3.org/2000/svg'
-                width='16'
-                height='16'
-                viewBox='0 0 256 256'
-              >
-                <path d='M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z'></path>
-              </svg>
-            </button>
-            <p hidden={!canRemove} className='ml-2'>
-              Remove
-            </p>
-          </li>
+          {canRemove && (
+            <li className='flex items-center'>
+              <button className='flex justify-center items-center border-1 border-white/70 w-8 h-8 rounded-full group/remove hover:bg-white/70'>
+                <svg
+                  className='fill-white/70 group-hover/remove:fill-background/70'
+                  xmlns='http://www.w3.org/2000/svg'
+                  width='16'
+                  height='16'
+                  viewBox='0 0 256 256'
+                >
+                  <path d='M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z'></path>
+                </svg>
+              </button>
+              <p className='ml-2'>Remove</p>
+            </li>
+          )}
         </ul>
         <Tooltip
           style={{ backgroundColor: 'rgb(55, 65, 81)' }}

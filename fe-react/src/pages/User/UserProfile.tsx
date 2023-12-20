@@ -7,6 +7,7 @@ import UserOverview from './UserOverView';
 import UserRatingPanel from './UserRatingPanel';
 import useUser from 'src/hooks/useUser';
 import MovieList from './MovieList';
+import DiscussionList from './DiscussionList';
 
 const UserProfile = () => {
   const { id, type } = useParams();
@@ -130,7 +131,13 @@ const UserProfile = () => {
               movieIds={userProfileData.recommendation_list}
             />
           </TabPanel>
-          <TabPanel></TabPanel>
+          <TabPanel>
+            <DiscussionList
+              title='My Discussions'
+              nullListMessage="You don' have any discussion yet"
+              userId={userProfileData.id}
+            />
+          </TabPanel>
           <TabPanel>
             <MovieList
               title={'My Watchlist'}
