@@ -7,7 +7,12 @@ import { Link } from 'react-router-dom';
 import { useSignIn } from 'src/hooks/useLogin';
 import Input from 'src/components/Input/Input';
 import { toast } from 'react-toastify';
-import { INCORRECT_CREDENTIALS, LOGIN_FAILED, LOGIN_SUCCESSFULLY } from 'src/constant/error';
+import {
+  INCORRECT_CREDENTIALS,
+  LOGIN_FAILED,
+  LOGIN_SUCCESSFULLY,
+  MANDATORY_FIELDS
+} from 'src/constant/error';
 
 export default function Login() {
   const [username, setUsername] = useState('4nh3k');
@@ -18,7 +23,10 @@ export default function Login() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // prevent page reload
-
+    if (!username || !password) {
+      toast.error(MANDATORY_FIELDS);
+      return;
+    }
     //const data = await login(username, password);
     console.log(username, password);
     testSignIn(
@@ -46,7 +54,6 @@ export default function Login() {
           placeholder='Username'
           autoComplete='username'
           value={username}
-          required
           errorMessage={usernameError}
           onChange={e => setUsername(e.target.value)}
         />
@@ -55,7 +62,6 @@ export default function Login() {
           placeholder='Password'
           autoComplete='current-password'
           value={password}
-          required
           onChange={e => setPassword(e.target.value)}
         />
 

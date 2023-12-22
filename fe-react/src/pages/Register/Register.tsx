@@ -11,6 +11,7 @@ import { buildUserImageUrl } from 'src/helpers/utils';
 import Input from 'src/components/Input/Input';
 import { toast } from 'react-toastify';
 import {
+  MANDATORY_FIELDS,
   PASSWORDS_DONT_MATCH,
   PASSWORDS_MIN_LENGTH,
   REGISTER_FAILED,
@@ -46,7 +47,10 @@ export default function Register() {
     setPasswordError('');
     setUsernameError('');
     setRepeatPasswordError('');
-
+    if (!username || !password || !repeatPassword) {
+      toast.error(MANDATORY_FIELDS);
+      return;
+    }
     if (password.length < 8) {
       setPasswordError(PASSWORDS_MIN_LENGTH);
       return;
@@ -76,7 +80,6 @@ export default function Register() {
           placeholder='Username'
           value={username}
           errorMessage={usernameError}
-          required
           onChange={e => setUsername(e.target.value)}
         />
         <Input
@@ -84,7 +87,6 @@ export default function Register() {
           placeholder='Password'
           value={password}
           errorMessage={passwordError}
-          required
           onChange={e => setPassword(e.target.value)}
         />
         <Input
@@ -92,7 +94,6 @@ export default function Register() {
           placeholder='Repeat Password'
           value={repeatPassword}
           errorMessage={repeatPasswordError}
-          required
           onChange={e => setRepeatPassword(e.target.value)}
         />
 
