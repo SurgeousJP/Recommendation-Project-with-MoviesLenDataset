@@ -8,9 +8,12 @@ import UserRatingPanel from './UserRatingPanel';
 import useUser from 'src/hooks/useUser';
 import MovieList from './MovieList';
 import DiscussionList from './DiscussionList';
+import useUserId from 'src/hooks/useUserId';
 
 const UserProfile = () => {
   const { id, type } = useParams();
+
+  const { userId } = useUserId();
 
   const getSelectedIndex = () => {
     switch (type) {
@@ -94,20 +97,26 @@ const UserProfile = () => {
         <Tabs onSelect={onSelect} selectedIndex={selectedIndex}>
           <TabList className={'flex justify-center border-border border-b-1 react-tabs__tab-list '}>
             <Tab>Overview</Tab>
-            <Tab>Ratings</Tab>
-            <Tab>Recommendations</Tab>
-            <Tab>Discussion</Tab>
-            <Tab>Watchlist</Tab>
+            {userId === parseInt(id || '0') && (
+              <>
+                <Tab>Ratings</Tab>
+                <Tab>Recommendations</Tab>
+                <Tab>Discussion</Tab>
+                <Tab>Watchlist</Tab>
+              </>
+            )}
           </TabList>
           <TabPanel>
             <UserOverview ratingData={ratingData} favourites={[233, 3, 5, 6, 11]} />
-            <MovieList
-              title={'My Favorite List'}
-              nullListMessage={`You don't have any favorite movie yet.`}
-              favoriteList={userProfileData.favorite_list}
-              canRemove
-              movieIds={userProfileData.favorite_list}
-            />
+            {userId === parseInt(id || '0') && (
+              <MovieList
+                title={'My Favorite List'}
+                nullListMessage={`You don't have any favorite movie yet.`}
+                favoriteList={userProfileData.favorite_list}
+                canRemove
+                movieIds={userProfileData.favorite_list}
+              />
+            )}
           </TabPanel>
           <TabPanel>
             <UserRatingPanel

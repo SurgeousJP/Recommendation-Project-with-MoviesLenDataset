@@ -167,7 +167,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
             >
               {movie?.rating === undefined ? 'NR' : movie?.rating?.toFixed(1).toString()}
             </span>
-            <button
+            {/* <button
               data-tooltip-id='my-tooltip'
               data-tooltip-content={
                 hasLogin ? 'Add to list' : 'Login to create and edit custom lists'
@@ -184,7 +184,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
               >
                 <path d='M224,56V72a8,8,0,0,1-8,8H96a8,8,0,0,1-8-8V56a8,8,0,0,1,8-8H216A8,8,0,0,1,224,56ZM56,48H40a8,8,0,0,0-8,8V72a8,8,0,0,0,8,8H56a8,8,0,0,0,8-8V56A8,8,0,0,0,56,48Zm160,64H96a8,8,0,0,0-8,8v16a8,8,0,0,0,8,8H216a8,8,0,0,0,8-8V120A8,8,0,0,0,216,112ZM56,112H40a8,8,0,0,0-8,8v16a8,8,0,0,0,8,8H56a8,8,0,0,0,8-8V120A8,8,0,0,0,56,112Zm160,64H96a8,8,0,0,0-8,8v16a8,8,0,0,0,8,8H216a8,8,0,0,0,8-8V184A8,8,0,0,0,216,176ZM56,176H40a8,8,0,0,0-8,8v16a8,8,0,0,0,8,8H56a8,8,0,0,0,8-8V184A8,8,0,0,0,56,176Z'></path>
               </svg>{' '}
-            </button>
+            </button> */}
             <button
               onClick={hasLogin ? handleAddFavorite : () => {}}
               data-tooltip-id='my-tooltip'

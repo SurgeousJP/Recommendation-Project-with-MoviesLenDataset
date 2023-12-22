@@ -1,4 +1,4 @@
-import { useRoutes } from 'react-router-dom';
+import { Navigate, Outlet, type RouteObject, useRoutes } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -21,7 +21,33 @@ import TopRatedMovies from './pages/TopRatedMovies/TopRatedMovies';
 import EditProfile from './pages/EditProfile/EditProfile';
 import MainLayout from './layouts/MainLayout';
 import ChangePass from './pages/EditProfile/ChangePass';
+import useUserId from './hooks/useUserId';
 
+function ProtectedRoute() {
+  const { hasLogin } = useUserId();
+
+  return hasLogin ? <Outlet /> : <Navigate to='/login' />;
+}
+
+function RejectedRoute() {
+  const { hasLogin } = useUserId();
+  return !hasLogin ? <Outlet /> : <Navigate to={`/`} />;
+}
+
+const AuthRouteChildren: RouteObject[] = [
+  {
+    path: path.login,
+    element: <Login />
+  },
+  {
+    path: path.register,
+    element: <Register />
+  },
+  {
+    path: path.forgot_password,
+    element: <ForgotPass />
+  }
+];
 export default function useRouteElement() {
   const routeElement = useRoutes([
     {
@@ -106,19 +132,6 @@ export default function useRouteElement() {
         }
       ]
     },
-
-    {
-      path: path.login,
-      element: <Login />
-    },
-    {
-      path: path.register,
-      element: <Register />
-    },
-    {
-      path: path.forgot_password,
-      element: <ForgotPass />
-    },
     {
       element: <DiscussionLayout />,
       children: [
@@ -157,6 +170,14 @@ export default function useRouteElement() {
               ]
             }
           ]
+        }
+      ]
+    },
+    {
+      element: <RejectedRoute />,
+      children: [
+        {
+          children: AuthRouteChildren
         }
       ]
     }
