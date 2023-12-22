@@ -23,7 +23,7 @@ function MovieCardTopRated({
   avgRating
 }: MovieCardTopRatedProps) {
   return (
-    <div className='rounded-md overflow-hidden w-fit border-border border-1 shadow-border shadow-md pb-2'>
+    <div className='rounded-md overflow-hidden w-40 border-border border-1 shadow-border shadow-md pb-2'>
       <Link className='contents' to={`/details/${movieId}`}>
         <img className='  w-40 h-56' src={posterPath} alt={title} />
       </Link>
@@ -48,8 +48,8 @@ function TopRatedMovies() {
   const { isLoading, data } = useQuery('movies', getTopRatedMovies);
   return (
     <div className='pt-10'>
-      <h3 className='text-center text-2xl font-semibold'>Top Rated Movies</h3>
-      <div className='space-y-4 pb-5 grid grid-cols-5 gap-2 w-9/12 mx-auto '>
+      <h3 className='text-center text-2xl  font-semibold'>Top Rated Movies</h3>
+      <div className='pb-5 grid grid-cols-5 gap-5 w-2/3 mt-4 mx-auto '>
         {isLoading ? (
           <p>Loading...</p>
         ) : (

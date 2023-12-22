@@ -12,9 +12,10 @@ interface DiscussionListProps {
   title: string;
   nullListMessage: string;
   userId: number;
+  id: string;
 }
 
-const DiscussionList: React.FC<DiscussionListProps> = ({ nullListMessage, title, userId }) => {
+const DiscussionList: React.FC<DiscussionListProps> = ({ nullListMessage, title, userId, id }) => {
   const { data: discussionList, isLoading } = useQuery(
     ['discussionList', userId],
     () => getUserDiscussion(userId.toString()),
@@ -22,7 +23,7 @@ const DiscussionList: React.FC<DiscussionListProps> = ({ nullListMessage, title,
   );
   console.log(discussionList);
   return (
-    <div className='mt-3'>
+    <div id={id} className='mt-3'>
       <h2 className='text-2xl font-bold mb-3'>{title}</h2>
       {discussionList && <p>{nullListMessage}</p>}
       {isLoading ? (
@@ -31,6 +32,7 @@ const DiscussionList: React.FC<DiscussionListProps> = ({ nullListMessage, title,
         discussionList.map((discussion, index) => {
           return (
             <div
+              id={`${id}-card-${index}`}
               className='border-border border-1 shadow-md shadow-border mt-4 py-4 px-6 flex items-center'
               key={discussion._id}
             >

@@ -12,6 +12,7 @@ interface MovieListProps {
   movieIds: number[];
   canRemove?: boolean;
   favoriteList?: number[];
+  id?: string;
 }
 
 const MovieList: React.FC<MovieListProps> = ({
@@ -19,7 +20,8 @@ const MovieList: React.FC<MovieListProps> = ({
   nullListMessage,
   title,
   canRemove,
-  favoriteList
+  favoriteList,
+  id
 }) => {
   console.log('movieIds', movieIds);
   if (movieIds === null || movieIds === undefined)
@@ -41,7 +43,7 @@ const MovieList: React.FC<MovieListProps> = ({
   const isLoading = movieQueries.some(result => result.isLoading);
   console.log(title);
   return (
-    <div className='mt-3'>
+    <div id={id} className='mt-3'>
       <h2 className='text-2xl font-bold mb-3'>{title}</h2>
       {movieIds.length === 0 && <p>{nullListMessage}</p>}
       {isLoading ? (
@@ -53,6 +55,7 @@ const MovieList: React.FC<MovieListProps> = ({
             console.log(movie.id, favoriteList?.includes(movie.id));
             return (
               <MovieCardUser
+                id={`${id}-card-${index}`}
                 key={index}
                 movieId={movie.id}
                 posterPath={buildImageUrl(movie.posterPath, 'original')}

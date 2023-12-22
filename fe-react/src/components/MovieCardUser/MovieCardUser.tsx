@@ -22,6 +22,7 @@ type MovieCardUserProps = {
   avgRating: number;
   isFavourite?: boolean;
   canRemove?: boolean;
+  id?: string;
 };
 
 const MovieCardUser = ({
@@ -32,6 +33,7 @@ const MovieCardUser = ({
   overview,
   avgRating,
   isFavourite,
+  id,
   canRemove
 }: MovieCardUserProps) => {
   const [rating, setRating] = useState<number | undefined>(undefined);
@@ -102,7 +104,7 @@ const MovieCardUser = ({
   };
 
   return (
-    <div className='flex items-center rounded-md border-border border-1 overflow-hidden'>
+    <div id={id} className='flex items-center rounded-md border-border border-1 overflow-hidden'>
       <Link className='contents' to={`/details/${movieId}`}>
         <img className='  w-40 h-56' src={posterPath} alt={title} />
       </Link>

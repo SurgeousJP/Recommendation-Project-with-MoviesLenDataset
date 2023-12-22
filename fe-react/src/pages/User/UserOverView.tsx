@@ -93,14 +93,18 @@ const UserOverview: React.FC<UserOverviewProps> = props => {
       <div className='flex justify-between'>
         <div>
           <p className='text-lg'>Total Rating</p>
-          <p className='text-[4rem] font-bold'>{props.ratingData?.length ?? 0}</p>
+          <p id='total-rating' className='text-[4rem] font-bold'>
+            {props.ratingData?.length ?? 0}
+          </p>
         </div>
         <div>
           <p className='text-lg'>Total Reviews</p>
-          <p className='text-[4rem] font-bold'>{props.ratingData?.length ?? 0}</p>
+          <p id='total-review' className='text-[4rem] font-bold'>
+            {props.ratingData?.length ?? 0}
+          </p>
         </div>
         <div className='w-1/3'>
-          <p className='text-lg'>Total Reviews</p>
+          <p className='text-lg'>Rating Overview</p>
           <Chart
             options={{
               data: data,
