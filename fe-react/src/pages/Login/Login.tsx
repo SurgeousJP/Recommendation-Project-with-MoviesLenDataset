@@ -50,6 +50,7 @@ export default function Login() {
       <form id='login' className='form-container' onSubmit={handleSubmit}>
         <img src={logo} alt='Logo'></img>
         <Input
+          id='usernameInput'
           type='text'
           placeholder='Username'
           autoComplete='username'
@@ -58,6 +59,7 @@ export default function Login() {
           onChange={e => setUsername(e.target.value)}
         />
         <Input
+          id='passwordInput'
           type='password'
           placeholder='Password'
           autoComplete='current-password'
@@ -65,16 +67,21 @@ export default function Login() {
           onChange={e => setPassword(e.target.value)}
         />
 
-        <button type='submit' className='primary-btn h-11 mb-4'>
+        <button id='signInButton' type='submit' className='primary-btn h-11 mb-4'>
           Sign in
         </button>
         <span className='sign__delimiter'>or</span>
         <SocialSign></SocialSign>
         <span className='sign__text'>
-          Don&apos;t have an account? <Link to='/register'>Sign up!</Link>
+          Don&apos;t have an account?{' '}
+          <Link id='signUpLink' to='/register'>
+            Sign up!
+          </Link>
         </span>
         <span className='sign__text'>
-          <Link to='/forgot-password'>Forgot password?</Link>
+          <Link id='forgotPasswordLink' to='/forgot-password'>
+            Forgot password?
+          </Link>
         </span>
       </form>
     </div>
