@@ -112,7 +112,7 @@ const UserProfile = () => {
             )}
           </TabList>
           <TabPanel>
-            <UserOverview ratingData={ratingData} favourites={[233, 3, 5, 6, 11]} />
+            <UserOverview userId={id} ratingData={ratingData} favourites={[233, 3, 5, 6, 11]} />
             {userId === parseInt(id || '0') && (
               <MovieList
                 title={'My Favorite List'}

@@ -45,7 +45,7 @@ const MovieList: React.FC<MovieListProps> = ({
   return (
     <div id={id} className='mt-3'>
       <h2 className='text-2xl font-bold mb-3'>{title}</h2>
-      {movieIds.length === 0 && <p>{nullListMessage}</p>}
+      {movieIds.length === 0 && <p id={`${id}-message`}>{nullListMessage}</p>}
       {isLoading ? (
         <LoadingIndicator></LoadingIndicator>
       ) : (
@@ -65,6 +65,7 @@ const MovieList: React.FC<MovieListProps> = ({
                 overview={movie.overview}
                 avgRating={movie.rating}
                 canRemove={canRemove}
+                removeFrom={id}
               />
             );
           })}

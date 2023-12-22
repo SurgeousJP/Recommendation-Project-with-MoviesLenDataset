@@ -16,7 +16,9 @@ const useFavorite = (userId: number | undefined, favoriteId: number, onSuccess?:
       onSuccess && onSuccess();
       refetch();
       if (isDelete) {
-        toast.success(REMOVE_FROM_FAVORITES_SUCCESS);
+        toast.success(REMOVE_FROM_FAVORITES_SUCCESS, {
+          toastId: `remove_from_favorites_${favoriteId}`
+        });
       } else {
         toast.success(ADD_TO_FAVORITES_SUCCESS);
       }
