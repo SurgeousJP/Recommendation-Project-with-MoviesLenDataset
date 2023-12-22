@@ -72,6 +72,7 @@ export default function Register() {
       <form id='register' onSubmit={handleSubmit} className='form-container'>
         <img src={logo} alt='Logo'></img>
         <Input
+          id='usernameInput'
           type='text'
           placeholder='Username'
           value={username}
@@ -80,6 +81,7 @@ export default function Register() {
           onChange={e => setUsername(e.target.value)}
         />
         <Input
+          id='passwordInput'
           type='password'
           placeholder='Password'
           value={password}
@@ -88,6 +90,7 @@ export default function Register() {
           onChange={e => setPassword(e.target.value)}
         />
         <Input
+          id='repeatPasswordInput'
           type='password'
           placeholder='Repeat Password'
           value={repeatPassword}
@@ -96,13 +99,16 @@ export default function Register() {
           onChange={e => setRepeatPassword(e.target.value)}
         />
 
-        <button type='submit' className='primary-btn h-11 mb-4 mt-9'>
+        <button id='signUpButton' type='submit' className='primary-btn h-11 mb-4 mt-9'>
           Sign up
         </button>
         <span className='sign__delimiter'>or</span>
         <SocialSign></SocialSign>
         <span className='sign__text'>
-          Already have an account? <Link to='/login'>Sign in!</Link>
+          Already have an account?{' '}
+          <Link id='signInLink' to='/login'>
+            Sign in!
+          </Link>
         </span>
       </form>
     </div>
