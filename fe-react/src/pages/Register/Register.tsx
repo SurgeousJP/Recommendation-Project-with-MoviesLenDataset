@@ -32,7 +32,7 @@ export default function Register() {
 
   const { mutate: register } = useMutation(createUserProfile, {
     onSuccess: () => {
-      toast.success(REGISTER_SUCCESSFULLY);
+      toast.success(REGISTER_SUCCESSFULLY, { toastId: 'registerSuccessfully' });
       navigate('/login');
     },
     onError: error => {
@@ -48,7 +48,9 @@ export default function Register() {
     setUsernameError('');
     setRepeatPasswordError('');
     if (!username || !password || !repeatPassword) {
-      toast.error(MANDATORY_FIELDS);
+      toast.error(MANDATORY_FIELDS, {
+        toastId: 'mandatoryFieldsError'
+      });
       return;
     }
     if (password.length < 8) {

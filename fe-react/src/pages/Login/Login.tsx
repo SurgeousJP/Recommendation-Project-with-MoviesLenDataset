@@ -24,7 +24,9 @@ export default function Login() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // prevent page reload
     if (!username || !password) {
-      toast.error(MANDATORY_FIELDS);
+      toast.error(MANDATORY_FIELDS, {
+        toastId: 'mandatoryFieldsError'
+      });
       return;
     }
     //const data = await login(username, password);
@@ -33,13 +35,17 @@ export default function Login() {
       { Username: username, Password: password },
       {
         onSuccess: data => {
-          toast.success(LOGIN_SUCCESSFULLY);
+          toast.success(LOGIN_SUCCESSFULLY, {
+            toastId: 'loginSuccessfully'
+          });
         },
         onError: error => {
           if (error.response.status === 401) {
             setUsernameError(INCORRECT_CREDENTIALS);
           }
-          toast.error(LOGIN_FAILED);
+          toast.error(LOGIN_FAILED, {
+            toastId: 'incorrectCredentials'
+          });
         }
       }
     );
@@ -57,6 +63,7 @@ export default function Login() {
           value={username}
           errorMessage={usernameError}
           onChange={e => setUsername(e.target.value)}
+          contentEditable={true}
         />
         <Input
           id='passwordInput'
@@ -65,6 +72,7 @@ export default function Login() {
           autoComplete='current-password'
           value={password}
           onChange={e => setPassword(e.target.value)}
+          contentEditable={true}
         />
 
         <button id='signInButton' type='submit' className='primary-btn h-11 mb-4'>
