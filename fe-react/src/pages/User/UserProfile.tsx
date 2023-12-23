@@ -66,7 +66,7 @@ const UserProfile = () => {
           <img
             id='backdrop'
             src='/src/assets/images/bg.png'
-            className='w-full h-full object-cover object-bottom'
+            className='w-full h-full object-cover obtnRatingject-bottom'
             alt='backdrop'
           ></img>
         </div>

@@ -187,6 +187,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
             </button> */}
             <button
               onClick={hasLogin ? handleAddFavorite : () => {}}
+              id='btnAddToFavorites'
               data-tooltip-id='my-tooltip'
               data-tooltip-content={hasLogin ? 'Mark as favourite' : LOGIN_TO_ADD_FAVORITE}
               data-tooltip-place='bottom'
@@ -204,6 +205,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
               </svg>
             </button>
             <button
+              id='btnAddToWatchlist'
               data-tooltip-id='my-tooltip'
               data-tooltip-content={hasLogin ? 'Add to your watchlist' : LOGIN_TO_ADD_WATCHLIST}
               data-tooltip-place='bottom'
@@ -223,7 +225,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
             </button>
             <div className='relative'>
               <button
-                id='clickable'
+                id='btnRating'
                 className='flex justify-center items-center rounded-full w-12 h-12 border-none hover:bg-gray-600 bg-gray-700 p-2'
                 onClick={hasLogin ? handleRatingButton : () => {}}
               >
