@@ -16,7 +16,7 @@ import {
 
 export default function Login() {
   const [username, setUsername] = useState('4nh3k');
-  const [password, setPassword] = useState('12345');
+  const [password, setPassword] = useState('12345678');
   const [usernameError, setUsernameError] = useState('');
 
   const testSignIn = useSignIn();
