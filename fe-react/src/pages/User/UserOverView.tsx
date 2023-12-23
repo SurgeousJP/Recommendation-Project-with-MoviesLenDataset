@@ -1,7 +1,7 @@
 import React from 'react';
 import { AxisOptions, Chart } from 'react-charts';
-import { useQueries } from 'react-query';
-import { getMovieDetail } from 'src/helpers/api';
+import { useQueries, useQuery } from 'react-query';
+import { getMovieDetail, getUserReview } from 'src/helpers/api';
 
 export type RatingData = {
   rate: string;
@@ -23,6 +23,7 @@ export type RatingRawData = {
 export interface UserOverviewProps {
   ratingData: RatingRawData[];
   favourites: number[];
+  userId: string;
   // Define the props for the component here
 }
 
@@ -84,6 +85,14 @@ const UserOverview: React.FC<UserOverviewProps> = props => {
     })
   );
 
+  const { data: reviewData } = useQuery(
+    ['userReview', props.userId],
+    () => getUserReview(props.userId),
+    {
+      select: data => data?.length ?? 0
+    }
+  );
+
   const isLoading = movieQueries.some(result => result.isLoading);
 
   return (
@@ -100,7 +109,7 @@ const UserOverview: React.FC<UserOverviewProps> = props => {
         <div>
           <p className='text-lg'>Total Reviews</p>
           <p id='total-review' className='text-[4rem] font-bold'>
-            {props.ratingData?.length ?? 0}
+            {reviewData ?? 0}
           </p>
         </div>
         <div className='w-1/3'>

@@ -12,6 +12,8 @@ import useUserId from 'src/hooks/useUserId';
 import useFavorite from 'src/hooks/useFavorite';
 import { toast } from 'react-toastify';
 import { RATING_UPDATED, SERVER_UNAVAILABLE, RATING_REMOVED } from 'src/constant/error';
+import useWatchList from 'src/hooks/useWatchList';
+import useUserRating from 'src/hooks/useUserRating';
 
 type MovieCardUserProps = {
   movieId: number;
@@ -23,7 +25,10 @@ type MovieCardUserProps = {
   isFavourite?: boolean;
   canRemove?: boolean;
   id?: string;
+  removeFrom: RemoveFrom;
 };
+
+type RemoveFrom = 'watchlist-list' | 'favorite-list' | 'rating-list';
 
 const MovieCardUser = ({
   movieId,
@@ -34,7 +39,8 @@ const MovieCardUser = ({
   avgRating,
   isFavourite,
   id,
-  canRemove
+  canRemove,
+  removeFrom
 }: MovieCardUserProps) => {
   const [rating, setRating] = useState<number | undefined>(undefined);
   const [hasRated, setHasRated] = useState(false);
@@ -56,14 +62,19 @@ const MovieCardUser = ({
       toast.error(SERVER_UNAVAILABLE);
     }
   });
+  const { refetch } = useUserRating({
+    id: userId?.toString() ?? ''
+  });
   const { mutate: deleteRating } = useMutation(deleteMovieRating, {
     onSuccess: () => {
+      refetch();
       toast.success(RATING_REMOVED);
     },
     onError: () => {
       toast.error(SERVER_UNAVAILABLE);
     }
   });
+  const { mutate: toggleWatchList } = useWatchList(userId, movieId);
   const handleDeleteRating = () => {
     setRating(0);
     setHasRated(false);
@@ -100,6 +111,20 @@ const MovieCardUser = ({
       updateRating({ user_id: userId ?? 1, movie_id: movieId, rating: rate });
     } else {
       createRating({ user_id: userId ?? 1, movie_id: movieId, rating: rate });
+    }
+  };
+
+  const handleRemove = () => {
+    switch (removeFrom) {
+      case 'watchlist-list':
+        toggleWatchList();
+        break;
+      case 'favorite-list':
+        toggleFavorite();
+        break;
+      case 'rating-list':
+        handleDeleteRating();
+        break;
     }
   };
 
@@ -170,7 +195,10 @@ const MovieCardUser = ({
             <p className='ml-2'>Favourite</p>
           </li>
           <li className='flex items-center'>
-            <button className='flex justify-center items-center border-1 border-white/70 w-8 h-8 rounded-full group/list hover:bg-white/70'>
+            <button
+              className='flex justify-center items-center border-1 border-white/70 w-8 h-8 rounded-full group/list hover:bg-white/70'
+              onClick={toggleWatchList}
+            >
               <svg
                 className='fill-white/70 group-hover/list:fill-background/70'
                 xmlns='http://www.w3.org/2000/svg'
@@ -181,11 +209,14 @@ const MovieCardUser = ({
                 <path d='M224,56V72a8,8,0,0,1-8,8H96a8,8,0,0,1-8-8V56a8,8,0,0,1,8-8H216A8,8,0,0,1,224,56ZM56,48H40a8,8,0,0,0-8,8V72a8,8,0,0,0,8,8H56a8,8,0,0,0,8-8V56A8,8,0,0,0,56,48Zm160,64H96a8,8,0,0,0-8,8v16a8,8,0,0,0,8,8H216a8,8,0,0,0,8-8V120A8,8,0,0,0,216,112ZM56,112H40a8,8,0,0,0-8,8v16a8,8,0,0,0,8,8H56a8,8,0,0,0,8-8V120A8,8,0,0,0,56,112Zm160,64H96a8,8,0,0,0-8,8v16a8,8,0,0,0,8,8H216a8,8,0,0,0,8-8V184A8,8,0,0,0,216,176ZM56,176H40a8,8,0,0,0-8,8v16a8,8,0,0,0,8,8H56a8,8,0,0,0,8-8V184A8,8,0,0,0,56,176Z'></path>
               </svg>
             </button>
-            <p className='ml-2'>Add to list</p>
+            <p className='ml-2'>Add to watchlist</p>
           </li>
           {canRemove && (
             <li className='flex items-center'>
-              <button className='flex justify-center items-center border-1 border-white/70 w-8 h-8 rounded-full group/remove hover:bg-white/70'>
+              <button
+                className='flex justify-center items-center border-1 border-white/70 w-8 h-8 rounded-full group/remove hover:bg-white/70'
+                onClick={handleRemove}
+              >
                 <svg
                   className='fill-white/70 group-hover/remove:fill-background/70'
                   xmlns='http://www.w3.org/2000/svg'
@@ -225,6 +256,9 @@ const MovieCardUser = ({
               <Rating
                 allowFraction={true}
                 initialValue={rating}
+                onPointerEnter={() => {
+                  console.log('enter');
+                }}
                 onClick={handleRating}
                 /* Available Props */
               />

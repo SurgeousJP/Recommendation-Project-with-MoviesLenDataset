@@ -226,6 +226,11 @@ export const getUserRating = async (userId: string) => {
   return data;
 };
 
+export const getUserReview = async (userId: string) => {
+  const { data } = await instance.get(`userReview/get/user/${userId}`);
+  return data;
+};
+
 export const getMovieRatingByUser = async (userId: number, movieId: string) => {
   const { data } = await instance.get(`rating/get/${userId}/${movieId}`);
   return data;

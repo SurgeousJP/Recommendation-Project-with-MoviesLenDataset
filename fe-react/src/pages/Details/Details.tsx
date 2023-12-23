@@ -18,6 +18,7 @@ import NotFound from '../NotFound/NotFound';
 import { useQueries, useQuery } from 'react-query';
 import { getMovieDetail, getSimilarMovies } from 'src/helpers/api';
 import { useState } from 'react';
+import { useTitle } from 'src/hooks/useTitle';
 
 export default function Details() {
   const { id } = useParams();
@@ -26,6 +27,7 @@ export default function Details() {
   const { userId, hasLogin } = useUserId();
 
   const { data: movie, isLoading: isMovieLoading, isError } = useMovieDetail(id || '');
+
   const { data: casts } = useCast(id || '');
   const { data: keywords } = useKeyword(id || '');
   const { data: similarMoviesData } = useQuery(['similarMovies', id], () => getSimilarMovies(id), {
