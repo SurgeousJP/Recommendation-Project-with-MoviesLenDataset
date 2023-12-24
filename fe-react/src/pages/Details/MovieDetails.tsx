@@ -242,7 +242,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
               <Tooltip
                 style={{ backgroundColor: 'rgb(55, 65, 81)' }}
                 id='rating'
-                anchorSelect='#clickable'
+                anchorSelect='#btnRating'
                 place='bottom'
               >
                 {hasLogin ? 'Rate this movie' : LOGIN_TO_RATE_MOVIE}
@@ -253,7 +253,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
                 style={{ backgroundColor: 'rgb(55, 65, 81)' }}
                 opacity={1}
                 id='rating-clickable'
-                anchorSelect='#clickable'
+                anchorSelect='#btnRating'
                 place='bottom'
                 openOnClick
                 clickable
