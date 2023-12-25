@@ -156,7 +156,7 @@ export default function Header(props: HeaderProps) {
                 <hr className='border-white/30'></hr>
                 <ul className='my-1'>
                   <li className=' hover:bg-gray-800 py-1.5 px-3'>
-                    <Link to={`/u/${userId}/disscussion`}>Disscussion</Link>
+                    <Link to={`/u/${userId}/discussion`}>Discussion</Link>
                   </li>
                   <li className=' hover:bg-gray-800 py-1.5 px-3'>
                     <Link to={`/u/${userId}/recommendations`}>Recommendation</Link>

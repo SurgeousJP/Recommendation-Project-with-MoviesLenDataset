@@ -25,8 +25,8 @@ export default function DiscussionTab({ movieId }: DiscussionTabProps) {
           {discussions.slice(0, 3).map((discussion: Discussion) => {
             return (
               <DiscussionCard
-                key={discussion.discussion_id}
-                discussionId={discussion.discussion_id?.toString()}
+                key={discussion._id}
+                discussionId={discussion._id}
                 userId={discussion.discussion_part[0].user_id.toString()}
                 answerCount={discussion.discussion_part.length - 1}
                 profilePath={discussion.discussion_part[0].profile_path}
