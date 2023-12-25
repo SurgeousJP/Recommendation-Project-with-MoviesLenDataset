@@ -3,6 +3,7 @@ import { useMutation } from 'react-query';
 import { Rating } from 'react-simple-star-rating';
 import { toast } from 'react-toastify';
 import { Tooltip } from 'react-tooltip';
+import RatingStar from 'src/components/RatingStar';
 import {
   LOGIN_TO_ADD_FAVORITE,
   LOGIN_TO_ADD_WATCHLIST,
@@ -269,10 +270,10 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie, hasLogin, userId }) 
                   >
                     <path d='M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm40,112H88a8,8,0,0,1,0-16h80a8,8,0,0,1,0,16Z'></path>
                   </svg>
-                  <Rating
-                    allowFraction={true}
-                    initialValue={rating}
-                    onClick={handleRating}
+                  <RatingStar
+                    initialRating={rating}
+                    onChange={handleRating}
+                    size={44}
                     /* Available Props */
                   />
                 </div>

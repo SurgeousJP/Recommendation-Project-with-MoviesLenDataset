@@ -13,6 +13,7 @@ import {
   LOGIN_SUCCESSFULLY,
   MANDATORY_FIELDS
 } from 'src/constant/error';
+import RatingStar from 'src/components/RatingStar';
 
 export default function Login() {
   const [username, setUsername] = useState('4nh3k');

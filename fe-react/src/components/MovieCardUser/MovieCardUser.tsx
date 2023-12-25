@@ -14,6 +14,7 @@ import { toast } from 'react-toastify';
 import { RATING_UPDATED, SERVER_UNAVAILABLE, RATING_REMOVED } from 'src/constant/error';
 import useWatchList from 'src/hooks/useWatchList';
 import useUserRating from 'src/hooks/useUserRating';
+import RatingStar from '../RatingStar';
 
 type MovieCardUserProps = {
   movieId: number;
@@ -253,15 +254,8 @@ const MovieCardUser = ({
               >
                 <path d='M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm40,112H88a8,8,0,0,1,0-16h80a8,8,0,0,1,0,16Z'></path>
               </svg>
-              <Rating
-                allowFraction={true}
-                initialValue={rating}
-                onPointerEnter={() => {
-                  console.log('enter');
-                }}
-                onClick={handleRating}
-                /* Available Props */
-              />
+
+              <RatingStar onChange={handleRating} initialRating={rating} size={44} />
             </div>
           )}
         </Tooltip>
