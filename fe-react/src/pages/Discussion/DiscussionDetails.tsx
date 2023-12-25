@@ -12,6 +12,7 @@ import { toast } from 'react-toastify';
 import useMovieDetail from 'src/hooks/useMovieDetail';
 import QuillForm from 'src/components/QuillForm';
 import { DISCUSSION_EDITED, REPLY_DELETED, REPLY_EDITED } from 'src/constant/error';
+import BreadCrumbs from 'src/components/BreadCrumbs/BreadCrumbs';
 
 function DiscussionDetails() {
   const { discussion_id, id } = useParams();
@@ -51,12 +52,14 @@ function DiscussionDetails() {
     addDiscussionPart(value);
     console.log(value);
   };
+
   if (isLoading) return <LoadingIndicator />;
   return (
     <div className='w-full p-8'>
       {isMovieLoading && `Let's Chat`}
       {!isMovieLoading && <h2 className='text-2xl font-semibold'>Discuss {movie?.title}</h2>}
-      <div className='space-y-10 mt-10'>
+      <BreadCrumbs />
+      <div className='space-y-10 mt-8'>
         {discussion.discussion_part.map((part: DiscussionPart, index: number) => {
           if (index === 0) {
             return (

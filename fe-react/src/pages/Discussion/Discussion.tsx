@@ -2,6 +2,7 @@ import React from 'react';
 import ReactPaginate from 'react-paginate';
 import { useQuery } from 'react-query';
 import { Link, useNavigate } from 'react-router-dom';
+import BreadCrumbs from 'src/components/BreadCrumbs/BreadCrumbs';
 import DiscussionSubject from 'src/components/DiscussionSubject/DiscussionSubject';
 import LoadingIndicator from 'src/components/LoadingIndicator';
 import Table from 'src/components/Table';
@@ -81,8 +82,9 @@ function Discussion() {
       <h2 id='top' className='text-2xl font-semibold scroll-m-12'>
         Let&apos;s Chat
       </h2>
+      <BreadCrumbs />
       <Table
-        className='border-border border-1 shadow-md shadow-border/50 rounded-sm mt-10 w-full'
+        className='border-border border-1 shadow-md shadow-border/50 rounded-sm mt-8 w-full'
         classNameTable='bg-transparent w-full'
         classNameBody='border-t border-[#01b4e4]/50'
         classNameRowSelected={data ? '' : 'bg-border/30 '}

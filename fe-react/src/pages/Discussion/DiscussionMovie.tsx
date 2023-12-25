@@ -1,6 +1,7 @@
 import React from 'react';
 import { useQuery } from 'react-query';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import BreadCrumbs from 'src/components/BreadCrumbs/BreadCrumbs';
 import LoadingIndicator from 'src/components/LoadingIndicator';
 import Table from 'src/components/Table/Table';
 import { options } from 'src/constant/time-option';
@@ -67,8 +68,10 @@ const DiscussionMovie: React.FC = () => {
     <div className='w-full p-8'>
       {isMovieLoading && `Let's Chat`}
       {!isMovieLoading && <h2 className='text-2xl font-semibold'>Discuss {movie?.title}</h2>}
+      <BreadCrumbs />
+
       <Table
-        className='border-border border-1 shadow-md shadow-border/50 rounded-sm mt-10 w-full'
+        className='border-border border-1 shadow-md shadow-border/50 rounded-sm mt-8 w-full'
         classNameTable='bg-transparent w-full'
         classNameBody='border-t border-[#01b4e4]/50'
         classNameRowSelected={data ? '' : 'bg-border/30 '}
@@ -83,7 +86,8 @@ const DiscussionMovie: React.FC = () => {
             ? data
             : [
                 {
-                  subject: <p>No discussions.</p>
+                  subject: <p>No discussions.</p>,
+                  colSpan: 4
                 }
               ]
         }

@@ -26,6 +26,8 @@ export default function DiscussionTab({ movieId }: DiscussionTabProps) {
             return (
               <DiscussionCard
                 key={discussion.discussion_id}
+                discussionId={discussion.discussion_id?.toString()}
+                userId={discussion.discussion_part[0].user_id.toString()}
                 answerCount={discussion.discussion_part.length - 1}
                 profilePath={discussion.discussion_part[0].profile_path}
                 status={discussion.status}
