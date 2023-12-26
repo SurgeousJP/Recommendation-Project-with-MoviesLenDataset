@@ -137,18 +137,22 @@ func (suite *MovieDiscussionTestSuite) TestGetAnExistingMovieDiscussion() {
 	// Check the response body
 	assert.JSONEq(suite.T(), `{
 		"_id": "` + id + `",
-		 "discussion_part":{
-			"description":"Test",
-			"is_reply_of": null, 
-			"name":"4nh3k", 
-			"part_id":0, 
-			"profile_path":"https://ui-avatars.com/api/?background=01d277&name=4nh3k&color=fff&size=256", 
-			"timestamp":"2023-12-25T14:56:26.142Z", "title":"", 
-			"user_id":672}
-		}, 
-		"movie_id":949, 
-		"status":true, 
-		"subject":"Thoughts on the Ending"}`,
+		"discussion_part": [
+			{
+				"description": "Test",
+				"is_reply_of": null,
+				"user_id": 672,
+				"name": "4nh3k",
+				"part_id": 0,
+				"profile_path": "https://ui-avatars.com/api/?background=01d277&name=4nh3k&color=fff&size=256",
+				"timestamp":  "2023-12-25T14:56:26.142Z",
+				"title": "",
+			  }
+		],
+		"movie_id": 949,
+		"status": true,
+		"subject": "Thoughts on the Ending"
+	}`,
 		 w.Body.String())
 }
 
