@@ -2,11 +2,21 @@ import { useMutation } from 'react-query';
 import useUser from './useUser';
 import { createMovieReview } from 'src/helpers/api';
 import Review from 'src/types/Review';
+import { toast } from 'react-toastify';
+import { REVIEW_SUBMITTED, SERVER_UNAVAILABLE } from 'src/constant/error';
 
 const useUserReview = (userId: number | undefined, movieId: number, onSuccess?: () => void) => {
   const { data: user } = useUser(userId);
   const mutation = useMutation(createMovieReview, {
-    onSuccess: onSuccess
+    onSuccess: () => {
+      onSuccess && onSuccess();
+      toast.success(REVIEW_SUBMITTED);
+    },
+    onError: error => {
+      if (error.response.status === 502) {
+        toast.error('User can only submit one review per movie');
+      } else toast.error(SERVER_UNAVAILABLE);
+    }
   });
 
   const createReview = async (comment: string) => {

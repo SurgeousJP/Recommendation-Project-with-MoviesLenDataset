@@ -5,7 +5,6 @@ import { getMovieCrew } from 'src/helpers/api';
 const useCrew = (id: string, select?: (data: any) => any) => {
   return useQuery(['crew', id], () => getMovieCrew(id), {
     select(data) {
-      console.log(data);
       if (select) {
         return select(data);
       }

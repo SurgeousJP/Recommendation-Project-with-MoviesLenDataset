@@ -231,6 +231,16 @@ export const getUserReview = async (userId: string) => {
   return data;
 };
 
+export const deleteUserReview = async (userId: string, movieId: string) => {
+  const { data } = await authInstance.delete(`userReview/delete/${userId}/${movieId}`);
+  return data;
+};
+
+export const updateUserReview = async (review: Partial<Review>) => {
+  const { data } = await authInstance.patch(`userReview/update`, review);
+  return data;
+};
+
 export const getMovieRatingByUser = async (userId: number, movieId: string) => {
   const { data } = await instance.get(`rating/get/${userId}/${movieId}`);
   return data;

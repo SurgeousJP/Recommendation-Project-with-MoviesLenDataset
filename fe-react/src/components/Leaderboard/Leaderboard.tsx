@@ -21,7 +21,6 @@ function Leaderboard() {
     }
   );
   if (isLeaderBoardLoading) return <LoadingIndicator />;
-  console.log(leaderBoardData);
   return (
     <div className='mt-4'>
       <div className='flex items-center'>

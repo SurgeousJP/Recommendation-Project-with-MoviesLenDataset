@@ -77,7 +77,20 @@ func (suite *MovieDiscussionTestSuite) TestCreateMovieDiscussionSuccessfully() {
 		"movie_id": 949,
 		"subject": "Thoughts on the Ending",
 		"status": true,
-		"discussion_part": []
+		"discussion_part": [
+			{
+				"user_id": 672,
+				"part_id": 0,
+				"name": "4nh3k",
+				"profile_path": "https://ui-avatars.com/api/?background=01d277&name=4nh3k&color=fff&size=256",
+				"title": "",
+				"timestamp": {
+				  "$date": "2023-12-25T14:56:26.142Z"
+				},
+				"description": "Test",
+				"is_reply_of": null
+			  },
+		]
 	}`)
 
 	req, _ := http.NewRequest("POST", "/movieDiscussion/create", body)

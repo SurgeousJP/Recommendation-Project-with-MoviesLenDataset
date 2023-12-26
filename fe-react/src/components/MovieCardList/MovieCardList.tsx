@@ -15,11 +15,9 @@ function MovieCardList({ page, setPage }: MovieCardListProps) {
   const { data: movieListData, isLoading: isMovieListLoading } = useQuery(['movieList', page], () =>
     getMoviesByPage(page)
   );
-  console.log('rendering movie card list');
   const handlePageClick = (event: { selected: number }) => {
     const newPage = event.selected + 1;
 
-    console.log(newPage);
     setPage(newPage);
     // Scroll to the movie_list element
     const movieListElement = document.getElementById('movie_list');
@@ -28,7 +26,6 @@ function MovieCardList({ page, setPage }: MovieCardListProps) {
     }
   };
   if (isMovieListLoading) return <LoadingIndicator />;
-  console.log(movieListData);
   return (
     <div className='border-border border-b-1 pb-4'>
       <h2 id='movie_list' className='text-2xl font-semibold scroll-m-20'>

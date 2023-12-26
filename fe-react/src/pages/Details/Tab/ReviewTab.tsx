@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ReviewCard from 'src/components/ReviewCard/ReviewCard';
 import ReviewForm from '../ReviewForm';
-import { useQuery } from 'react-query';
+import { QueryCache, useQuery, useQueryClient } from 'react-query';
 import { getMovieReview } from 'src/helpers/api';
 import LoadingIndicator from 'src/components/LoadingIndicator';
 import Review from 'src/types/Review';
@@ -16,12 +16,16 @@ export default function ReviewTab({ movieId, userId }: ReviewTabProps) {
   const handleToggleReview = () => {
     setToggleReview(!toggleReview);
   };
+  const queryClient = useQueryClient();
   const {
     data: reviewData,
     isLoading: isReviewLoading,
     refetch
   } = useQuery(['movie-review', movieId], () => getMovieReview(movieId.toString()), {
-    retry: false
+    retry: false,
+    onError: () => {
+      queryClient.setQueryData(['movie-review', movieId], null);
+    }
   });
   if (isReviewLoading) return <LoadingIndicator />;
   return (
@@ -40,15 +44,15 @@ export default function ReviewTab({ movieId, userId }: ReviewTabProps) {
                   key={review.user_id}
                   avatar={review.picture_profile}
                   content={review.comment}
+                  movieId={review.movie_id}
+                  userId={review.user_id}
+                  refetch={refetch}
                   reviewTime='24.08.2018, 17:53'
                   title={`A review by ${review.username}`}
                   username={review.username}
                 />
               );
             })}
-            <a className='hover:opacity-70' href='reviews'>
-              <h3 className='font-semibold my-5'>Read All Reviews</h3>
-            </a>
           </>
         )}
       </div>
@@ -57,7 +61,10 @@ export default function ReviewTab({ movieId, userId }: ReviewTabProps) {
         className='mt-4'
         userId={userId}
         movieId={movieId}
-        onSuccess={refetch}
+        onSuccess={() => {
+          refetch();
+          handleToggleReview();
+        }}
       />
       <button
         className='font-semibold text-primary w-fit border-none hover:bg-transparent h-fit text-base normal-case my-3 hover:opacity-70'

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { isLoggedIn, getAccessToken } from 'axios-jwt'; // Replace with your actual authentication utils
 
 const useUserId = () => {
@@ -15,7 +15,6 @@ const useUserId = () => {
           const accessToken = await getAccessToken();
           const decodedToken = jwtDecode(accessToken);
           setUserId(decodedToken.userId);
-          console.log('decoded', decodedToken.userId);
         }
       } catch (error) {
         console.error('Error fetching data:', error);

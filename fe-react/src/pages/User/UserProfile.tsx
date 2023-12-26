@@ -55,7 +55,7 @@ const UserProfile = () => {
   const onSelect = (index: number, lastIndex: number, event: Event) => {
     setSelectedIndex(index);
   };
-  if (isLoading || isRatingLoading) {
+  if (isLoading) {
     return <p>Loading...</p>;
   }
 

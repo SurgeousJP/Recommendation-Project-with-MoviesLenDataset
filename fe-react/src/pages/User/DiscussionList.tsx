@@ -1,12 +1,9 @@
 import React from 'react';
-import { useQueries, useQuery } from 'react-query';
+import { useQuery } from 'react-query';
 import DiscussionSubject from 'src/components/DiscussionSubject/DiscussionSubject';
 import LoadingIndicator from 'src/components/LoadingIndicator';
-import MovieCardSearch from 'src/components/MovieCardSearch/MovieCardSearch';
-import MovieCardUser from 'src/components/MovieCardUser';
 import { options } from 'src/constant/time-option';
-import { getMovieDetail, getUserDiscussion } from 'src/helpers/api';
-import { buildImageUrl, formatDateToDDMMYYYY, mapJsonToMovie } from 'src/helpers/utils';
+import { getUserDiscussion } from 'src/helpers/api';
 
 interface DiscussionListProps {
   title: string;

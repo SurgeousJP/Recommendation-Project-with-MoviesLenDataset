@@ -107,7 +107,6 @@ export default function HomePage() {
             >
               {data?.map((movie, index) => {
                 const card = mapJsonToMovie(movie);
-                console.log(movie);
                 return (
                   <MovieCard
                     key={index}

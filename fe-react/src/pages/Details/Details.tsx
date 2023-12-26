@@ -17,12 +17,9 @@ import DiscussionTab from './Tab/DiscussionTab';
 import NotFound from '../NotFound/NotFound';
 import { useQueries, useQuery } from 'react-query';
 import { getMovieDetail, getSimilarMovies } from 'src/helpers/api';
-import { useState } from 'react';
-import { useTitle } from 'src/hooks/useTitle';
 
 export default function Details() {
   const { id } = useParams();
-  const [similarMovies, setSimilarMovies] = useState([]);
 
   const { userId, hasLogin } = useUserId();
 
@@ -32,20 +29,21 @@ export default function Details() {
   const { data: keywords } = useKeyword(id || '');
   const { data: similarMoviesData } = useQuery(['similarMovies', id], () => getSimilarMovies(id), {
     enabled: !!id,
-    retry: false,
-    onSuccess: data => {
-      setSimilarMovies(data.similar_movies);
+
+    select: data => {
       return data.similar_movies;
     }
   });
-
+  console.log(similarMoviesData);
   const similarMoviesQueries = useQueries(
-    similarMovies?.map((movieId: string) => {
-      return {
-        queryKey: ['movie', movieId],
-        queryFn: () => getMovieDetail(movieId.toString())
-      };
-    })
+    similarMoviesData
+      ? similarMoviesData.map((movieId: string) => {
+          return {
+            queryKey: ['movie', movieId],
+            queryFn: () => getMovieDetail(movieId.toString())
+          };
+        })
+      : []
   );
 
   const isSimilarLoading = similarMoviesQueries.some(result => result.isLoading);
@@ -100,9 +98,10 @@ export default function Details() {
             </Tabs>
           </div>
           <h2 className='text-2xl font-semibold mb-3 mt-3'>Recommendations</h2>
-          {similarMoviesData && (
+          {isSimilarLoading && <LoadingIndicator />}
+          {!isSimilarLoading ? (
             <Scroller>
-              {similarMoviesQueries.map((res, index) => {
+              {similarMoviesQueries.splice(1).map((res, index) => {
                 const movie = res.data;
                 return (
                   <MovieCardRecom
@@ -115,8 +114,7 @@ export default function Details() {
                 );
               })}
             </Scroller>
-          )}
-          {!similarMoviesData && (
+          ) : (
             <p>
               We don&apos;t have enough data to suggest any movies based on Reptile. You can help by
               rating movies you&apos;ve seen.
