@@ -89,7 +89,7 @@ func (suite *MovieDiscussionTestSuite) TestCreateMovieDiscussionSuccessfully() {
 				},
 				"description": "Test",
 				"is_reply_of": null
-			  },
+			  }
 		]
 	}`)
 
