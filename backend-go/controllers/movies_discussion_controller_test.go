@@ -84,9 +84,7 @@ func (suite *MovieDiscussionTestSuite) TestCreateMovieDiscussionSuccessfully() {
 				"name": "4nh3k",
 				"profile_path": "https://ui-avatars.com/api/?background=01d277&name=4nh3k&color=fff&size=256",
 				"title": "",
-				"timestamp": {
-				  "$date": "2023-12-25T14:56:26.142Z"
-				},
+				"timestamp":  "2023-12-25T14:56:26.142Z",
 				"description": "Test",
 				"is_reply_of": null
 			  }
