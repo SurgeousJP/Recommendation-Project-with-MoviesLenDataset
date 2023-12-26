@@ -146,7 +146,7 @@ func (suite *MovieDiscussionTestSuite) TestGetAnExistingMovieDiscussion() {
 				"part_id": 0,
 				"profile_path": "https://ui-avatars.com/api/?background=01d277&name=4nh3k&color=fff&size=256",
 				"timestamp":  "2023-12-25T14:56:26.142Z",
-				"title": "",
+				"title": ""
 			  }
 		],
 		"movie_id": 949,
