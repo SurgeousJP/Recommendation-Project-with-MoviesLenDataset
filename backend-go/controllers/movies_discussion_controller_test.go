@@ -140,7 +140,6 @@ func (suite *MovieDiscussionTestSuite) TestGetAnExistingMovieDiscussion() {
 		"discussion_part": [
 			{
 				"description": "Test",
-				"is_reply_of": null,
 				"user_id": 672,
 				"name": "4nh3k",
 				"part_id": 0,
