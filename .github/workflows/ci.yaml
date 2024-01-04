@@ -3,11 +3,11 @@ on:
   push:
   pull_request:
 
-jobs:  
-  run-tests: 
-    strategy: 
+jobs:
+  run-tests:
+    strategy:
       max-parallel: 1
-      fail-fast: false 
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     name: Test
@@ -18,26 +18,26 @@ jobs:
     steps:
       - uses: actions/setup-go@v4
         with:
-          go-version: '1.20'
+          go-version: [1.16, 1.17, 1.20]
       - name: Print Environment Variables
         run: |
-            echo "DB_CONNECTION_STRING=$DB_CONNECTION_STRING"
-            echo "DB_NAME=$DB_NAME"
+          echo "DB_CONNECTION_STRING=$DB_CONNECTION_STRING"
+          echo "DB_NAME=$DB_NAME"
       - name: Checkout
         uses: actions/checkout@v3
       - name: Install dependecies
         run: |
-            go env
-            cd backend-go
-            go get github.com/stretchr/testify
-            go install github.com/go-gremlins/gremlins/cmd/gremlins@v0.4.0
+          go env
+          cd backend-go
+          go get github.com/stretchr/testify
+          go install github.com/go-gremlins/gremlins/cmd/gremlins@v0.4.0
       - name: Build Backend
         run: |
-            cd backend-go
-            go build ./...
+          cd backend-go
+          go build ./...
       - name: Test and Coverage
         run: |
-            cd backend-go
-            cd controllers
-            go test -cover
-            gremlins unleash
+          cd backend-go
+          cd controllers
+          go test -cover
+          gremlins unleash
